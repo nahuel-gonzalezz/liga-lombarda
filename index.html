@@ -1,14 +1,333 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liga Lombarda</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Liga Lombarda — Registro Oficial</title>
+
+<link rel="icon" type="image/png" href="./logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Libre+Baskerville&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+    --bg-main: #1d1b19;
+    --panel: #25211d;
+    --paper: #eee4ce;
+    --gold: #a4864a;
+    --gold-light: #d4b76c;
+    --red: #76251c;
+    --border: #4a3d2e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Libre Baskerville", serif;
+    background: radial-gradient(circle at top, #3a342e 0%, var(--bg-main) 50%, #111 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+/* HEADER */
+header {
+    width: 100%;
+    height: 75px;
+    background: rgba(18, 17, 15, 0.95);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.header-inner {
+    width: min(1100px, 90%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand img {
+    width: 35px;
+}
+
+.brand h1 {
+    font-family: "Cinzel", serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    color: var(--paper);
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: #c7b99d;
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 8px 12px;
+    transition: 0.2s;
+}
+
+nav a:hover {
+    color: var(--gold-light);
+}
+
+/* HERO */
+.hero {
+    width: min(1100px, 90%);
+    margin: 80px auto 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.official {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    color: var(--gold-light);
+    padding: 6px 14px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+.hero-title {
+    font-family: "Cinzel", serif;
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--paper);
+    letter-spacing: 2px;
+}
+
+.hero-title span {
+    color: var(--gold-light);
+}
+
+.hero-description {
+    max-width: 600px;
+    color: #cfc4b0;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn {
+    text-decoration: none;
+    padding: 12px 24px;
+    font-family: "Cinzel", serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.25s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #8a3428, var(--red));
+    color: white;
+    border: 1px solid #a94a3d;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(118, 37, 28, 0.4);
+}
+
+.btn-secondary {
+    border: 1px solid var(--border);
+    color: #dbcba9;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.btn-secondary:hover {
+    background: #3a332c;
+}
+
+/* CARDS */
+.actions {
+    width: min(1100px, 90%);
+    margin: 40px auto 60px;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--gold);
+}
+
+.card i {
+    font-size: 24px;
+    color: var(--gold-light);
+}
+
+.card h3 {
+    font-family: "Cinzel", serif;
+    font-size: 16px;
+    color: var(--paper);
+}
+
+.card p {
+    color: #b7aa94;
+    font-size: 12px;
+    line-height: 1.6;
+    flex: 1;
+}
+
+.card a {
+    color: var(--gold-light);
+    text-decoration: none;
+    font-family: "Cinzel", serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-top: 10px;
+}
+
+/* FOOTER */
+footer {
+    background: #131211;
+    border-top: 1px solid var(--border);
+    padding: 25px 20px;
+    text-align: center;
+}
+
+footer img {
+    width: 28px;
+    opacity: 0.8;
+}
+
+footer h3 {
+    font-family: "Cinzel", serif;
+    color: #cdbb95;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+footer p {
+    color: #786d5c;
+    font-family: "Montserrat", sans-serif;
+    font-size: 8px;
+    margin-top: 4px;
+}
+
+@media(max-width: 600px) {
+    header { height: auto; padding: 15px 0; }
+    .header-inner { flex-direction: column; gap: 12px; }
+    .hero-buttons { flex-direction: column; width: 100%; }
+    .btn { justify-content: center; }
+}
+</style>
 </head>
+
 <body>
 
-    <h1>Prueba: Registro Civil Lombardo</h1>
-    <p>El sistema de documentos de la Liga Lombarda está funcionando. XD </p>
+<header>
+    <div class="header-inner">
+        <div class="brand">
+            <img src="./logo.png" alt="Logo">
+            <h1>LIGA LOMBARDA</h1>
+        </div>
+        <nav>
+            <a href="./index.html">INICIO</a>
+            <a href="./documentos.html">DOCUMENTOS</a>
+            <a href="./formulario.html">FORMULARIO</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="official">
+        <i class="fa-solid fa-shield-halved"></i> REGISTRO CENTRAL LOMBARDO
+    </div>
+
+    <h2 class="hero-title">DOCUMENTOS <span>LOMBARDOS</span></h2>
+
+    <p class="hero-description">
+        Bienvenido al sistema oficial de identificación de la Liga Lombarda.
+        Consulta los documentos del archivo o registra tus datos en el sistema central.
+    </p>
+
+    <div class="hero-buttons">
+        <a class="btn btn-primary" href="./documentos.html">
+            <i class="fa-solid fa-address-book"></i> VER DOCUMENTOS
+        </a>
+        <a class="btn btn-secondary" href="./formulario.html">
+            <i class="fa-solid fa-pen-to-square"></i> IR AL FORMULARIO
+        </a>
+    </div>
+</section>
+
+<section class="actions">
+    <div class="cards">
+        <div class="card">
+            <i class="fa-solid fa-address-book"></i>
+            <h3>Consultar Documentos</h3>
+            <p>Accede al registro público de ciudadanos lombardos y consulta los documentos oficiales.</p>
+            <a href="./documentos.html">ABRIR REGISTRO <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="card">
+            <i class="fa-solid fa-id-card"></i>
+            <h3>Completar Formulario</h3>
+            <p>Registra oficialmente tu documento de identidad dentro del archivo central de la Liga.</p>
+            <a href="./formulario.html">IR AL FORMULARIO <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <img src="./logo.png" alt="Logo">
+    <h3>LIGA LOMBARDA</h3>
+    <p>SISTEMA OFICIAL DE DOCUMENTACIÓN · ARCHIVO CENTRAL</p>
+</footer>
 
 </body>
 </html>
