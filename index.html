@@ -77,6 +77,7 @@ header {
 nav {
     display: flex;
     gap: 20px;
+    align-items: center;
 }
 
 nav a {
@@ -93,7 +94,110 @@ nav a:hover {
     color: var(--gold-light);
 }
 
-/* HERO */
+/* =========================================================
+   USER INFO EN EL HEADER
+========================================================= */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info .email {
+    color: #b7a98f;
+    font-size: 10px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.user-info .email i {
+    color: var(--gold-light);
+    margin-right: 4px;
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid #4a3d2e;
+    color: #b7a98f;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-size: 9px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.logout-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+}
+
+.login-btn-nav {
+    background: var(--red);
+    border: none;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.login-btn-nav:hover {
+    background: #591a14;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-family: "Cinzel", serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.4s ease;
+    pointer-events: none;
+    max-width: 90%;
+    text-align: center;
+}
+
+.toast.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.toast.success {
+    background: #1a4a2a;
+    color: #b8e0b8;
+    border: 1px solid #2a6a3a;
+}
+
+.toast.error {
+    background: #4a1a1a;
+    color: #e0b8b8;
+    border: 1px solid #6a2a2a;
+}
+
+.toast.info {
+    background: #1a2a4a;
+    color: #b8c8e0;
+    border: 1px solid #2a3a6a;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
 .hero {
     width: min(1100px, 90%);
     margin: 80px auto 60px;
@@ -173,7 +277,39 @@ nav a:hover {
     background: #3a332c;
 }
 
-/* CARDS */
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* =========================================================
+   ESTADO DE AUTENTICACIÓN (mensaje en hero)
+========================================================= */
+.auth-status {
+    background: rgba(164, 134, 74, 0.08);
+    border: 1px solid var(--border);
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #b7a98f;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-status i {
+    color: var(--gold-light);
+}
+
+.auth-status .highlight {
+    color: var(--gold-light);
+    font-weight: 600;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
 .actions {
     width: min(1100px, 90%);
     margin: 40px auto 60px;
@@ -227,11 +363,18 @@ nav a:hover {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     margin-top: 10px;
 }
 
-/* FOOTER */
+.card a.disabled-link {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
 footer {
     background: #131211;
     border-top: 1px solid var(--border);
@@ -258,17 +401,25 @@ footer p {
     margin-top: 4px;
 }
 
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 @media(max-width: 600px) {
     header { height: auto; padding: 15px 0; }
     .header-inner { flex-direction: column; gap: 12px; }
     .hero-buttons { flex-direction: column; width: 100%; }
     .btn { justify-content: center; }
+    nav { flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .user-info .email { display: none; }
 }
 </style>
 </head>
 
 <body>
 
+<!-- =========================================================
+     HEADER
+========================================================= -->
 <header>
     <div class="header-inner">
         <div class="brand">
@@ -279,10 +430,18 @@ footer p {
             <a href="./index.html">INICIO</a>
             <a href="./documentos.html">DOCUMENTOS</a>
             <a href="./formulario.html">FORMULARIO</a>
+
+            <!-- ESTADO DE USUARIO (se renderiza con JS) -->
+            <div id="userNav" style="display: none;">
+                <!-- Lo llena JavaScript -->
+            </div>
         </nav>
     </div>
 </header>
 
+<!-- =========================================================
+     HERO
+========================================================= -->
 <section class="hero">
     <div class="official">
         <i class="fa-solid fa-shield-halved"></i> REGISTRO CENTRAL LOMBARDO
@@ -295,39 +454,255 @@ footer p {
         Consulta los documentos del archivo o registra tus datos en el sistema central.
     </p>
 
+    <!-- ESTADO DE AUTENTICACIÓN (se renderiza con JS) -->
+    <div id="authStatus" class="auth-status" style="display: none;">
+        <!-- Lo llena JavaScript -->
+    </div>
+
     <div class="hero-buttons">
-        <a class="btn btn-primary" href="./documentos.html">
+        <a class="btn btn-primary" id="btnDocumentos" href="./documentos.html">
             <i class="fa-solid fa-address-book"></i> VER DOCUMENTOS
         </a>
-        <a class="btn btn-secondary" href="./formulario.html">
+        <a class="btn btn-secondary" id="btnFormulario" href="./formulario.html">
             <i class="fa-solid fa-pen-to-square"></i> IR AL FORMULARIO
         </a>
     </div>
 </section>
 
+<!-- =========================================================
+     CARDS
+========================================================= -->
 <section class="actions">
     <div class="cards">
         <div class="card">
             <i class="fa-solid fa-address-book"></i>
             <h3>Consultar Documentos</h3>
             <p>Accede al registro público de ciudadanos lombardos y consulta los documentos oficiales.</p>
-            <a href="./documentos.html">ABRIR REGISTRO <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="./documentos.html" id="cardDocumentos">ABRIR REGISTRO <i class="fa-solid fa-arrow-right"></i></a>
         </div>
 
         <div class="card">
             <i class="fa-solid fa-id-card"></i>
             <h3>Completar Formulario</h3>
             <p>Registra oficialmente tu documento de identidad dentro del archivo central de la Liga.</p>
-            <a href="./formulario.html">IR AL FORMULARIO <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="./formulario.html" id="cardFormulario">IR AL FORMULARIO <i class="fa-solid fa-arrow-right"></i></a>
         </div>
     </div>
 </section>
 
+<!-- =========================================================
+     FOOTER
+========================================================= -->
 <footer>
     <img src="./logo.png" alt="Logo">
     <h3>LIGA LOMBARDA</h3>
     <p>SISTEMA OFICIAL DE DOCUMENTACIÓN · ARCHIVO CENTRAL</p>
 </footer>
+
+<!-- =========================================================
+     TOAST
+========================================================= -->
+<div id="toast" class="toast"></div>
+
+<!-- =========================================================
+     SCRIPT PRINCIPAL
+========================================================= -->
+<script type="module">
+    // =========================================================
+    // IMPORTS
+    // =========================================================
+    import { 
+        auth, 
+        onAuthStateChanged, 
+        signOut,
+        database,
+        ref,
+        get
+    } from "./firebase-init.js";
+
+    // =========================================================
+    // REFERENCIAS DOM
+    // =========================================================
+    const userNav = document.getElementById('userNav');
+    const authStatus = document.getElementById('authStatus');
+    const toast = document.getElementById('toast');
+    const btnDocumentos = document.getElementById('btnDocumentos');
+    const btnFormulario = document.getElementById('btnFormulario');
+    const cardDocumentos = document.getElementById('cardDocumentos');
+    const cardFormulario = document.getElementById('cardFormulario');
+
+    // =========================================================
+    // TOAST
+    // =========================================================
+    function showToast(message, type = 'info', duration = 4000) {
+        toast.textContent = message;
+        toast.className = 'toast ' + type + ' show';
+        clearTimeout(toast._timeout);
+        toast._timeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, duration);
+    }
+
+    // =========================================================
+    // RENDERIZAR NAV SEGÚN AUTENTICACIÓN
+    // =========================================================
+    function renderNav(user, isAdmin = false) {
+        if (user) {
+            userNav.style.display = 'flex';
+            userNav.innerHTML = `
+                <span class="user-info">
+                    <span class="email">
+                        <i class="fas fa-user-circle"></i> ${user.email}
+                        ${isAdmin ? '<span style="color:var(--gold-light);margin-left:4px;">👑</span>' : ''}
+                    </span>
+                    <button class="logout-btn" id="logoutBtnNav">
+                        <i class="fas fa-sign-out-alt"></i> SALIR
+                    </button>
+                </span>
+            `;
+
+            // Evento logout desde nav
+            document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
+
+        } else {
+            userNav.style.display = 'flex';
+            userNav.innerHTML = `
+                <a href="./login.html" class="login-btn-nav">
+                    <i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN
+                </a>
+            `;
+        }
+    }
+
+    // =========================================================
+    // RENDERIZAR ESTADO DE AUTENTICACIÓN EN HERO
+    // =========================================================
+    function renderAuthStatus(user) {
+        authStatus.style.display = 'inline-flex';
+
+        if (user) {
+            authStatus.innerHTML = `
+                <i class="fas fa-check-circle" style="color:#4f7547;"></i>
+                Sesión iniciada como <span class="highlight">${user.email}</span>
+                <span style="font-size:9px;color:#5f5446;margin-left:4px;">
+                    <i class="fas fa-circle" style="color:#4f7547;font-size:6px;"></i> activo
+                </span>
+            `;
+        } else {
+            authStatus.innerHTML = `
+                <i class="fas fa-lock" style="color:var(--gold-light);"></i>
+                No has iniciado sesión
+                <a href="./login.html" style="color:var(--gold-light);text-decoration:none;font-weight:600;margin-left:8px;">
+                    <i class="fas fa-arrow-right"></i> Iniciar
+                </a>
+            `;
+        }
+    }
+
+    // =========================================================
+    // ACTUALIZAR BOTONES Y CARDS
+    // =========================================================
+    function updateAccess(user) {
+        if (user) {
+            // Usuario logueado - todo habilitado
+            btnDocumentos.style.pointerEvents = 'auto';
+            btnDocumentos.style.opacity = '1';
+            btnFormulario.style.pointerEvents = 'auto';
+            btnFormulario.style.opacity = '1';
+            cardDocumentos.classList.remove('disabled-link');
+            cardFormulario.classList.remove('disabled-link');
+        } else {
+            // No logueado - deshabilitar formulario, documentos sigue disponible
+            btnDocumentos.style.pointerEvents = 'auto';
+            btnDocumentos.style.opacity = '1';
+            btnFormulario.style.pointerEvents = 'none';
+            btnFormulario.style.opacity = '0.5';
+            cardDocumentos.classList.remove('disabled-link');
+            cardFormulario.classList.add('disabled-link');
+        }
+    }
+
+    // =========================================================
+    // LOGOUT
+    // =========================================================
+    async function handleLogout() {
+        try {
+            await signOut(auth);
+            showToast('👋 Sesión cerrada correctamente', 'info', 2000);
+            // La página se actualiza sola con onAuthStateChanged
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+            showToast('❌ Error al cerrar sesión', 'error', 3000);
+        }
+    }
+
+    // =========================================================
+    // VERIFICAR SI ES ADMIN
+    // =========================================================
+    async function checkIsAdmin(user) {
+        if (!user) return false;
+        try {
+            const adminRef = ref(database, `usuarios/${user.uid}/admin`);
+            const snapshot = await get(adminRef);
+            return snapshot.val() === true;
+        } catch (error) {
+            console.warn('No se pudo verificar rol de admin:', error);
+            return false;
+        }
+    }
+
+    // =========================================================
+    // OBSERVER DE AUTENTICACIÓN
+    // =========================================================
+    onAuthStateChanged(auth, async (user) => {
+        let isAdmin = false;
+        
+        if (user) {
+            isAdmin = await checkIsAdmin(user);
+        }
+
+        // Renderizar UI
+        renderNav(user, isAdmin);
+        renderAuthStatus(user);
+        updateAccess(user);
+
+        // Si el usuario es admin, mostrar un mensaje especial
+        if (user && isAdmin) {
+            showToast('👑 Bienvenido Administrador', 'success', 2000);
+        } else if (user) {
+            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+        }
+
+        console.log(`🔐 Estado de autenticación: ${user ? 'logueado' : 'anónimo'}`);
+        console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
+    });
+
+    // =========================================================
+    // MANEJAR CLICK EN CARD FORMULARIO (si no está logueado)
+    // =========================================================
+    cardFormulario.addEventListener('click', (e) => {
+        if (!auth.currentUser) {
+            e.preventDefault();
+            showToast('🔐 Debes iniciar sesión para acceder al formulario', 'error', 3000);
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        }
+    });
+
+    // También el botón del hero
+    btnFormulario.addEventListener('click', (e) => {
+        if (!auth.currentUser) {
+            e.preventDefault();
+            showToast('🔐 Debes iniciar sesión para acceder al formulario', 'error', 3000);
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 500);
+        }
+    });
+
+    console.log('🏠 Página de inicio con autenticación lista');
+</script>
 
 </body>
 </html>
