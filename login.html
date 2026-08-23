@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión — Liga Lombarda</title>
+
+    <link rel="icon" type="image/png" href="./logo.png" />
+    <link rel="shortcut icon" href="./logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* =========================================================
+           RESET Y ESTILOS BASE
+        ========================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #3a342e, #171717 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Libre Baskerville", Georgia, serif;
+            padding: 20px;
+        }
+
+        /* =========================================================
+           CONTENEDOR PRINCIPAL
+        ========================================================= */
+        .login-container {
+            background: rgba(30, 28, 25, 0.95);
+            border: 1px solid #4a3d2e;
+            border-radius: 12px;
+            padding: 50px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================================
+           HEADER DEL LOGIN
+        ========================================================= */
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header img {
+            width: 70px;
+            height: auto;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 0 10px rgba(164, 134, 74, 0.3));
+        }
+
+        .login-header h1 {
+            font-family: "Cinzel", serif;
+            font-size: 24px;
+            color: #eee4ce;
+            letter-spacing: 3px;
+        }
+
+        .login-header p {
+            color: #8e8373;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .login-header .version {
+            display: inline-block;
+            background: rgba(164, 134, 74, 0.15);
+            border: 1px solid #4a3d2e;
+            color: #a4864a;
+            font-size: 9px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-family: "Montserrat", sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        /* =========================================================
+           FORMULARIO
+        ========================================================= */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            color: #b7a98f;
+            font-size: 10px;
+            letter-spacing: 1px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .form-group label i {
+            margin-right: 6px;
+            color: #a4864a;
+        }
+
+        .form-group input {
+            background: #2a2722;
+            border: 1px solid #4a3d2e;
+            color: #eee4ce;
+            padding: 14px 16px;
+            border-radius: 6px;
+            font-family: "Libre Baskerville", serif;
+            font-size: 14px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #a4864a;
+            box-shadow: 0 0 0 3px rgba(164, 134, 74, 0.15);
+        }
+
+        .form-group input::placeholder {
+            color: #5f5446;
+        }
+
+        .form-group input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* =========================================================
+           BOTÓN DE LOGIN
+        ========================================================= */
+        .login-btn {
+            background: linear-gradient(135deg, #8b3428, #591a14);
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: "Cinzel", serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn i {
+            margin-right: 8px;
+        }
+
+        /* =========================================================
+           ERROR MESSAGE
+        ========================================================= */
+        .error-message {
+            background: rgba(118, 37, 28, 0.2);
+            border: 1px solid #76251c;
+            color: #e0b8b8;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: none;
+            text-align: center;
+            animation: shake 0.4s ease;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .error-message i {
+            margin-right: 6px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #5f5446;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .login-footer .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(164, 134, 74, 0.08);
+            border: 1px solid #3a322b;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 9px;
+            color: #8e8373;
+        }
+
+        .login-footer .security-badge i {
+            color: #a4864a;
+        }
+
+        /* =========================================================
+           SPINNER
+        ========================================================= */
+        .spinner {
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================================
+           TOAST NOTIFICATIONS
+        ========================================================= */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: "Cinzel", serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast.success {
+            background: #1a4a2a;
+            color: #b8e0b8;
+            border: 1px solid #2a6a3a;
+        }
+
+        .toast.error {
+            background: #4a1a1a;
+            color: #e0b8b8;
+            border: 1px solid #6a2a2a;
+        }
+
+        .toast.info {
+            background: #1a2a4a;
+            color: #b8c8e0;
+            border: 1px solid #2a3a6a;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 20px;
+            }
+
+            .login-header img {
+                width: 55px;
+            }
+
+            .login-btn {
+                font-size: 12px;
+                padding: 14px;
+            }
+
+            .form-group input {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================================
+         CONTENEDOR DE LOGIN
+    ========================================================= -->
+    <div class="login-container">
+        
+        <!-- HEADER -->
+        <div class="login-header">
+            <img src="./logo.png" alt="Liga Lombarda" />
+            <h1>LIGA LOMBARDA</h1>
+            <p>ACCESO AL ARCHIVO CENTRAL</p>
+            <span class="version"><i class="fas fa-shield-alt"></i> Sistema Seguro v2.0</span>
+        </div>
+
+        <!-- ERROR MESSAGE -->
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">Credenciales incorrectas</span>
+        </div>
+
+        <!-- FORMULARIO -->
+        <form class="login-form" id="loginForm" autocomplete="on">
+            
+            <div class="form-group">
+                <label for="email"><i class="fas fa-envelope"></i> Correo electrónico</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="usuario@liga-lombarda.com" 
+                    required 
+                    autocomplete="email"
+                    spellcheck="false"
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Contraseña</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="••••••••" 
+                    required 
+                    autocomplete="current-password"
+                />
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN
+            </button>
+
+        </form>
+
+        <!-- FOOTER -->
+        <div class="login-footer">
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                Conexión segura · Solo personal autorizado
+            </div>
+        </div>
+
+    </div>
+
+    <!-- =========================================================
+         TOAST
+    ========================================================= -->
+    <div id="toast" class="toast"></div>
+
+    <!-- =========================================================
+         SCRIPT PRINCIPAL
+    ========================================================= -->
+    <script type="module">
+        // =========================================================
+        // IMPORTS
+        // =========================================================
+        import { 
+            auth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword,
+            signOut,
+            database,
+            ref,
+            get
+        } from "./firebase-init.js";
+
+        // =========================================================
+        // REFERENCIAS DOM
+        // =========================================================
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const toast = document.getElementById('toast');
+
+        // =========================================================
+        // TOAST
+        // =========================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // =========================================================
+        // FUNCIONES DE UTILIDAD
+        // =========================================================
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('visible');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('visible');
+        }
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> VERIFICANDO...';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN';
+            }
+        }
+
+        // =========================================================
+        // RECUPERAR EMAIL GUARDADO
+        // =========================================================
+        const savedEmail = localStorage.getItem('lombarda_login_email');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+        }
+
+        // =========================================================
+        // VERIFICAR SESIÓN EXISTENTE
+        // =========================================================
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    // Verificar si es admin
+                    const adminRef = ref(database, `usuarios/${user.uid}/admin`);
+                    const snapshot = await get(adminRef);
+                    const isAdmin = snapshot.val() === true;
+                    
+                    showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+                    
+                    // Redirigir según rol
+                    setTimeout(() => {
+                        window.location.href = isAdmin ? 'admin.html' : 'formulario.html';
+                    }, 800);
+                    
+                } catch (error) {
+                    console.error('Error verificando admin:', error);
+                    // Si hay error, ir a formulario por defecto
+                    setTimeout(() => {
+                        window.location.href = 'formulario.html';
+                    }, 800);
+                }
+            }
+        });
+
+        // =========================================================
+        // MANEJAR ENVÍO DEL FORMULARIO
+        // =========================================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            // Validaciones
+            if (!email || !password) {
+                showError('Por favor, completá todos los campos.');
+                return;
+            }
+
+            if (!email.includes('@') || !email.includes('.')) {
+                showError('El correo electrónico no es válido.');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('La contraseña debe tener al menos 6 caracteres.');
+                return;
+            }
+
+            // Guardar email para futuras visitas
+            localStorage.setItem('lombarda_login_email', email);
+
+            // Mostrar loading
+            setLoading(true);
+            hideError();
+
+            try {
+                // Intentar iniciar sesión
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Verificar si es admin
+                const adminRef = ref(database, `usuarios/${user.uid}/admin`);
+                const snapshot = await get(adminRef);
+                const isAdmin = snapshot.val() === true;
+
+                showToast(`✅ Sesión iniciada como ${email}`, 'success', 2000);
+
+                // Redirigir según rol
+                setTimeout(() => {
+                    window.location.href = isAdmin ? 'admin.html' : 'formulario.html';
+                }, 800);
+
+            } catch (error) {
+                console.error('Error de login:', error);
+                
+                // Manejar errores específicos de Firebase
+                let message = 'Error al iniciar sesión.';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        message = 'No existe una cuenta con este correo.';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Contraseña incorrecta.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'El formato del correo no es válido.';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'Demasiados intentos. Esperá un momento.';
+                        break;
+                    case 'auth/user-disabled':
+                        message = 'Esta cuenta ha sido deshabilitada.';
+                        break;
+                    default:
+                        message = error.message || 'Error desconocido.';
+                }
+                
+                showError(message);
+                
+                // Limpiar contraseña por seguridad
+                passwordInput.value = '';
+                passwordInput.focus();
+                
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // =========================================================
+        // LIMPIAR ERROR AL ESCRIBIR
+        // =========================================================
+        emailInput.addEventListener('input', hideError);
+        passwordInput.addEventListener('input', hideError);
+
+        // =========================================================
+        // PERMITIR ENTER PARA ENVIAR
+        // =========================================================
+        passwordInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // =========================================================
+        // FOCUS AUTOMÁTICO
+        // =========================================================
+        if (!savedEmail) {
+            emailInput.focus();
+        } else {
+            passwordInput.focus();
+        }
+
+        // =========================================================
+        // CONSOLA
+        // =========================================================
+        console.log('🔐 Página de login lista');
+        console.log(`📧 Email guardado: ${savedEmail || 'ninguno'}`);
+        
+    </script>
+
+</body>
+</html>
