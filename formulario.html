@@ -14,36 +14,9 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-    <!-- FIREBASE SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBRlqcYR3IiCXear-vAIyv9rug2W8Mpyy8",
-            authDomain: "liga-lombarda.firebaseapp.com",
-            databaseURL: "https://liga-lombarda-default-rtdb.firebaseio.com",
-            projectId: "liga-lombarda",
-            storageBucket: "liga-lombarda.firebasestorage.app",
-            messagingSenderId: "307688207183",
-            appId: "1:307688207183:web:333da62c10793719330b3a",
-            measurementId: "G-KM18Y3F21T"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        window.firebaseDB = database;
-        window.firebaseRef = ref;
-        window.firebasePush = push;
-        window.firebaseSet = set;
-
-        console.log('Firebase inicializado correctamente');
-    </script>
-
     <style>
         /* =========================================================
-           VARIABLES Y RESET (MISMO QUE ANTES)
+           VARIABLES Y RESET
         ========================================================= */
         :root {
             --black: #151515;
@@ -75,6 +48,64 @@
             min-height: 100vh;
         }
 
+        /* =========================================================
+           OVERLAY DE AUTENTICACIÓN
+        ========================================================= */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .auth-overlay.hidden {
+            display: none;
+        }
+
+        .auth-overlay .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #4a3d2e;
+            border-top: 4px solid #a4864a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .auth-overlay p {
+            color: #b7a98f;
+            font-family: "Cinzel", serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================================
+           CONTENIDO PRINCIPAL (oculto hasta autenticar)
+        ========================================================= */
+        #mainContent {
+            display: none;
+        }
+
+        #mainContent.visible {
+            display: block;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
         header {
             width: 100%;
             height: 75px;
@@ -115,6 +146,8 @@
         nav {
             display: flex;
             gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         nav a {
@@ -131,6 +164,92 @@
             color: var(--gold);
         }
 
+        /* =========================================================
+           USER INFO EN EL HEADER
+        ========================================================= */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info .email {
+            color: #b7a98f;
+            font-size: 10px;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .user-info .email i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #4a3d2e;
+            color: #b7a98f;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: "Montserrat", sans-serif;
+            font-size: 9px;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--red);
+            border-color: var(--red);
+            color: white;
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: "Cinzel";
+            font-size: 12px;
+            letter-spacing: 1px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast.success {
+            background: #1a4a2a;
+            color: #b8e0b8;
+            border: 1px solid #2a6a3a;
+        }
+
+        .toast.error {
+            background: #4a1a1a;
+            color: #e0b8b8;
+            border: 1px solid #6a2a2a;
+        }
+
+        .toast.info {
+            background: #1a2a4a;
+            color: #b8c8e0;
+            border: 1px solid #2a3a6a;
+        }
+
+        /* =========================================================
+           RESTO DE TU CSS (TODOS TUS ESTILOS EXISTENTES)
+        ========================================================= */
         .main-wrapper {
             display: flex;
             gap: 30px;
@@ -426,45 +545,6 @@
             margin-top: 10px;
             color: #8f8576;
             font-size: 9px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-family: "Cinzel";
-            font-size: 12px;
-            letter-spacing: 1px;
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.4s ease;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .toast.success {
-            background: #1a4a2a;
-            color: #b8e0b8;
-            border: 1px solid #2a6a3a;
-        }
-
-        .toast.error {
-            background: #4a1a1a;
-            color: #e0b8b8;
-            border: 1px solid #6a2a2a;
-        }
-
-        .toast.info {
-            background: #1a2a4a;
-            color: #b8c8e0;
-            border: 1px solid #2a3a6a;
         }
 
         .preview-section {
@@ -1288,6 +1368,13 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
+            .user-info .email {
+                font-size: 8px;
+            }
+            .logout-btn {
+                font-size: 8px;
+                padding: 4px 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1343,613 +1430,781 @@
 
 <body>
 
-    <header>
-        <div class="header-inner">
-            <div class="brand">
-                <img src="./logo.png" alt="Logo">
-                <h1>LIGA LOMBARDA</h1>
-            </div>
-            <nav>
-                <a href="./index.html">INICIO</a>
-                <a href="./documentos.html">DOCUMENTOS</a>
-                <a href="./formulario.html">FORMULARIO</a>
-            </nav>
-        </div>
-    </header>
+    <!-- =========================================================
+         OVERLAY DE AUTENTICACIÓN
+    ========================================================= -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="spinner"></div>
+        <p>VERIFICANDO ACCESO...</p>
+    </div>
 
-    <div class="main-wrapper">
+    <!-- =========================================================
+         CONTENIDO PRINCIPAL (oculto hasta autenticar)
+    ========================================================= -->
+    <div id="mainContent">
 
-        <div class="editor-column">
-            <section class="editor">
-
-                <div class="editor-title">
-                    <div>
-                        <span class="small-title">ARCHIVO CENTRAL</span>
-                        <h2>Nuevo expediente ciudadano</h2>
-                    </div>
-                    <div class="classification">
-                        DOCUMENTO<br />
-                        <strong>OFICIAL</strong>
-                    </div>
+        <header>
+            <div class="header-inner">
+                <div class="brand">
+                    <img src="./logo.png" alt="Logo">
+                    <h1>LIGA LOMBARDA</h1>
                 </div>
+                <nav>
+                    <a href="./index.html">INICIO</a>
+                    <a href="./documentos.html">DOCUMENTOS</a>
+                    <a href="./formulario.html">FORMULARIO</a>
 
-                <!-- PERFIL MINECRAFT -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <span>01</span>
-                        PERFIL DE MINECRAFT
+                    <!-- USER INFO (se renderiza con JS) -->
+                    <div id="userNav" style="display: none;">
+                        <!-- Lo llena JavaScript -->
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="main-wrapper">
+
+            <div class="editor-column">
+                <section class="editor">
+
+                    <div class="editor-title">
+                        <div>
+                            <span class="small-title">ARCHIVO CENTRAL</span>
+                            <h2>Nuevo expediente ciudadano</h2>
+                        </div>
+                        <div class="classification">
+                            DOCUMENTO<br />
+                            <strong>OFICIAL</strong>
+                        </div>
                     </div>
 
-                    <div class="minecraft-profile">
-
-                        <div class="skin-input">
-                            <label for="minecraftNick">
-                                <i class="fas fa-user"></i> NICK DE MINECRAFT
-                            </label>
-                            <div class="nick-row">
-                                <input type="text" id="minecraftNick" placeholder="Ej: Nahuelitro" maxlength="16" />
-                                <button id="loadSkinBtn" class="secondary-btn">
-                                    <i class="fas fa-cloud-upload-alt"></i> CARGAR SKIN
-                                </button>
-                            </div>
-                            <small id="skinStatus">
-                                <i class="fas fa-info-circle"></i> Introducí tu nombre de Minecraft.
-                            </small>
+                    <!-- PERFIL MINECRAFT -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>01</span>
+                            PERFIL DE MINECRAFT
                         </div>
 
-                        <div class="pose-section">
-                            <label><i class="fas fa-people-arrows"></i> POSES RÁPIDAS</label>
-                            <div class="pose-buttons">
-                                <button class="pose-btn active" data-pose="normal">
-                                    <i class="fas fa-stand"></i> NORMAL
-                                </button>
-                                <button class="pose-btn" data-pose="formal">
-                                    <i class="fas fa-hand-peace"></i> FORMAL
-                                </button>
-                                <button class="pose-btn" data-pose="salute">
-                                    <i class="fas fa-hand-spock"></i> SALUDO
-                                </button>
-                                <button class="pose-btn" data-pose="combat">
-                                    <i class="fas fa-fist-raised"></i> COMBATE
-                                </button>
-                                <button class="pose-btn" data-pose="crossed">
-                                    <i class="fas fa-arms-crossed"></i> BRAZOS CRUZADOS
-                                </button>
-                                <button class="pose-btn" data-pose="thinking">
-                                    <i class="fas fa-brain"></i> PENSANDO
-                                </button>
+                        <div class="minecraft-profile">
+
+                            <div class="skin-input">
+                                <label for="minecraftNick">
+                                    <i class="fas fa-user"></i> NICK DE MINECRAFT
+                                </label>
+                                <div class="nick-row">
+                                    <input type="text" id="minecraftNick" placeholder="Ej: Nahuelitro" maxlength="16" />
+                                    <button id="loadSkinBtn" class="secondary-btn">
+                                        <i class="fas fa-cloud-upload-alt"></i> CARGAR SKIN
+                                    </button>
+                                </div>
+                                <small id="skinStatus">
+                                    <i class="fas fa-info-circle"></i> Introducí tu nombre de Minecraft.
+                                </small>
                             </div>
-                        </div>
 
-                        <div class="advanced-controls">
-                            <button id="advancedToggle" class="advanced-toggle">
-                                <i class="fas fa-gamepad"></i> EDITOR DE POSES AVANZADO ▼
-                            </button>
-
-                            <div id="advancedPanel" class="advanced-panel" style="display: none;">
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-head-side"></i> CABEZA
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-undo-alt"></i> Giro</span>
-                                        <input type="range" id="headYaw" min="-1.57" max="1.57" step="0.01" value="0" />
-                                        <output id="headYawValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-up"></i> Mirar</span>
-                                        <input type="range" id="headPitch" min="-0.8" max="0.8" step="0.01" value="0" />
-                                        <output id="headPitchValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-right"></i> Inclinar</span>
-                                        <input type="range" id="headRoll" min="-0.5" max="0.5" step="0.01" value="0" />
-                                        <output id="headRollValue">0.00</output>
-                                    </div>
+                            <div class="pose-section">
+                                <label><i class="fas fa-people-arrows"></i> POSES RÁPIDAS</label>
+                                <div class="pose-buttons">
+                                    <button class="pose-btn active" data-pose="normal">
+                                        <i class="fas fa-stand"></i> NORMAL
+                                    </button>
+                                    <button class="pose-btn" data-pose="formal">
+                                        <i class="fas fa-hand-peace"></i> FORMAL
+                                    </button>
+                                    <button class="pose-btn" data-pose="salute">
+                                        <i class="fas fa-hand-spock"></i> SALUDO
+                                    </button>
+                                    <button class="pose-btn" data-pose="combat">
+                                        <i class="fas fa-fist-raised"></i> COMBATE
+                                    </button>
+                                    <button class="pose-btn" data-pose="crossed">
+                                        <i class="fas fa-arms-crossed"></i> BRAZOS CRUZADOS
+                                    </button>
+                                    <button class="pose-btn" data-pose="thinking">
+                                        <i class="fas fa-brain"></i> PENSANDO
+                                    </button>
                                 </div>
+                            </div>
 
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-hand-paper"></i> BRAZO IZQUIERDO
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-left"></i> Adelante/atrás</span>
-                                        <input type="range" id="leftArmX" min="-2.5" max="2.5" step="0.01" value="0" />
-                                        <output id="leftArmXValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-up"></i> Arriba/abajo</span>
-                                        <input type="range" id="leftArmY" min="-2.5" max="0.5" step="0.01" value="0" />
-                                        <output id="leftArmYValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-sync-alt"></i> Rotación</span>
-                                        <input type="range" id="leftArmZ" min="-1.57" max="1.57" step="0.01" value="0" />
-                                        <output id="leftArmZValue">0.00</output>
-                                    </div>
-                                </div>
+                            <div class="advanced-controls">
+                                <button id="advancedToggle" class="advanced-toggle">
+                                    <i class="fas fa-gamepad"></i> EDITOR DE POSES AVANZADO ▼
+                                </button>
 
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-hand-paper"></i> BRAZO DERECHO
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-right"></i> Adelante/atrás</span>
-                                        <input type="range" id="rightArmX" min="-2.5" max="2.5" step="0.01" value="0" />
-                                        <output id="rightArmXValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-up"></i> Arriba/abajo</span>
-                                        <input type="range" id="rightArmY" min="-2.5" max="0.5" step="0.01" value="0" />
-                                        <output id="rightArmYValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-sync-alt"></i> Rotación</span>
-                                        <input type="range" id="rightArmZ" min="-1.57" max="1.57" step="0.01" value="0" />
-                                        <output id="rightArmZValue">0.00</output>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-shoe-prints"></i> PIERNA IZQUIERDA
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-left"></i> Adelante/atrás</span>
-                                        <input type="range" id="leftLegX" min="-1.57" max="1.57" step="0.01" value="0" />
-                                        <output id="leftLegXValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-sync-alt"></i> Rotación</span>
-                                        <input type="range" id="leftLegZ" min="-0.5" max="0.5" step="0.01" value="0" />
-                                        <output id="leftLegZValue">0.00</output>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-shoe-prints"></i> PIERNA DERECHA
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-right"></i> Adelante/atrás</span>
-                                        <input type="range" id="rightLegX" min="-1.57" max="1.57" step="0.01" value="0" />
-                                        <output id="rightLegXValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-sync-alt"></i> Rotación</span>
-                                        <input type="range" id="rightLegZ" min="-0.5" max="0.5" step="0.01" value="0" />
-                                        <output id="rightLegZValue">0.00</output>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-user-circle"></i> CUERPO
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-undo-alt"></i> Giro</span>
-                                        <input type="range" id="bodyYaw" min="-0.8" max="0.8" step="0.01" value="0" />
-                                        <output id="bodyYawValue">0.00</output>
-                                    </div>
-                                    <div class="slider-control">
-                                        <span><i class="fas fa-arrow-up"></i> Inclinación</span>
-                                        <input type="range" id="bodyPitch" min="-0.5" max="0.5" step="0.01" value="0" />
-                                        <output id="bodyPitchValue">0.00</output>
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <div class="control-group-title">
-                                        <i class="fas fa-camera"></i> CÁMARA Y FONDO
-                                    </div>
-                                    <div class="slider-control" style="grid-template-columns: 1fr; gap: 5px; margin-bottom: 8px;">
-                                        <span style="font-size: 9px; color: #5f5446; font-weight: 500;">
-                                            <i class="fas fa-image"></i> FONDO DE LA FOTO
-                                        </span>
-                                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                            <button class="bg-btn active" data-bg="default">PREDETERMINADO</button>
-                                            <button class="bg-btn" data-bg="fondo1">FONDO 1</button>
-                                            <button class="bg-btn" data-bg="fondo2">FONDO 2</button>
-                                            <label style="padding: 3px 10px; border: 1px solid #b8aa92; background: #e3d7c0; color: #51483b; cursor: pointer; font-family: 'Cinzel'; font-size: 7px; border-radius: 3px; margin: 0;">
-                                                <i class="fas fa-upload"></i> SUBIR
-                                                <input type="file" id="bgUpload" accept="image/*" style="display: none;" />
-                                            </label>
+                                <div id="advancedPanel" class="advanced-panel" style="display: none;">
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-head-side"></i> CABEZA
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-undo-alt"></i> Giro</span>
+                                            <input type="range" id="headYaw" min="-1.57" max="1.57" step="0.01" value="0" />
+                                            <output id="headYawValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-up"></i> Mirar</span>
+                                            <input type="range" id="headPitch" min="-0.8" max="0.8" step="0.01" value="0" />
+                                            <output id="headPitchValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-right"></i> Inclinar</span>
+                                            <input type="range" id="headRoll" min="-0.5" max="0.5" step="0.01" value="0" />
+                                            <output id="headRollValue">0.00</output>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="control-buttons">
-                                    <button id="resetPoseBtn" class="control-btn reset-btn">
-                                        <i class="fas fa-undo"></i> RESTABLECER POSE
-                                    </button>
-                                    <button id="resetCameraBtn" class="control-btn reset-btn">
-                                        <i class="fas fa-camera-retro"></i> RESTABLECER CÁMARA
-                                    </button>
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-hand-paper"></i> BRAZO IZQUIERDO
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-left"></i> Adelante/atrás</span>
+                                            <input type="range" id="leftArmX" min="-2.5" max="2.5" step="0.01" value="0" />
+                                            <output id="leftArmXValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-up"></i> Arriba/abajo</span>
+                                            <input type="range" id="leftArmY" min="-2.5" max="0.5" step="0.01" value="0" />
+                                            <output id="leftArmYValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-sync-alt"></i> Rotación</span>
+                                            <input type="range" id="leftArmZ" min="-1.57" max="1.57" step="0.01" value="0" />
+                                            <output id="leftArmZValue">0.00</output>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-hand-paper"></i> BRAZO DERECHO
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-right"></i> Adelante/atrás</span>
+                                            <input type="range" id="rightArmX" min="-2.5" max="2.5" step="0.01" value="0" />
+                                            <output id="rightArmXValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-up"></i> Arriba/abajo</span>
+                                            <input type="range" id="rightArmY" min="-2.5" max="0.5" step="0.01" value="0" />
+                                            <output id="rightArmYValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-sync-alt"></i> Rotación</span>
+                                            <input type="range" id="rightArmZ" min="-1.57" max="1.57" step="0.01" value="0" />
+                                            <output id="rightArmZValue">0.00</output>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-shoe-prints"></i> PIERNA IZQUIERDA
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-left"></i> Adelante/atrás</span>
+                                            <input type="range" id="leftLegX" min="-1.57" max="1.57" step="0.01" value="0" />
+                                            <output id="leftLegXValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-sync-alt"></i> Rotación</span>
+                                            <input type="range" id="leftLegZ" min="-0.5" max="0.5" step="0.01" value="0" />
+                                            <output id="leftLegZValue">0.00</output>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-shoe-prints"></i> PIERNA DERECHA
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-right"></i> Adelante/atrás</span>
+                                            <input type="range" id="rightLegX" min="-1.57" max="1.57" step="0.01" value="0" />
+                                            <output id="rightLegXValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-sync-alt"></i> Rotación</span>
+                                            <input type="range" id="rightLegZ" min="-0.5" max="0.5" step="0.01" value="0" />
+                                            <output id="rightLegZValue">0.00</output>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-user-circle"></i> CUERPO
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-undo-alt"></i> Giro</span>
+                                            <input type="range" id="bodyYaw" min="-0.8" max="0.8" step="0.01" value="0" />
+                                            <output id="bodyYawValue">0.00</output>
+                                        </div>
+                                        <div class="slider-control">
+                                            <span><i class="fas fa-arrow-up"></i> Inclinación</span>
+                                            <input type="range" id="bodyPitch" min="-0.5" max="0.5" step="0.01" value="0" />
+                                            <output id="bodyPitchValue">0.00</output>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <div class="control-group-title">
+                                            <i class="fas fa-camera"></i> CÁMARA Y FONDO
+                                        </div>
+                                        <div class="slider-control" style="grid-template-columns: 1fr; gap: 5px; margin-bottom: 8px;">
+                                            <span style="font-size: 9px; color: #5f5446; font-weight: 500;">
+                                                <i class="fas fa-image"></i> FONDO DE LA FOTO
+                                            </span>
+                                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                                <button class="bg-btn active" data-bg="default">PREDETERMINADO</button>
+                                                <button class="bg-btn" data-bg="fondo1">FONDO 1</button>
+                                                <button class="bg-btn" data-bg="fondo2">FONDO 2</button>
+                                                <label style="padding: 3px 10px; border: 1px solid #b8aa92; background: #e3d7c0; color: #51483b; cursor: pointer; font-family: 'Cinzel'; font-size: 7px; border-radius: 3px; margin: 0;">
+                                                    <i class="fas fa-upload"></i> SUBIR
+                                                    <input type="file" id="bgUpload" accept="image/*" style="display: none;" />
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="control-buttons">
+                                        <button id="resetPoseBtn" class="control-btn reset-btn">
+                                            <i class="fas fa-undo"></i> RESTABLECER POSE
+                                        </button>
+                                        <button id="resetCameraBtn" class="control-btn reset-btn">
+                                            <i class="fas fa-camera-retro"></i> RESTABLECER CÁMARA
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- IDENTIFICACIÓN -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>02</span>
+                            IDENTIFICACIÓN DEL CIUDADANO
+                        </div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label><i class="fas fa-user"></i> NOMBRE</label>
+                                <input type="text" id="name" placeholder="Nombre completo" />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-tag"></i> ALIAS</label>
+                                <input type="text" id="alias" placeholder="Alias o apodo" />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-chess-king"></i> RANGO ACTUAL</label>
+                                <input type="text" id="rank" placeholder="Ej: Caballero Lombardo" />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-flag"></i> NACIONALIDAD</label>
+                                <input type="text" id="nationality" placeholder="Ej: Argentina" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INFORMACIÓN DEL CIUDADANO -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>03</span>
+                            INFORMACIÓN DEL CIUDADANO
+                        </div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label><i class="fas fa-briefcase"></i> PROFESIÓN / OFICIO</label>
+                                <input type="text" id="occupation" placeholder="Ej: Constructor" />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-circle"></i> ESTADO ACTUAL</label>
+                                <select id="status">
+                                    <option value="☑ ACTIVO">☑ ACTIVO</option>
+                                    <option value="☐ INACTIVO">☐ INACTIVO</option>
+                                    <option value="☐ RETIRADO">☐ RETIRADO</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-cake-candles"></i> FECHA DE CUMPLEAÑOS</label>
+                                <input type="date" id="birthday" />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-venus-mars"></i> GÉNERO</label>
+                                <select id="gender">
+                                    <option value="">Seleccionar</option>
+                                    <option>Masculino</option>
+                                    <option>Femenino</option>
+                                    <option>No binario</option>
+                                    <option>Otro</option>
+                                    <option>Prefiero no especificar</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-dragon"></i> ESPECIE</label>
+                                <input type="text" id="species" placeholder="Humano, Enderman, Slime..." />
+                            </div>
+                            <div class="field">
+                                <label><i class="fas fa-heart"></i> ESTADO CIVIL</label>
+                                <select id="marital">
+                                    <option>Soltero/a</option>
+                                    <option>Casado/a</option>
+                                    <option>Comprometido/a</option>
+                                    <option>Viudo/a</option>
+                                    <option>Divorciado/a</option>
+                                    <option>Otro</option>
+                                </select>
+                            </div>
+                            <div class="field full">
+                                <label><i class="fas fa-align-left"></i> DESCRIPCIÓN DEL CIUDADANO</label>
+                                <textarea id="description" rows="3" maxlength="300" placeholder="Breve descripción (máximo 3 líneas)..."></textarea>
+                                <small style="display:block;margin-top:4px;color:#5f5446;font-size:9px;">
+                                    <i class="fas fa-info-circle"></i> Máximo 3 líneas de texto.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAPACIDADES -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>04</span>
+                            EVALUACIÓN DE CAPACIDADES
+                        </div>
+                        <div class="stats-editor">
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-dumbbell"></i> FUERZA</div>
+                                <input type="range" min="1" max="10" value="5" id="strength" />
+                                <output id="strengthValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-eye"></i> PERCEPCIÓN</div>
+                                <input type="range" min="1" max="10" value="5" id="perception" />
+                                <output id="perceptionValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-shield-alt"></i> RESISTENCIA</div>
+                                <input type="range" min="1" max="10" value="5" id="endurance" />
+                                <output id="enduranceValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-comment"></i> CARISMA</div>
+                                <input type="range" min="1" max="10" value="5" id="charisma" />
+                                <output id="charismaValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-brain"></i> INTELIGENCIA</div>
+                                <input type="range" min="1" max="10" value="5" id="intelligence" />
+                                <output id="intelligenceValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-running"></i> AGILIDAD</div>
+                                <input type="range" min="1" max="10" value="5" id="agility" />
+                                <output id="agilityValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-clover"></i> SUERTE</div>
+                                <input type="range" min="1" max="10" value="5" id="luck" />
+                                <output id="luckValue">5</output>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COMPETENCIAS -->
+                    <div class="panel">
+                        <div class="panel-title">
+                            <span>05</span>
+                            COMPETENCIAS LOMBARDAS
+                        </div>
+                        <div class="stats-editor">
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fa-solid fa-hand-fist"></i> COMBATE</div>
+                                <input type="range" min="1" max="10" value="5" id="combat" />
+                                <output id="combatValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-hammer"></i> CONSTRUCCIÓN</div>
+                                <input type="range" min="1" max="10" value="5" id="building" />
+                                <output id="buildingValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-seedling"></i> FARMEO</div>
+                                <input type="range" min="1" max="10" value="5" id="farming" />
+                                <output id="farmingValue">5</output>
+                            </div>
+                            <div class="stat-editor-row">
+                                <div class="stat-name"><i class="fas fa-bolt"></i> REDSTONE</div>
+                                <input type="range" min="1" max="10" value="5" id="redstone" />
+                                <output id="redstoneValue">5</output>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="generate-area">
+                        <button id="generateBtn" class="generate-btn">
+                            <i class="fas fa-file-alt"></i> GENERAR EXPEDIENTE
+                        </button>
+                        <p>Los datos se actualizan en el documento automáticamente.</p>
+                    </div>
+
+                </section>
+            </div>
+
+            <div class="preview-column">
+                <section class="preview-section">
+
+                    <div class="preview-title">
+                        <span>VISTA PREVIA DEL EXPEDIENTE</span>
+                        <small>Documento oficial unificado</small>
+                    </div>
+
+                    <div id="skinViewerContainer">
+                        <canvas id="skinCanvas"></canvas>
+                    </div>
+
+                    <div id="document">
+
+                        <div class="document-header">
+                            <div class="crest">
+                                <div class="crest-symbol">
+                                    <img src="./logo.png" alt="Liga Lombarda" class="crest-logo" />
+                                </div>
+                            </div>
+                            <div class="document-heading">
+                                <h1>LIGA LOMBARDA</h1>
+                                <h2>DOCUMENTO DE IDENTIDAD</h2>
+                                <p>REGISTRO OFICIAL DE CIUDADANOS</p>
+                            </div>
+                            <div class="file-number">
+                                <span>EXPEDIENTE Nº</span>
+                                <strong id="previewFile">LL-2026-0000</strong>
+                                <small>CLASIFICACIÓN</small>
+                                <b>CIUDADANO</b>
+                            </div>
+                        </div>
+
+                        <div class="identity-section">
+                            <div class="portrait-box">
+                                <div class="portrait-background">
+                                    <img id="portraitBgImage" class="portrait-bg-image" src="" alt="Fondo" />
+                                    <canvas id="previewSkinCanvas"></canvas>
+                                </div>
+                                <div class="portrait-label">
+                                    FOTOGRAFÍA OFICIAL<br />
+                                    <small>VISTA DEL CIUDADANO</small>
+                                </div>
+                            </div>
+                            <div class="identity-info">
+                                <div class="document-field">
+                                    <span>NOMBRE:</span>
+                                    <strong id="previewName">SIN REGISTRO</strong>
+                                </div>
+                                <div class="document-field">
+                                    <span>ALIAS:</span>
+                                    <strong id="previewAlias">—</strong>
+                                </div>
+                                <div class="document-field">
+                                    <span>RANGO ACTUAL:</span>
+                                    <strong id="previewRank">—</strong>
+                                </div>
+                                <div class="document-field">
+                                    <span>NACIONALIDAD:</span>
+                                    <strong id="previewNationality">—</strong>
                                 </div>
                             </div>
                         </div>
 
-                    </div>
-                </div>
+                        <div class="document-section">
+                            <div class="section-heading">INFORMACIÓN DEL CIUDADANO</div>
+                            <div class="info-columns">
+                                <div>
+                                    <div class="info-line">
+                                        <span>PROFESIÓN / OFICIO</span>
+                                        <b id="previewOccupation">—</b>
+                                    </div>
+                                    <div class="info-line">
+                                        <span>ESTADO ACTUAL:</span>
+                                        <b id="previewStatus">☑ ACTIVO</b>
+                                    </div>
+                                    <div class="info-line">
+                                        <span>FECHA DE CUMPLEAÑOS:</span>
+                                        <b id="previewBirthday">—</b>
+                                    </div>
+                                    <div class="info-line">
+                                        <span>GÉNERO:</span>
+                                        <b id="previewGender">—</b>
+                                    </div>
+                                    <div class="info-line">
+                                        <span>ESPECIE:</span>
+                                        <b id="previewSpecies">—</b>
+                                    </div>
+                                    <div class="info-line">
+                                        <span>ESTADO CIVIL:</span>
+                                        <b id="previewMarital">—</b>
+                                    </div>
+                                </div>
+                                <div class="emblem-box">
+                                    <span>EMBLEMA LOMBARDO</span>
+                                    <img src="./img/escudo-Lombardo.png" alt="Escudo Lombardo" class="emblem-image" crossorigin="anonymous" />
+                                </div>
+                            </div>
+                            <div class="description-box">
+                                <span>DESCRIPCIÓN</span>
+                                <p id="previewDescription">Sin descripción registrada.</p>
+                            </div>
+                        </div>
 
-                <!-- IDENTIFICACIÓN -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <span>02</span>
-                        IDENTIFICACIÓN DEL CIUDADANO
-                    </div>
-                    <div class="form-grid">
-                        <div class="field">
-                            <label><i class="fas fa-user"></i> NOMBRE</label>
-                            <input type="text" id="name" placeholder="Nombre completo" />
+                        <div class="tables-section">
+                            <div class="document-table">
+                                <h3>EVALUACIÓN DE CAPACIDADES</h3>
+                                <div class="rating-row">
+                                    <i class="fas fa-dumbbell stat-icon"></i>
+                                    <span>Fuerza</span>
+                                    <div class="boxes" id="previewStrength"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-eye stat-icon"></i>
+                                    <span>Percepción</span>
+                                    <div class="boxes" id="previewPerception"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-shield-alt stat-icon"></i>
+                                    <span>Resistencia</span>
+                                    <div class="boxes" id="previewEndurance"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-comment stat-icon"></i>
+                                    <span>Carisma</span>
+                                    <div class="boxes" id="previewCharisma"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-brain stat-icon"></i>
+                                    <span>Inteligencia</span>
+                                    <div class="boxes" id="previewIntelligence"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-running stat-icon"></i>
+                                    <span>Agilidad</span>
+                                    <div class="boxes" id="previewAgility"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-clover stat-icon"></i>
+                                    <span>Suerte</span>
+                                    <div class="boxes" id="previewLuck"></div>
+                                </div>
+                            </div>
+                            <div class="document-table">
+                                <h3>COMPETENCIAS LOMBARDAS</h3>
+                                <div class="rating-row">
+                                    <i class="fa-solid fa-hand-fist stat-icon"></i>
+                                    <span>Combate</span>
+                                    <div class="boxes" id="previewCombat"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-hammer stat-icon"></i>
+                                    <span>Construcción</span>
+                                    <div class="boxes" id="previewBuilding"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-seedling stat-icon"></i>
+                                    <span>Farmeo</span>
+                                    <div class="boxes" id="previewFarming"></div>
+                                </div>
+                                <div class="rating-row">
+                                    <i class="fas fa-bolt stat-icon"></i>
+                                    <span>Redstone</span>
+                                    <div class="boxes" id="previewRedstone"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="field">
-                            <label><i class="fas fa-tag"></i> ALIAS</label>
-                            <input type="text" id="alias" placeholder="Alias o apodo" />
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-chess-king"></i> RANGO ACTUAL</label>
-                            <input type="text" id="rank" placeholder="Ej: Caballero Lombardo" />
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-flag"></i> NACIONALIDAD</label>
-                            <input type="text" id="nationality" placeholder="Ej: Argentina" />
-                        </div>
-                    </div>
-                </div>
 
-                <!-- INFORMACIÓN DEL CIUDADANO -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <span>03</span>
-                        INFORMACIÓN DEL CIUDADANO
-                    </div>
-                    <div class="form-grid">
-                        <div class="field">
-                            <label><i class="fas fa-briefcase"></i> PROFESIÓN / OFICIO</label>
-                            <input type="text" id="occupation" placeholder="Ej: Constructor" />
+                        <div class="document-footer-certification">
+                            <div class="certification-text">
+                                SE CERTIFICA QUE LA INFORMACIÓN CONTENIDA EN ESTE EXPEDIENTE<br />
+                                ES VERÍDICA Y HA SIDO REGISTRADA EN EL ARCHIVO CENTRAL.
+                            </div>
+                            <div class="certification-bottom">
+                                <div class="certification-date">
+                                    <span class="cert-label">FECHA DE EMISIÓN</span>
+                                    <span class="cert-value" id="previewCertDate">__ / __ / ____</span>
+                                </div>
+                                <div class="certification-signature">
+                                    <img src="./img/Firma.png" alt="Firma del Registrador" class="signature-image" crossorigin="anonymous" />
+                                    <span class="cert-label">FIRMA DEL REGISTRADOR</span>
+                                </div>
+                                <div class="certification-seal">
+                                    <img src="./img/Sello.png" alt="Sello Oficial" class="seal-image" crossorigin="anonymous" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="field">
-                            <label><i class="fas fa-circle"></i> ESTADO ACTUAL</label>
-                            <select id="status">
-                                <option value="☑ ACTIVO">☑ ACTIVO</option>
-                                <option value="☐ INACTIVO">☐ INACTIVO</option>
-                                <option value="☐ RETIRADO">☐ RETIRADO</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-cake-candles"></i> FECHA DE CUMPLEAÑOS</label>
-                            <input type="date" id="birthday" />
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-venus-mars"></i> GÉNERO</label>
-                            <select id="gender">
-                                <option value="">Seleccionar</option>
-                                <option>Masculino</option>
-                                <option>Femenino</option>
-                                <option>No binario</option>
-                                <option>Otro</option>
-                                <option>Prefiero no especificar</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-dragon"></i> ESPECIE</label>
-                            <input type="text" id="species" placeholder="Humano, Enderman, Slime..." />
-                        </div>
-                        <div class="field">
-                            <label><i class="fas fa-heart"></i> ESTADO CIVIL</label>
-                            <select id="marital">
-                                <option>Soltero/a</option>
-                                <option>Casado/a</option>
-                                <option>Comprometido/a</option>
-                                <option>Viudo/a</option>
-                                <option>Divorciado/a</option>
-                                <option>Otro</option>
-                            </select>
-                        </div>
-                        <div class="field full">
-                            <label><i class="fas fa-align-left"></i> DESCRIPCIÓN DEL CIUDADANO</label>
-                            <textarea id="description" rows="3" maxlength="300" placeholder="Breve descripción (máximo 3 líneas)..."></textarea>
-                            <small style="display:block;margin-top:4px;color:#5f5446;font-size:9px;">
-                                <i class="fas fa-info-circle"></i> Máximo 3 líneas de texto.
-                            </small>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- CAPACIDADES -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <span>04</span>
-                        EVALUACIÓN DE CAPACIDADES
-                    </div>
-                    <div class="stats-editor">
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-dumbbell"></i> FUERZA</div>
-                            <input type="range" min="1" max="10" value="5" id="strength" />
-                            <output id="strengthValue">5</output>
+                        <div class="document-motto">
+                            POR LA LIGA · POR LOMBARDOS · POR SIEMPRE
                         </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-eye"></i> PERCEPCIÓN</div>
-                            <input type="range" min="1" max="10" value="5" id="perception" />
-                            <output id="perceptionValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-shield-alt"></i> RESISTENCIA</div>
-                            <input type="range" min="1" max="10" value="5" id="endurance" />
-                            <output id="enduranceValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-comment"></i> CARISMA</div>
-                            <input type="range" min="1" max="10" value="5" id="charisma" />
-                            <output id="charismaValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-brain"></i> INTELIGENCIA</div>
-                            <input type="range" min="1" max="10" value="5" id="intelligence" />
-                            <output id="intelligenceValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-running"></i> AGILIDAD</div>
-                            <input type="range" min="1" max="10" value="5" id="agility" />
-                            <output id="agilityValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-clover"></i> SUERTE</div>
-                            <input type="range" min="1" max="10" value="5" id="luck" />
-                            <output id="luckValue">5</output>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- COMPETENCIAS -->
-                <div class="panel">
-                    <div class="panel-title">
-                        <span>05</span>
-                        COMPETENCIAS LOMBARDAS
                     </div>
-                    <div class="stats-editor">
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fa-solid fa-hand-fist"></i> COMBATE</div>
-                            <input type="range" min="1" max="10" value="5" id="combat" />
-                            <output id="combatValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-hammer"></i> CONSTRUCCIÓN</div>
-                            <input type="range" min="1" max="10" value="5" id="building" />
-                            <output id="buildingValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-seedling"></i> FARMEO</div>
-                            <input type="range" min="1" max="10" value="5" id="farming" />
-                            <output id="farmingValue">5</output>
-                        </div>
-                        <div class="stat-editor-row">
-                            <div class="stat-name"><i class="fas fa-bolt"></i> REDSTONE</div>
-                            <input type="range" min="1" max="10" value="5" id="redstone" />
-                            <output id="redstoneValue">5</output>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="generate-area">
-                    <button id="generateBtn" class="generate-btn">
-                        <i class="fas fa-file-alt"></i> GENERAR EXPEDIENTE
-                    </button>
-                    <p>Los datos se actualizan en el documento automáticamente.</p>
-                </div>
+                </section>
+            </div>
 
-            </section>
         </div>
 
-        <div class="preview-column">
-            <section class="preview-section">
+        <div id="toast" class="toast"></div>
 
-                <div class="preview-title">
-                    <span>VISTA PREVIA DEL EXPEDIENTE</span>
-                    <small>Documento oficial unificado</small>
-                </div>
-
-                <div id="skinViewerContainer">
-                    <canvas id="skinCanvas"></canvas>
-                </div>
-
-                <div id="document">
-
-                    <div class="document-header">
-                        <div class="crest">
-                            <div class="crest-symbol">
-                                <img src="./logo.png" alt="Liga Lombarda" class="crest-logo" />
-                            </div>
-                        </div>
-                        <div class="document-heading">
-                            <h1>LIGA LOMBARDA</h1>
-                            <h2>DOCUMENTO DE IDENTIDAD</h2>
-                            <p>REGISTRO OFICIAL DE CIUDADANOS</p>
-                        </div>
-                        <div class="file-number">
-                            <span>EXPEDIENTE Nº</span>
-                            <strong id="previewFile">LL-2026-0000</strong>
-                            <small>CLASIFICACIÓN</small>
-                            <b>CIUDADANO</b>
-                        </div>
-                    </div>
-
-                    <div class="identity-section">
-                        <div class="portrait-box">
-                            <div class="portrait-background">
-                                <img id="portraitBgImage" class="portrait-bg-image" src="" alt="Fondo" />
-                                <canvas id="previewSkinCanvas"></canvas>
-                            </div>
-                            <div class="portrait-label">
-                                FOTOGRAFÍA OFICIAL<br />
-                                <small>VISTA DEL CIUDADANO</small>
-                            </div>
-                        </div>
-                        <div class="identity-info">
-                            <div class="document-field">
-                                <span>NOMBRE:</span>
-                                <strong id="previewName">SIN REGISTRO</strong>
-                            </div>
-                            <div class="document-field">
-                                <span>ALIAS:</span>
-                                <strong id="previewAlias">—</strong>
-                            </div>
-                            <div class="document-field">
-                                <span>RANGO ACTUAL:</span>
-                                <strong id="previewRank">—</strong>
-                            </div>
-                            <div class="document-field">
-                                <span>NACIONALIDAD:</span>
-                                <strong id="previewNationality">—</strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="document-section">
-                        <div class="section-heading">INFORMACIÓN DEL CIUDADANO</div>
-                        <div class="info-columns">
-                            <div>
-                                <div class="info-line">
-                                    <span>PROFESIÓN / OFICIO</span>
-                                    <b id="previewOccupation">—</b>
-                                </div>
-                                <div class="info-line">
-                                    <span>ESTADO ACTUAL:</span>
-                                    <b id="previewStatus">☑ ACTIVO</b>
-                                </div>
-                                <div class="info-line">
-                                    <span>FECHA DE CUMPLEAÑOS:</span>
-                                    <b id="previewBirthday">—</b>
-                                </div>
-                                <div class="info-line">
-                                    <span>GÉNERO:</span>
-                                    <b id="previewGender">—</b>
-                                </div>
-                                <div class="info-line">
-                                    <span>ESPECIE:</span>
-                                    <b id="previewSpecies">—</b>
-                                </div>
-                                <div class="info-line">
-                                    <span>ESTADO CIVIL:</span>
-                                    <b id="previewMarital">—</b>
-                                </div>
-                            </div>
-                            <div class="emblem-box">
-                                <span>EMBLEMA LOMBARDO</span>
-                                <img src="./img/escudo-Lombardo.png" alt="Escudo Lombardo" class="emblem-image" crossorigin="anonymous" />
-                            </div>
-                        </div>
-                        <div class="description-box">
-                            <span>DESCRIPCIÓN</span>
-                            <p id="previewDescription">Sin descripción registrada.</p>
-                        </div>
-                    </div>
-
-                    <div class="tables-section">
-                        <div class="document-table">
-                            <h3>EVALUACIÓN DE CAPACIDADES</h3>
-                            <div class="rating-row">
-                                <i class="fas fa-dumbbell stat-icon"></i>
-                                <span>Fuerza</span>
-                                <div class="boxes" id="previewStrength"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-eye stat-icon"></i>
-                                <span>Percepción</span>
-                                <div class="boxes" id="previewPerception"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-shield-alt stat-icon"></i>
-                                <span>Resistencia</span>
-                                <div class="boxes" id="previewEndurance"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-comment stat-icon"></i>
-                                <span>Carisma</span>
-                                <div class="boxes" id="previewCharisma"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-brain stat-icon"></i>
-                                <span>Inteligencia</span>
-                                <div class="boxes" id="previewIntelligence"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-running stat-icon"></i>
-                                <span>Agilidad</span>
-                                <div class="boxes" id="previewAgility"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-clover stat-icon"></i>
-                                <span>Suerte</span>
-                                <div class="boxes" id="previewLuck"></div>
-                            </div>
-                        </div>
-                        <div class="document-table">
-                            <h3>COMPETENCIAS LOMBARDAS</h3>
-                            <div class="rating-row">
-                                <i class="fa-solid fa-hand-fist stat-icon"></i>
-                                <span>Combate</span>
-                                <div class="boxes" id="previewCombat"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-hammer stat-icon"></i>
-                                <span>Construcción</span>
-                                <div class="boxes" id="previewBuilding"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-seedling stat-icon"></i>
-                                <span>Farmeo</span>
-                                <div class="boxes" id="previewFarming"></div>
-                            </div>
-                            <div class="rating-row">
-                                <i class="fas fa-bolt stat-icon"></i>
-                                <span>Redstone</span>
-                                <div class="boxes" id="previewRedstone"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="document-footer-certification">
-                        <div class="certification-text">
-                            SE CERTIFICA QUE LA INFORMACIÓN CONTENIDA EN ESTE EXPEDIENTE<br />
-                            ES VERÍDICA Y HA SIDO REGISTRADA EN EL ARCHIVO CENTRAL.
-                        </div>
-                        <div class="certification-bottom">
-                            <div class="certification-date">
-                                <span class="cert-label">FECHA DE EMISIÓN</span>
-                                <span class="cert-value" id="previewCertDate">__ / __ / ____</span>
-                            </div>
-                            <div class="certification-signature">
-                                <img src="./img/Firma.png" alt="Firma del Registrador" class="signature-image" crossorigin="anonymous" />
-                                <span class="cert-label">FIRMA DEL REGISTRADOR</span>
-                            </div>
-                            <div class="certification-seal">
-                                <img src="./img/Sello.png" alt="Sello Oficial" class="seal-image" crossorigin="anonymous" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="document-motto">
-                        POR LA LIGA · POR LOMBARDOS · POR SIEMPRE
-                    </div>
-
-                </div>
-
-            </section>
-        </div>
+        <footer>
+            Liga Lombarda · Archivo Central · Generador de Expedientes
+        </footer>
 
     </div>
 
-    <div id="toast" class="toast"></div>
-
-    <footer>
-        Liga Lombarda · Archivo Central · Generador de Expedientes
-    </footer>
-
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================= -->
     <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js">
     </script>
 
+    <script type="module">
+        // =========================================================
+        // IMPORTS DE FIREBASE
+        // =========================================================
+        import { 
+            auth, 
+            onAuthStateChanged, 
+            signOut,
+            database,
+            ref,
+            get,
+            push,
+            set
+        } from "./firebase-init.js";
+
+        // Exponer Firebase para compatibilidad con el código existente
+        window.firebaseDB = database;
+        window.firebaseRef = ref;
+        window.firebasePush = push;
+        window.firebaseSet = set;
+        window.firebaseGet = get;
+        window.firebaseAuth = auth;
+
+        // =========================================================
+        // REFERENCIAS DOM
+        // =========================================================
+        const authOverlay = document.getElementById('authOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const userNav = document.getElementById('userNav');
+        const toast = document.getElementById('toast');
+        const generateBtn = document.getElementById('generateBtn');
+
+        // =========================================================
+        // TOAST
+        // =========================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // Exponer showToast globalmente para el código existente
+        window.showToast = showToast;
+
+        // =========================================================
+        // RENDERIZAR NAV
+        // =========================================================
+        function renderNav(user, isAdmin = false) {
+            if (user) {
+                userNav.style.display = 'flex';
+                userNav.innerHTML = `
+                    <span class="user-info">
+                        <span class="email">
+                            <i class="fas fa-user-circle"></i> ${user.email}
+                            ${isAdmin ? '<span style="color:var(--gold);margin-left:4px;">👑</span>' : ''}
+                        </span>
+                        <button class="logout-btn" id="logoutBtnNav">
+                            <i class="fas fa-sign-out-alt"></i> SALIR
+                        </button>
+                    </span>
+                `;
+
+                document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
+            }
+        }
+
+        // =========================================================
+        // VERIFICAR ADMIN
+        // =========================================================
+        async function checkIsAdmin(user) {
+            if (!user) return false;
+            try {
+                const adminRef = ref(database, `usuarios/${user.uid}/admin`);
+                const snapshot = await get(adminRef);
+                return snapshot.val() === true;
+            } catch (error) {
+                console.warn('No se pudo verificar rol de admin:', error);
+                return false;
+            }
+        }
+
+        // =========================================================
+        // LOGOUT
+        // =========================================================
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                showToast('👋 Sesión cerrada correctamente', 'info', 2000);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+                showToast('❌ Error al cerrar sesión', 'error', 3000);
+            }
+        }
+
+        // =========================================================
+        // OBSERVER DE AUTENTICACIÓN
+        // =========================================================
+        onAuthStateChanged(auth, async (user) => {
+            // Ocultar overlay
+            authOverlay.classList.add('hidden');
+
+            if (!user) {
+                // ❌ NO LOGUEADO → Redirigir a login
+                showToast('🔐 Debes iniciar sesión para acceder al formulario', 'error', 2000);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+                return;
+            }
+
+            // ✅ USUARIO LOGUEADO → Mostrar contenido
+            const isAdmin = await checkIsAdmin(user);
+            
+            // Mostrar contenido
+            mainContent.classList.add('visible');
+            
+            // Renderizar nav
+            renderNav(user, isAdmin);
+
+            // Habilitar botón de generar
+            generateBtn.disabled = false;
+
+            // Mensaje de bienvenida
+            if (isAdmin) {
+                showToast('👑 Bienvenido Administrador', 'success', 2000);
+            } else {
+                showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+            }
+
+            console.log(`📝 Formulario - Usuario: ${user.email}`);
+            console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
+        });
+
+        console.log('📝 Formulario con autenticación obligatoria listo');
+    </script>
+
+    <!-- =========================================================
+         TU CÓDIGO EXISTENTE (SkinViewer, poses, generador, etc.)
+    ========================================================= -->
     <script>
         // =========================================================
         // VARIABLES GLOBALES
@@ -1965,16 +2220,19 @@
         let currentPose = 'normal';
 
         // =========================================================
-        // TOAST NOTIFICATIONS
+        // TOAST NOTIFICATIONS (fallback si el módulo no funciona)
         // =========================================================
-        function showToast(message, type = 'info', duration = 4000) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type + ' show';
-            clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
+        if (typeof window.showToast !== 'function') {
+            window.showToast = function(message, type = 'info', duration = 4000) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                toast.textContent = message;
+                toast.className = 'toast ' + type + ' show';
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            };
         }
 
         // =========================================================
@@ -2346,7 +2604,7 @@
         }
 
         // =========================================================
-        // OBTENER DATOS DEL FORMULARIO (INCLUYE POSA Y FONDO)
+        // OBTENER DATOS DEL FORMULARIO
         // =========================================================
         function getFormData() {
             const name = document.getElementById('name').value.trim() || 'SIN REGISTRO';
@@ -2387,10 +2645,8 @@
 
             const fileNumber = document.getElementById('previewFile').textContent;
 
-            // Obtener datos de la pose
             const poseData = getPoseData();
 
-            // Obtener el nombre de la pose activa
             let activePose = 'normal';
             document.querySelectorAll('.pose-btn').forEach(btn => {
                 if (btn.classList.contains('active')) {
@@ -2414,7 +2670,6 @@
                 minecraftNick,
                 stats,
                 competencies,
-                // NUEVOS CAMPOS: pose y fondo
                 pose: {
                     name: activePose,
                     values: poseData
@@ -2603,7 +2858,16 @@
                 el.addEventListener('change', updateAllData);
             });
 
+            // El botón de generar ya tiene el evento de autenticación
+            // Solo lo habilitamos si el usuario está logueado
             document.getElementById('generateBtn').addEventListener('click', async function() {
+                // Verificar que el usuario esté logueado (por si acaso)
+                if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
+                    window.showToast('🔐 Debes iniciar sesión para generar expedientes', 'error', 3000);
+                    window.location.href = 'login.html';
+                    return;
+                }
+
                 const btn = this;
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
@@ -2620,14 +2884,14 @@
 
                     if (result.success) {
                         const source = result.source === 'firebase' ? 'Firebase' : 'Almacenamiento local';
-                        showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
+                        window.showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
                     } else {
-                        showToast('⚠️ Error al guardar el expediente: ' + (result.error || 'Intenta de nuevo'), 'error',
+                        window.showToast('⚠️ Error al guardar el expediente: ' + (result.error || 'Intenta de nuevo'), 'error',
                             5000);
                     }
                 } catch (error) {
                     console.error('Error al generar expediente:', error);
-                    showToast('❌ Error al generar el expediente', 'error', 5000);
+                    window.showToast('❌ Error al generar el expediente', 'error', 5000);
                 } finally {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-file-alt"></i> GENERAR EXPEDIENTE';
@@ -2638,7 +2902,7 @@
                 generateFileNumber();
                 updateAllData();
                 document.querySelector('.pose-btn[data-pose="normal"]')?.classList.add('active');
-                showToast('📜 Generador de expedientes listo', 'info', 3000);
+                window.showToast('📜 Generador de expedientes listo', 'info', 3000);
             }, 800);
 
             setTimeout(() => {
@@ -2646,7 +2910,7 @@
                     console.log('✅ Firebase conectado');
                 } else {
                     console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
-                    showToast('⚠️ Usando almacenamiento local (Firebase no disponible)', 'info', 4000);
+                    window.showToast('⚠️ Usando almacenamiento local (Firebase no disponible)', 'info', 4000);
                 }
             }, 1500);
         });
