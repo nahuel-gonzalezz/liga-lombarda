@@ -248,6 +248,185 @@
         }
 
         /* =========================================================
+           MODAL DE CONFIRMACIÓN
+        ========================================================= */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(6px);
+            padding: 20px;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        .modal {
+            background: #2a2722;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 35px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: #1a1715;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 3px;
+        }
+
+        .modal-header {
+            text-align: center;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-family: "Cinzel", serif;
+            color: var(--paper);
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+
+        .modal-header h2 i {
+            color: var(--gold);
+            margin-right: 10px;
+        }
+
+        .modal-header p {
+            color: #8e8373;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .modal-body {
+            color: #d4c8b2;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .modal-body .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #3a322b;
+        }
+
+        .modal-body .data-row .label {
+            color: #8e8373;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-body .data-row .value {
+            color: var(--paper);
+            font-weight: 400;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+
+        .modal-body .data-row .value.highlight {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .modal-body .section-divider {
+            border-top: 1px solid #4a3d2e;
+            margin: 12px 0;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+            border-top: 1px solid #4a3d2e;
+            padding-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 6px;
+            font-family: "Cinzel", serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-btn-cancel {
+            background: #3a322b;
+            color: #b7a98f;
+            border: 1px solid #4a3d2e;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #4a3d2e;
+            color: white;
+        }
+
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, #8b3428, #591a14);
+            color: white;
+            border: 1px solid #a94a3d;
+        }
+
+        .modal-btn-confirm:hover {
+            filter: brightness(1.15);
+            transform: translateY(-2px);
+        }
+
+        .modal-btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-btn-confirm .spinner {
+            display: inline-block;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* =========================================================
            RESTO DE TU CSS (TODOS TUS ESTILOS EXISTENTES)
         ========================================================= */
         .main-wrapper {
@@ -1375,6 +1554,18 @@
                 font-size: 8px;
                 padding: 4px 10px;
             }
+            .modal {
+                padding: 20px 20px;
+            }
+            .modal-header h2 {
+                font-size: 18px;
+            }
+            .modal-footer {
+                flex-direction: column;
+            }
+            .modal-btn {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1423,6 +1614,19 @@
             }
             .identity-section {
                 gap: 12px;
+            }
+            .modal {
+                padding: 15px;
+            }
+            .modal-body .data-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            .modal-body .data-row .value {
+                text-align: left;
+                max-width: 100%;
+                padding-left: 10px;
             }
         }
     </style>
@@ -1694,7 +1898,16 @@
                             </div>
                             <div class="field">
                                 <label><i class="fas fa-chess-king"></i> RANGO ACTUAL</label>
-                                <input type="text" id="rank" placeholder="Ej: Caballero Lombardo" />
+                                <select id="rank">
+                                    <option value="Ciudadano">Ciudadano</option>
+                                    <option value="Ballestero Genovés Condecorado">Ballestero Genovés Condecorado</option>
+                                    <option value="Milicia Urbana">Milicia Urbana</option>
+                                    <option value="Pavesero Lombardo">Pavesero Lombardo</option>
+                                    <option value="Paladín Lombardo">Paladín Lombardo</option>
+                                    <option value="Infante Lombardo">Infante Lombardo</option>
+                                    <option value="Caballero Lombardo">Caballero Lombardo</option>
+                                    <option value="Elite Urbana">Elite Urbana</option>
+                                </select>
                             </div>
                             <div class="field">
                                 <label><i class="fas fa-flag"></i> NACIONALIDAD</label>
@@ -2055,6 +2268,31 @@
     </div>
 
     <!-- =========================================================
+         MODAL DE CONFIRMACIÓN
+    ========================================================= -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-shield-halved"></i> CONFIRMAR EXPEDIENTE</h2>
+                <p>Revisa los datos antes de finalizar el registro</p>
+            </div>
+
+            <div class="modal-body" id="modalBody">
+                <!-- Los datos se llenan con JavaScript -->
+            </div>
+
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">
+                    <i class="fas fa-times"></i> CANCELAR
+                </button>
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">
+                    <i class="fas fa-check"></i> FINALIZAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
          SCRIPTS
     ========================================================= -->
     <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js">
@@ -2092,6 +2330,12 @@
         const toast = document.getElementById('toast');
         const generateBtn = document.getElementById('generateBtn');
 
+        // Modal
+        const confirmModal = document.getElementById('confirmModal');
+        const modalBody = document.getElementById('modalBody');
+        const modalCancel = document.getElementById('modalCancel');
+        const modalConfirm = document.getElementById('modalConfirm');
+
         // =========================================================
         // TOAST
         // =========================================================
@@ -2104,7 +2348,6 @@
             }, duration);
         }
 
-        // Exponer showToast globalmente para el código existente
         window.showToast = showToast;
 
         // =========================================================
@@ -2164,11 +2407,9 @@
         // OBSERVER DE AUTENTICACIÓN
         // =========================================================
         onAuthStateChanged(auth, async (user) => {
-            // Ocultar overlay
             authOverlay.classList.add('hidden');
 
             if (!user) {
-                // ❌ NO LOGUEADO → Redirigir a login
                 showToast('🔐 Debes iniciar sesión para acceder al formulario', 'error', 2000);
                 setTimeout(() => {
                     window.location.href = 'login.html';
@@ -2176,19 +2417,12 @@
                 return;
             }
 
-            // ✅ USUARIO LOGUEADO → Mostrar contenido
             const isAdmin = await checkIsAdmin(user);
             
-            // Mostrar contenido
             mainContent.classList.add('visible');
-            
-            // Renderizar nav
             renderNav(user, isAdmin);
-
-            // Habilitar botón de generar
             generateBtn.disabled = false;
 
-            // Mensaje de bienvenida
             if (isAdmin) {
                 showToast('👑 Bienvenido Administrador', 'success', 2000);
             } else {
@@ -2220,7 +2454,7 @@
         let currentPose = 'normal';
 
         // =========================================================
-        // TOAST NOTIFICATIONS (fallback si el módulo no funciona)
+        // TOAST NOTIFICATIONS (fallback)
         // =========================================================
         if (typeof window.showToast !== 'function') {
             window.showToast = function(message, type = 'info', duration = 4000) {
@@ -2584,9 +2818,7 @@
         function generateFileNumber() {
             const random = Math.floor(1000 + Math.random() * 9000);
             const num = "LL-" + new Date().getFullYear() + "-" + random;
-
             document.getElementById('previewFile').textContent = num;
-
             return num;
         }
 
@@ -2599,7 +2831,6 @@
             const month = String(now.getMonth() + 1).padStart(2, '0');
             const year = now.getFullYear();
             const dateStr = day + ' / ' + month + ' / ' + year;
-
             document.getElementById('previewCertDate').textContent = dateStr;
         }
 
@@ -2609,7 +2840,7 @@
         function getFormData() {
             const name = document.getElementById('name').value.trim() || 'SIN REGISTRO';
             const alias = document.getElementById('alias').value.trim() || '—';
-            const rank = document.getElementById('rank').value.trim() || '—';
+            const rank = document.getElementById('rank').value || 'Ciudadano';
             const nationality = document.getElementById('nationality').value.trim() || '—';
             const occupation = document.getElementById('occupation').value.trim() || '—';
             const status = document.getElementById('status').value || '☑ ACTIVO';
@@ -2644,7 +2875,6 @@
             };
 
             const fileNumber = document.getElementById('previewFile').textContent;
-
             const poseData = getPoseData();
 
             let activePose = 'normal';
@@ -2683,50 +2913,115 @@
         }
 
         // =========================================================
-        // ACTUALIZAR DATOS DEL FORMULARIO
+        // MOSTRAR MODAL CON DATOS
         // =========================================================
-        function updateAllData() {
-            const data = getFormData();
+        function mostrarModal(data) {
+            // Formatear stats y competencies para el modal
+            const statLabels = {
+                strength: '💪 Fuerza',
+                perception: '👁️ Percepción',
+                endurance: '🛡️ Resistencia',
+                charisma: '💬 Carisma',
+                intelligence: '🧠 Inteligencia',
+                agility: '🏃 Agilidad',
+                luck: '🍀 Suerte'
+            };
 
-            document.getElementById('previewName').textContent = data.name;
-            document.getElementById('previewAlias').textContent = data.alias;
-            document.getElementById('previewRank').textContent = data.rank;
-            document.getElementById('previewNationality').textContent = data.nationality;
-            document.getElementById('previewOccupation').textContent = data.occupation;
-            document.getElementById('previewStatus').textContent = data.status;
-            document.getElementById('previewBirthday').textContent = data.birthDate;
-            document.getElementById('previewGender').textContent = data.gender;
-            document.getElementById('previewSpecies').textContent = data.species;
-            document.getElementById('previewMarital').textContent = data.marital;
-            document.getElementById('previewDescription').textContent = data.description;
+            const compLabels = {
+                combat: '⚔️ Combate',
+                building: '🔨 Construcción',
+                farming: '🌱 Farmeo',
+                redstone: '⚡ Redstone'
+            };
 
-            Object.keys(data.stats).forEach(stat => {
-                const val = data.stats[stat];
-                const container = document.getElementById('preview' + stat.charAt(0).toUpperCase() + stat.slice(1));
-                if (container) {
-                    container.innerHTML = '';
-                    for (let i = 1; i <= 10; i++) {
-                        const box = document.createElement('i');
-                        if (i <= val) box.classList.add('fill');
-                        container.appendChild(box);
-                    }
-                }
-            });
+            let statsHtml = Object.keys(data.stats).map(key => 
+                `<div class="data-row"><span class="label">${statLabels[key]}</span><span class="value">${data.stats[key]} / 10</span></div>`
+            ).join('');
 
-            Object.keys(data.competencies).forEach(comp => {
-                const val = data.competencies[comp];
-                const container = document.getElementById('preview' + comp.charAt(0).toUpperCase() + comp.slice(1));
-                if (container) {
-                    container.innerHTML = '';
-                    for (let i = 1; i <= 10; i++) {
-                        const box = document.createElement('i');
-                        if (i <= val) box.classList.add('fill');
-                        container.appendChild(box);
-                    }
-                }
-            });
+            let compHtml = Object.keys(data.competencies).map(key => 
+                `<div class="data-row"><span class="label">${compLabels[key]}</span><span class="value">${data.competencies[key]} / 10</span></div>`
+            ).join('');
 
-            updateDates();
+            // Valores de la pose
+            let poseValuesHtml = Object.keys(data.pose.values).map(key => 
+                `<span style="font-size:9px;color:#8e8373;">${key}: ${data.pose.values[key].toFixed(2)}</span>`
+            ).join(' · ');
+
+            modalBody.innerHTML = `
+                <div class="data-row">
+                    <span class="label">📄 Expediente</span>
+                    <span class="value highlight">${data.fileNumber}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">👤 Nombre</span>
+                    <span class="value">${data.name}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🏷️ Alias</span>
+                    <span class="value">${data.alias}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">👑 Rango</span>
+                    <span class="value highlight">${data.rank}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🏳️ Nacionalidad</span>
+                    <span class="value">${data.nationality}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">💼 Profesión</span>
+                    <span class="value">${data.occupation}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">📌 Estado</span>
+                    <span class="value">${data.status}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🎂 Cumpleaños</span>
+                    <span class="value">${data.birthDate}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">⚧️ Género</span>
+                    <span class="value">${data.gender}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🐉 Especie</span>
+                    <span class="value">${data.species}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">❤️ Estado Civil</span>
+                    <span class="value">${data.marital}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🎮 Nick Minecraft</span>
+                    <span class="value">${data.minecraftNick || 'No especificado'}</span>
+                </div>
+                <div class="section-divider"></div>
+                <div style="font-size:11px;color:#8e8373;text-align:center;margin-bottom:8px;">
+                    <i class="fas fa-dice"></i> EVALUACIÓN DE CAPACIDADES
+                </div>
+                ${statsHtml}
+                <div class="section-divider"></div>
+                <div style="font-size:11px;color:#8e8373;text-align:center;margin-bottom:8px;">
+                    <i class="fas fa-sword"></i> COMPETENCIAS LOMBARDAS
+                </div>
+                ${compHtml}
+                <div class="section-divider"></div>
+                <div class="data-row">
+                    <span class="label">🧘 Pose</span>
+                    <span class="value">${data.pose.name.toUpperCase()}</span>
+                </div>
+                <div class="data-row">
+                    <span class="label">🖼️ Fondo</span>
+                    <span class="value">${data.background.type === 'custom' ? 'Personalizado' : data.background.type.toUpperCase()}</span>
+                </div>
+                <div style="margin-top:8px;padding:8px;background:#1a1715;border-radius:4px;text-align:center;font-size:9px;color:#5f5446;">
+                    <i class="fas fa-info-circle"></i> Pose: ${poseValuesHtml}
+                </div>
+            `;
+
+            // Mostrar modal
+            confirmModal.classList.add('visible');
         }
 
         // =========================================================
@@ -2858,46 +3153,79 @@
                 el.addEventListener('change', updateAllData);
             });
 
-            // El botón de generar ya tiene el evento de autenticación
-            // Solo lo habilitamos si el usuario está logueado
-            document.getElementById('generateBtn').addEventListener('click', async function() {
-                // Verificar que el usuario esté logueado (por si acaso)
+            // =========================================================
+            // BOTÓN GENERAR - MUESTRA MODAL
+            // =========================================================
+            document.getElementById('generateBtn').addEventListener('click', function() {
+                // Verificar que el usuario esté logueado
                 if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
                     window.showToast('🔐 Debes iniciar sesión para generar expedientes', 'error', 3000);
                     window.location.href = 'login.html';
                     return;
                 }
 
+                // Generar número de expediente y actualizar datos
+                generateFileNumber();
+                updateAllData();
+                updateAllPreviews();
+
+                // Obtener datos y mostrar modal
+                const data = getFormData();
+                mostrarModal(data);
+            });
+
+            // =========================================================
+            // MODAL - CANCELAR
+            // =========================================================
+            document.getElementById('modalCancel').addEventListener('click', function() {
+                confirmModal.classList.remove('visible');
+            });
+
+            // Cerrar modal con Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && confirmModal.classList.contains('visible')) {
+                    confirmModal.classList.remove('visible');
+                }
+            });
+
+            // Cerrar modal haciendo clic fuera
+            confirmModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    confirmModal.classList.remove('visible');
+                }
+            });
+
+            // =========================================================
+            // MODAL - CONFIRMAR (GUARDAR)
+            // =========================================================
+            document.getElementById('modalConfirm').addEventListener('click', async function() {
                 const btn = this;
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
+                btn.innerHTML = '<i class="fas fa-spinner spinner"></i> GUARDANDO...';
 
                 try {
-                    generateFileNumber();
-                    updateAllData();
-
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                    updateAllPreviews();
-
                     const data = getFormData();
                     const result = await saveToFirebase(data);
 
                     if (result.success) {
                         const source = result.source === 'firebase' ? 'Firebase' : 'Almacenamiento local';
                         window.showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
+                        confirmModal.classList.remove('visible');
                     } else {
-                        window.showToast('⚠️ Error al guardar el expediente: ' + (result.error || 'Intenta de nuevo'), 'error',
-                            5000);
+                        window.showToast('⚠️ Error al guardar el expediente: ' + (result.error || 'Intenta de nuevo'), 'error', 5000);
                     }
                 } catch (error) {
                     console.error('Error al generar expediente:', error);
                     window.showToast('❌ Error al generar el expediente', 'error', 5000);
                 } finally {
                     btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-file-alt"></i> GENERAR EXPEDIENTE';
+                    btn.innerHTML = '<i class="fas fa-check"></i> FINALIZAR';
                 }
             });
 
+            // =========================================================
+            // INICIALIZACIÓN
+            // =========================================================
             setTimeout(() => {
                 generateFileNumber();
                 updateAllData();
@@ -2915,10 +3243,60 @@
             }, 1500);
         });
 
+        // =========================================================
+        // ACTUALIZAR DATOS DEL FORMULARIO (versión global)
+        // =========================================================
+        function updateAllData() {
+            const data = getFormData();
+
+            document.getElementById('previewName').textContent = data.name;
+            document.getElementById('previewAlias').textContent = data.alias;
+            document.getElementById('previewRank').textContent = data.rank;
+            document.getElementById('previewNationality').textContent = data.nationality;
+            document.getElementById('previewOccupation').textContent = data.occupation;
+            document.getElementById('previewStatus').textContent = data.status;
+            document.getElementById('previewBirthday').textContent = data.birthDate;
+            document.getElementById('previewGender').textContent = data.gender;
+            document.getElementById('previewSpecies').textContent = data.species;
+            document.getElementById('previewMarital').textContent = data.marital;
+            document.getElementById('previewDescription').textContent = data.description;
+
+            Object.keys(data.stats).forEach(stat => {
+                const val = data.stats[stat];
+                const container = document.getElementById('preview' + stat.charAt(0).toUpperCase() + stat.slice(1));
+                if (container) {
+                    container.innerHTML = '';
+                    for (let i = 1; i <= 10; i++) {
+                        const box = document.createElement('i');
+                        if (i <= val) box.classList.add('fill');
+                        container.appendChild(box);
+                    }
+                }
+            });
+
+            Object.keys(data.competencies).forEach(comp => {
+                const val = data.competencies[comp];
+                const container = document.getElementById('preview' + comp.charAt(0).toUpperCase() + comp.slice(1));
+                if (container) {
+                    container.innerHTML = '';
+                    for (let i = 1; i <= 10; i++) {
+                        const box = document.createElement('i');
+                        if (i <= val) box.classList.add('fill');
+                        container.appendChild(box);
+                    }
+                }
+            });
+
+            updateDates();
+        }
+
+        // Exponer funciones globalmente
         window.loadSkinIntoViewer = loadSkinIntoViewer;
         window.loadMinecraftSkin = loadMinecraftSkin;
         window.initSkinViewer = initSkinViewer;
         window.saveToFirebase = saveToFirebase;
+        window.updateAllData = updateAllData;
+        window.getFormData = getFormData;
     </script>
 
 </body>
