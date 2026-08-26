@@ -102,6 +102,67 @@
     }
 
     /* =========================================================
+       USER INFO EN CABECERA
+    ========================================================= */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info .email {
+      color: #b7a98f;
+      font-size: 10px;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .user-info .email i {
+      color: #a4864a;
+      margin-right: 4px;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #4a3d2e;
+      color: #b7a98f;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #76251c;
+      border-color: #76251c;
+      color: white;
+    }
+
+    .btn-share {
+      background: #a4864a;
+      border: none;
+      color: #1a1a1a;
+      padding: 5px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-share:hover {
+      background: #d4b76c;
+      transform: scale(1.02);
+    }
+
+    /* =========================================================
        RESTO DEL CSS (tu estilo existente)
     ========================================================= */
     * {
@@ -183,46 +244,6 @@
       border-radius: 30px;
     }
 
-    /* =========================================================
-       USER INFO EN CABECERA
-    ========================================================= */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .user-info .email {
-      color: #b7a98f;
-      font-size: 10px;
-      font-family: "Montserrat", sans-serif;
-    }
-
-    .user-info .email i {
-      color: #a4864a;
-      margin-right: 4px;
-    }
-
-    .logout-btn {
-      background: transparent;
-      border: 1px solid #4a3d2e;
-      color: #b7a98f;
-      padding: 5px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: "Montserrat", sans-serif;
-      font-size: 9px;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-    }
-
-    .logout-btn:hover {
-      background: #76251c;
-      border-color: #76251c;
-      color: white;
-    }
-
-    /* contenedor vertical: foto arriba, documentos abajo */
     .contenido-vertical {
       display: flex;
       flex-direction: column;
@@ -230,7 +251,6 @@
       flex: 1;
     }
 
-    /* panel persona (arriba) - ahora con el visor animado */
     .panel-persona {
       background: #1e1b18;
       border: 1px solid #4a3d2e;
@@ -300,7 +320,6 @@
       color: #a4864a;
     }
 
-    /* panel documentos (abajo) - SIN SCROLL */
     .panel-documentos {
       background: #241f1b;
       border: 1px solid #4a3d2e;
@@ -313,12 +332,13 @@
       flex: 1;
     }
 
-    /* ======= DNI RESPONSIVE ======= */
+    /* ======= DNI ======= */
     .dni-container {
       width: 100%;
       max-width: 700px;
       margin: 0 auto;
       flex-shrink: 0;
+      position: relative;
     }
     .dni-card {
       width: 100%;
@@ -1163,57 +1183,30 @@
       cursor: not-allowed;
     }
 
-    /* =========================================================
-       ESTADO DE CARGA
-    ========================================================= */
-    .loading-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #5f5446;
-    }
-
-    .loading-state i {
-      font-size: 50px;
-      color: #4a3d2e;
-      margin-bottom: 15px;
-    }
-
-    .loading-state h3 {
-      font-family: "Cinzel", serif;
-      color: #8e8373;
-      font-size: 18px;
-    }
-
     .error-state {
       text-align: center;
       padding: 60px 20px;
       color: #5f5446;
     }
-
     .error-state i {
       font-size: 50px;
       color: #4a3d2e;
       margin-bottom: 15px;
     }
-
     .error-state h3 {
       font-family: "Cinzel", serif;
       color: #8e8373;
       font-size: 18px;
     }
-
     .error-state a {
       color: #a4864a;
       text-decoration: none;
     }
-
     .error-state a:hover {
       text-decoration: underline;
     }
 
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
+    /* responsive */
     @media (max-width: 768px) {
       .escenario { padding: 16px; }
       .panel-persona { flex-direction: column; text-align: center; gap: 12px; }
@@ -1325,8 +1318,8 @@
     <div class="panel-documentos">
 
       <!-- DNI -->
-      <div class="dni-container">
-        <div class="dni-card">
+      <div class="dni-container" id="dniContainer">
+        <div class="dni-card" id="dniCard">
           <div class="dni-inner-border"></div>
           <svg class="dni-watermark" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path d="M42,0 L58,0 L58,42 L100,42 L100,58 L58,58 L58,100 L42,100 L42,58 L0,58 L0,42 L42,42 Z" fill="#500a0e" />
@@ -1366,7 +1359,7 @@
             <div class="dni-footer">
               <div class="dni-qr">
                 <svg class="dni-qr-code" viewBox="0 0 100 100">
-                  <path d="M0 0h30v30H0zM40 0h10v10H40zM60 0h40v40H60zM10 10h10v10H10zM70 10h20v20H70zM0 40h10v20H10zM20 40h20v10H20zM50 40h20v20H50zM80 50h20v10H80zM0 70h30v30H0zM10 80h10v10H10zM40 70h10v30H40zM60 80h20v20H60zM90 70h10v30H90z" fill="#000"/>
+                  <path d="M0 0h30v30H0zM40 0h10v10H40zM60 0h40v40H60zM10 10h10v10H10zM70 10h20v20H70zM0 40h10v20H0zM20 40h20v10H20zM50 40h20v20H50zM80 50h20v10H80zM0 70h30v30H0zM10 80h10v10H10zM40 70h10v30H40zM60 80h20v20H60zM90 70h10v30H90z" fill="#000"/>
                 </svg>
                 <div class="dni-qr-text">IDENTIDAD REGISTRADA EN LA LIGA LOMBARDA</div>
               </div>
@@ -1610,9 +1603,13 @@
           <button class="logout-btn" id="logoutBtnNav">
             <i class="fas fa-sign-out-alt"></i> SALIR
           </button>
+          <button class="btn-share" id="shareBtn">
+            <i class="fas fa-share-alt"></i> COMPARTIR
+          </button>
         </span>
       `;
       document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
+      document.getElementById('shareBtn').addEventListener('click', compartirDNI);
     }
   }
 
@@ -1656,13 +1653,52 @@
   }
 
   // =========================================================
+  // COMPARTIR DNI COMO PNG
+  // =========================================================
+  function compartirDNI() {
+    const dniCard = document.getElementById('dniCard');
+    if (!dniCard) {
+      showToast('❌ No se encontró el DNI para compartir', 'error', 3000);
+      return;
+    }
+
+    showToast('📸 Generando imagen...', 'info', 2000);
+
+    // Usar html2canvas para capturar el DNI
+    import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.js').then((module) => {
+      const html2canvas = module.default;
+      
+      html2canvas(dniCard, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#f7f5ef',
+        logging: false,
+        allowTaint: true,
+        foreignObjectRendering: false
+      }).then((canvas) => {
+        const link = document.createElement('a');
+        link.download = `DNI_${document.getElementById('dniFileNumber').textContent}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ Imagen descargada', 'success', 3000);
+      }).catch((error) => {
+        console.error('Error al generar imagen:', error);
+        showToast('❌ Error al generar la imagen', 'error', 3000);
+      });
+    }).catch((error) => {
+      console.error('Error al cargar html2canvas:', error);
+      showToast('❌ Error al cargar la librería de imágenes', 'error', 3000);
+    });
+  }
+
+  // =========================================================
   // ACTUALIZAR UI CON DATOS DEL EXPEDIENTE
   // =========================================================
   function actualizarUI(data) {
     // Datos básicos
     const name = data.name || 'SIN REGISTRO';
     const alias = data.alias || '—';
-    const rank = data.rank || '—';
+    const rank = data.rank || 'Ciudadano';
     const nationality = data.nationality || '—';
     const occupation = data.occupation || '—';
     const status = data.status || '☑ ACTIVO';
@@ -1675,7 +1711,6 @@
     const minecraftNick = data.minecraftNick || '';
     const stats = data.stats || {};
     const competencies = data.competencies || {};
-    const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '—';
 
     // Panel persona
     document.getElementById('displayName').textContent = name;
@@ -1699,7 +1734,6 @@
     document.getElementById('dniSignature').textContent = name;
     document.getElementById('dniFileNumber').textContent = fileNumber;
     
-    // Fecha de emisión (hoy o fecha de creación)
     const hoy = new Date();
     const f = String(hoy.getDate()).padStart(2,'0')+'/'+String(hoy.getMonth()+1).padStart(2,'0')+'/'+hoy.getFullYear();
     document.getElementById('dniDate').textContent = f;
@@ -1723,8 +1757,7 @@
 
     // Estadísticas
     const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
-    const statNames = ['Fuerza','Percepción','Resistencia','Carisma','Inteligencia','Agilidad','Suerte'];
-    statKeys.forEach((key, i) => {
+    statKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
       if (container) {
         const val = stats[key] || 0;
@@ -1739,8 +1772,7 @@
 
     // Competencias
     const compKeys = ['combat','building','farming','redstone'];
-    const compNames = ['Combate','Construcción','Farmeo','Redstone'];
-    compKeys.forEach((key, i) => {
+    compKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
       if (container) {
         const val = competencies[key] || 0;
@@ -1753,23 +1785,22 @@
       }
     });
 
-    // Cargar skin
+    // Cargar skin con animaciones
     if (minecraftNick) {
-      cargarSkin(minecraftNick, data.pose?.values || null);
+      cargarSkinConAnimacion(minecraftNick, data.pose?.values || null);
     }
   }
 
   // =========================================================
-  // CARGAR SKIN EN EL VISOR Y MINI CANVAS
+  // SKIN VIEWER CON ANIMACIONES
   // =========================================================
   let viewer = null;
   let currentSkinNick = '';
 
-  function cargarSkin(nick, poseData = null) {
+  function cargarSkinConAnimacion(nick, poseData = null) {
     if (!nick || nick === currentSkinNick) return;
     currentSkinNick = nick;
 
-    const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
     const canvas = document.getElementById('skin-container');
 
     if (!viewer) {
@@ -1787,6 +1818,7 @@
       viewer.cameraLight.intensity = 1.2;
     }
 
+    const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
     viewer.loadSkin(skinUrl).then(() => {
       if (viewer.playerObject && viewer.playerObject.skin) {
         const skin = viewer.playerObject.skin;
@@ -1809,17 +1841,174 @@
         }
         viewer.render();
         
+        // Iniciar animaciones
+        iniciarAnimaciones();
+        
         // Actualizar mini canvases
         setTimeout(updateMiniCanvases, 500);
       }
     }).catch(() => {
-      // Fallback a minotar
       viewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(nick)}`).then(() => {
         setTimeout(updateMiniCanvases, 500);
       });
     });
   }
 
+  // =========================================================
+  // ANIMACIONES (caminar, saludar, etc.)
+  // =========================================================
+  let animacionActiva = true;
+  let estadoAnimacion = 'WALKING';
+  let posX = 28;
+  const targetX = 0;
+  const walkSpeed = 0.22;
+  let gestureStartTime = 0;
+  let gestureDuration = 2500;
+  let nextGestureTime = 0;
+  const GESTURE_MIN_DELAY = 4000;
+  const GESTURE_MAX_DELAY = 10000;
+  const GESTURES = ['WAVING', 'LOOKING', 'SIXSEVEN'];
+
+  function programarProximoGesto() {
+    const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
+    nextGestureTime = performance.now() + delay;
+  }
+
+  function triggerRandomGesture() {
+    if (estadoAnimacion === 'IDLE') {
+      const gesture = GESTURES[Math.floor(Math.random() * GESTURES.length)];
+      estadoAnimacion = gesture;
+      gestureStartTime = performance.now();
+
+      if (gesture === 'LOOKING') gestureDuration = 3000;
+      else if (gesture === 'SIXSEVEN') gestureDuration = 2800;
+      else gestureDuration = 2500;
+
+      const delay = gestureDuration + GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
+      nextGestureTime = performance.now() + delay;
+    }
+  }
+
+  function iniciarAnimaciones() {
+    if (!viewer || !viewer.playerObject || !viewer.playerObject.skin) return;
+    
+    estadoAnimacion = 'WALKING';
+    posX = 28;
+    if (viewer.playerObject) {
+      viewer.playerObject.position.x = posX;
+    }
+    programarProximoGesto();
+    
+    function animate(time) {
+      if (!animacionActiva) return;
+      requestAnimationFrame(animate);
+
+      const player = viewer.playerObject;
+      if (!player || !player.skin) return;
+
+      const t = time * 0.005;
+
+      if (estadoAnimacion !== 'WALKING') {
+        player.rotation.y = 0;
+      }
+
+      // WALKING
+      if (estadoAnimacion === 'WALKING') {
+        posX -= walkSpeed;
+        player.position.x = posX;
+        player.rotation.y = -Math.PI / 2;
+
+        const walkCycle = Math.sin(t * 6);
+        player.skin.leftArm.rotation.x = walkCycle * 0.5;
+        player.skin.rightArm.rotation.x = -walkCycle * 0.5;
+        player.skin.leftLeg.rotation.x = -walkCycle * 0.5;
+        player.skin.rightLeg.rotation.x = walkCycle * 0.5;
+        player.position.y = Math.abs(Math.sin(t * 12)) * 0.15;
+
+        if (posX <= targetX) {
+          posX = targetX;
+          player.position.x = targetX;
+          player.position.y = 0;
+          player.rotation.y = 0;
+          player.skin.leftArm.rotation.x = 0;
+          player.skin.rightArm.rotation.x = 0;
+          player.skin.leftLeg.rotation.x = 0;
+          player.skin.rightLeg.rotation.x = 0;
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // IDLE
+      else if (estadoAnimacion === 'IDLE') {
+        const breathe = Math.sin(t * 1.5) * 0.08;
+        player.position.y = breathe;
+        player.skin.head.rotation.y = 0;
+        player.skin.leftArm.rotation.x = Math.sin(t * 1.5) * 0.04;
+        player.skin.leftArm.rotation.z = -0.08 - Math.cos(t * 1.5) * 0.02;
+        player.skin.rightArm.rotation.x = -Math.sin(t * 1.5) * 0.04;
+        player.skin.rightArm.rotation.z = 0.08 + Math.cos(t * 1.5) * 0.02;
+
+        if (time >= nextGestureTime) {
+          triggerRandomGesture();
+        }
+      }
+
+      // WAVING
+      else if (estadoAnimacion === 'WAVING') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          player.skin.rightArm.rotation.x = Math.PI - 0.2;
+          player.skin.rightArm.rotation.z = -0.3 + Math.sin(progress * Math.PI * 8) * 0.3;
+        } else {
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // LOOKING
+      else if (estadoAnimacion === 'LOOKING') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          player.skin.head.rotation.y = Math.sin(progress * Math.PI * 2) * 0.6;
+        } else {
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // SIXSEVEN
+      else if (estadoAnimacion === 'SIXSEVEN') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          const rhythm = Math.sin(progress * Math.PI * 10);
+          player.skin.rightArm.rotation.x = -1.2 + rhythm * 0.15;
+          player.skin.rightArm.rotation.z = -0.2;
+          player.skin.leftArm.rotation.x = -1.2 - rhythm * 0.15;
+          player.skin.leftArm.rotation.z = 0.2;
+          player.skin.head.rotation.z = rhythm * 0.08;
+        } else {
+          player.skin.head.rotation.z = 0;
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      viewer.render();
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  // =========================================================
+  // ACTUALIZAR MINI CANVASES
+  // =========================================================
   function updateMiniCanvases() {
     const mainCanvas = document.getElementById('skin-container');
     const bookCanvas = document.getElementById('bookSkinCanvas');
@@ -1830,7 +2019,6 @@
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = function() {
-        // Libro
         let ctx = bookCanvas.getContext('2d');
         let size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
         bookCanvas.width = size; bookCanvas.height = size;
@@ -1838,7 +2026,6 @@
         let s = Math.min(size/img.width, size/img.height)*1.05;
         ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.04, img.width*s, img.height*s);
 
-        // DNI
         ctx = dniCanvas.getContext('2d');
         size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
         dniCanvas.width = size; dniCanvas.height = size;
@@ -1860,9 +2047,7 @@
           <i class="fas fa-exclamation-circle"></i>
           <h3>ID no especificado</h3>
           <p>No se proporcionó un ID de expediente válido.</p>
-          <a href="./documentos.html" style="color:#a4864a;text-decoration:none;margin-top:15px;display:inline-block;">
-            <i class="fas fa-arrow-left"></i> Volver al registro
-          </a>
+          <a href="./documentos.html">Volver al registro</a>
         </div>
       `;
       mainContent.style.display = 'block';
@@ -1879,9 +2064,7 @@
             <i class="fas fa-file-excel"></i>
             <h3>Expediente no encontrado</h3>
             <p>El expediente que buscas no existe o fue eliminado.</p>
-            <a href="./documentos.html" style="color:#a4864a;text-decoration:none;margin-top:15px;display:inline-block;">
-              <i class="fas fa-arrow-left"></i> Volver al registro
-            </a>
+            <a href="./documentos.html">Volver al registro</a>
           </div>
         `;
         mainContent.style.display = 'block';
@@ -1898,9 +2081,7 @@
           <i class="fas fa-exclamation-triangle"></i>
           <h3>Error al cargar</h3>
           <p>No se pudo cargar el expediente. Intenta de nuevo.</p>
-          <a href="./documentos.html" style="color:#a4864a;text-decoration:none;margin-top:15px;display:inline-block;">
-            <i class="fas fa-arrow-left"></i> Volver al registro
-          </a>
+          <a href="./documentos.html">Volver al registro</a>
         </div>
       `;
       mainContent.style.display = 'block';
@@ -1908,7 +2089,7 @@
   }
 
   // =========================================================
-  // NAVEGACIÓN DEL LIBRO (a nivel global para onclick)
+  // NAVEGACIÓN DEL LIBRO
   // =========================================================
   let currentStep = 1;
   const pages = document.querySelectorAll('.page');
@@ -1922,8 +2103,10 @@
       page.style.zIndex = (index < currentStep) ? index + 1 : totalPages - index;
     });
     book.classList.toggle('open', currentStep > 0 && currentStep < totalPages);
-    document.getElementById('prevBookBtn').disabled = (currentStep <= 0);
-    document.getElementById('nextBookBtn').disabled = (currentStep >= totalPages - 1);
+    const prevBtn = document.getElementById('prevBookBtn');
+    const nextBtn = document.getElementById('nextBookBtn');
+    if (prevBtn) prevBtn.disabled = (currentStep <= 0);
+    if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
   }
 
   window.nextPage = function() { 
@@ -1940,7 +2123,6 @@
     } 
   };
 
-  // Inicializar libro
   setTimeout(() => {
     pages.forEach((p, i) => {
       p.addEventListener('click', () => {
@@ -1950,7 +2132,7 @@
       });
     });
     updateBookState();
-  }, 200);
+  }, 300);
 
   // =========================================================
   // OBSERVER DE AUTENTICACIÓN
@@ -1970,14 +2152,13 @@
     mainContent.style.display = 'block';
     renderNav(user, isAdmin);
 
-    // Obtener ID y cargar expediente
     const id = getExpedienteId();
     await cargarExpediente(id);
 
     console.log(`📄 Expediente - Usuario: ${user.email}`);
   });
 
-  console.log('📄 Página de expediente con autenticación');
+  console.log('📄 Página de expediente con autenticación y animaciones');
 </script>
 
 </body>
