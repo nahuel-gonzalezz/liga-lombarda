@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expediente — Liga Lombarda</title>
+
+    <link rel="icon" type="image/png" href="./logo.png" />
+    <link rel="shortcut icon" href="./logo.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* =========================================================
+           VARIABLES Y RESET
+        ========================================================= */
+        :root {
+            --black: #151515;
+            --dark: #24201c;
+            --paper: #eee4ce;
+            --paper-light: #f7f0df;
+            --paper-dark: #ded0b5;
+            --red: #76251c;
+            --red-dark: #501812;
+            --gold: #a4864a;
+            --border: #332c24;
+            --gray: #81796c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #3a342e, #171717 70%);
+            color: white;
+            font-family: "Libre Baskerville", Georgia, serif;
+            min-height: 100vh;
+        }
+
+        /* =========================================================
+           OVERLAY DE AUTENTICACIÓN
+        ========================================================= */
+        .auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+            backdrop-filter: blur(8px);
+        }
+
+        .auth-overlay.hidden {
+            display: none;
+        }
+
+        .auth-overlay .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #4a3d2e;
+            border-top: 4px solid #a4864a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .auth-overlay p {
+            color: #b7a98f;
+            font-family: "Cinzel", serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* =========================================================
+           CONTENIDO PRINCIPAL
+        ========================================================= */
+        #mainContent {
+            display: none;
+        }
+
+        #mainContent.visible {
+            display: block;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+        header {
+            width: 100%;
+            height: 75px;
+            background: rgba(18, 17, 15, 0.95);
+            border-bottom: 1px solid #4a3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-inner {
+            width: min(1100px, 90%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand img {
+            width: 35px;
+        }
+
+        .brand h1 {
+            font-family: "Cinzel", serif;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: var(--paper);
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #c7b99d;
+            text-decoration: none;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 8px 12px;
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--gold);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info .email {
+            color: #b7a98f;
+            font-size: 10px;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        .user-info .email i {
+            color: var(--gold);
+            margin-right: 4px;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #4a3d2e;
+            color: #b7a98f;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: "Montserrat", sans-serif;
+            font-size: 9px;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: var(--red);
+            border-color: var(--red);
+            color: white;
+        }
+
+        /* =========================================================
+           TOAST
+        ========================================================= */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: "Cinzel";
+            font-size: 12px;
+            letter-spacing: 1px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toast.success {
+            background: #1a4a2a;
+            color: #b8e0b8;
+            border: 1px solid #2a6a3a;
+        }
+
+        .toast.error {
+            background: #4a1a1a;
+            color: #e0b8b8;
+            border: 1px solid #6a2a2a;
+        }
+
+        .toast.info {
+            background: #1a2a4a;
+            color: #b8c8e0;
+            border: 1px solid #2a3a6a;
+        }
+
+        /* =========================================================
+           CONTENEDOR DEL EXPEDIENTE
+        ========================================================= */
+        .expediente-container {
+            width: min(900px, 94%);
+            margin: 30px auto 50px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gold);
+            text-decoration: none;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--gold-light);
+        }
+
+        /* =========================================================
+           DOCUMENTO (casi igual al de formulario.html)
+        ========================================================= */
+        #document {
+            background: #f7f3e8;
+            color: #1a1a1a;
+            border: 2px solid #3a322b;
+            border-radius: 8px;
+            padding: 28px 32px 18px 32px;
+            width: 100%;
+            font-family: "Libre Baskerville", Georgia, serif;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .document-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--red);
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .crest {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .crest-symbol {
+            width: 48px;
+            height: 52px;
+            border: 2px solid var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1715;
+            overflow: hidden;
+        }
+
+        .crest-logo {
+            width: 36px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .document-heading {
+            text-align: center;
+            flex: 1;
+        }
+
+        .document-heading h1 {
+            font-family: "Cinzel";
+            font-size: 22px;
+            letter-spacing: 3px;
+            color: var(--red);
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .document-heading h2 {
+            font-family: "Cinzel";
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #3a322b;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .document-heading p {
+            font-size: 9px;
+            color: #6a5f4f;
+            letter-spacing: 1.5px;
+            margin: 2px 0 0 0;
+        }
+
+        .file-number {
+            text-align: center;
+            border: 2px solid var(--red);
+            padding: 6px 14px;
+            background: #faf6ed;
+            min-width: 110px;
+        }
+
+        .file-number span {
+            display: block;
+            font-size: 7px;
+            color: #6a5f4f;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .file-number strong {
+            display: block;
+            font-size: 15px;
+            color: var(--red);
+            font-family: "Cinzel";
+        }
+
+        .file-number small {
+            display: block;
+            font-size: 6px;
+            color: #6a5f4f;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .file-number b {
+            display: block;
+            font-size: 10px;
+            color: #1a1a1a;
+            font-family: "Cinzel";
+        }
+
+        .identity-section {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #d4c8b2;
+        }
+
+        .portrait-box {
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .portrait-background {
+            width: 150px;
+            height: 175px;
+            border: 2px solid #a89885;
+            border-radius: 6px;
+            background: #e8e4da;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .portrait-background canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+            object-fit: contain;
+            position: relative;
+            z-index: 2;
+        }
+
+        .portrait-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            display: none;
+        }
+
+        .portrait-bg-image.visible {
+            display: block;
+        }
+
+        .portrait-label {
+            font-size: 7px;
+            font-weight: 700;
+            color: #5f5446;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+
+        .portrait-label small {
+            font-weight: 400;
+            color: #8a7d69;
+        }
+
+        .identity-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .document-field {
+            display: flex;
+            border-bottom: 1px solid #d4c8b2;
+            padding: 3px 0;
+            font-size: 13px;
+        }
+
+        .document-field span {
+            font-weight: 700;
+            color: #5f5446;
+            min-width: 110px;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        .document-field strong {
+            font-weight: 700;
+            color: #1a1a1a;
+            font-size: 13px;
+        }
+
+        .document-section {
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #d4c8b2;
+        }
+
+        .section-heading {
+            font-family: "Cinzel";
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--red);
+            border-bottom: 2px solid var(--red);
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .info-columns {
+            display: flex;
+            gap: 24px;
+        }
+
+        .info-columns>div {
+            flex: 1;
+        }
+
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #d4c8b2;
+            padding: 2px 0;
+            font-size: 11px;
+        }
+
+        .info-line span {
+            color: #5f5446;
+            font-weight: 600;
+        }
+
+        .info-line b {
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .emblem-box {
+            text-align: center;
+            border: 1px solid #a89885;
+            padding: 6px;
+            background: #faf6ed;
+            min-width: 110px;
+        }
+
+        .emblem-box span {
+            display: block;
+            font-size: 7px;
+            font-weight: 700;
+            color: #5f5446;
+            letter-spacing: 1px;
+        }
+
+        .emblem-image {
+            width: 65px;
+            height: auto;
+            max-height: 65px;
+            object-fit: contain;
+            margin: 4px auto;
+            opacity: 0.9;
+            filter: sepia(0.1) saturate(0.95);
+            display: block;
+        }
+
+        .description-box {
+            margin-top: 6px;
+            border: 1px solid #a89885;
+            padding: 6px 10px;
+            background: #faf6ed;
+        }
+
+        .description-box span {
+            display: block;
+            font-size: 8px;
+            font-weight: 700;
+            color: #5f5446;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .description-box p {
+            font-size: 11px;
+            line-height: 1.5;
+            color: #1a1a1a;
+            max-height: 50px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .tables-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 14px;
+        }
+
+        .document-table h3 {
+            font-family: "Cinzel";
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--red);
+            border-bottom: 2px solid var(--red);
+            padding-bottom: 3px;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 2px 0;
+            border-bottom: 1px dotted #d4c8b2;
+            font-size: 10px;
+        }
+
+        .stat-icon {
+            color: var(--red);
+            font-size: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .rating-row span {
+            font-weight: 700;
+            color: #3a322b;
+            min-width: 80px;
+            font-size: 9px;
+        }
+
+        .boxes {
+            display: flex;
+            gap: 2px;
+            flex: 1;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .boxes i {
+            width: 11px;
+            height: 11px;
+            border: 1px solid #888;
+            display: inline-block;
+            background: #fff;
+            font-style: normal;
+        }
+
+        .boxes i.fill {
+            background: var(--red);
+            border-color: #4a0000;
+        }
+
+        .document-footer-certification {
+            border-top: 2px solid var(--red);
+            padding-top: 10px;
+            margin-top: 4px;
+        }
+
+        .certification-text {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: #3a322b;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .certification-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 10px;
+        }
+
+        .certification-date {
+            text-align: center;
+        }
+
+        .cert-label {
+            display: block;
+            font-size: 7px;
+            font-weight: 700;
+            color: #5f5446;
+            letter-spacing: 0.5px;
+        }
+
+        .cert-value {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--red);
+            font-family: "Cinzel";
+        }
+
+        .certification-signature {
+            text-align: center;
+        }
+
+        .signature-image {
+            height: 30px;
+            width: auto;
+            max-width: 120px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto;
+            opacity: 0.85;
+        }
+
+        .certification-seal {
+            text-align: center;
+        }
+
+        .seal-image {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            opacity: 0.9;
+            filter: sepia(0.15) saturate(0.9);
+        }
+
+        .document-motto {
+            text-align: center;
+            font-family: "Cinzel";
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--red);
+            padding-top: 8px;
+            border-top: 1px solid #d4c8b2;
+            margin-top: 8px;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media (max-width: 768px) {
+            header {
+                height: auto;
+                padding: 15px 0;
+            }
+            .header-inner {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .brand h1 {
+                font-size: 16px;
+            }
+            nav a {
+                font-size: 9px;
+                padding: 6px 8px;
+            }
+            nav {
+                gap: 8px;
+                justify-content: center;
+            }
+            #document {
+                padding: 16px 18px 12px 18px;
+            }
+            .document-header {
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
+            }
+            .document-heading h1 {
+                font-size: 18px;
+            }
+            .document-heading h2 {
+                font-size: 11px;
+            }
+            .identity-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            .portrait-background {
+                width: 120px;
+                height: 145px;
+            }
+            .info-columns {
+                flex-direction: column;
+            }
+            .tables-section {
+                grid-template-columns: 1fr;
+            }
+            .certification-bottom {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            .file-number {
+                min-width: 80px;
+                padding: 4px 8px;
+            }
+            .file-number strong {
+                font-size: 12px;
+            }
+            .document-field span {
+                min-width: 80px;
+                font-size: 10px;
+            }
+            .document-field strong {
+                font-size: 11px;
+            }
+            .signature-image {
+                height: 24px;
+            }
+            .seal-image {
+                width: 40px;
+                height: 40px;
+            }
+            .emblem-box {
+                min-width: 80px;
+            }
+            .emblem-image {
+                width: 50px;
+                max-height: 50px;
+            }
+            .rating-row span {
+                min-width: 60px;
+                font-size: 8px;
+            }
+            .boxes i {
+                width: 9px;
+                height: 9px;
+            }
+            .user-info .email {
+                font-size: 8px;
+            }
+            .logout-btn {
+                font-size: 8px;
+                padding: 4px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #document {
+                padding: 12px 12px 8px 12px;
+            }
+            .portrait-background {
+                width: 100px;
+                height: 120px;
+            }
+            .document-heading h1 {
+                font-size: 14px;
+            }
+            .document-heading h2 {
+                font-size: 9px;
+            }
+            .document-heading p {
+                font-size: 7px;
+            }
+            .crest-symbol {
+                width: 36px;
+                height: 40px;
+            }
+            .crest-logo {
+                width: 28px;
+            }
+            .file-number {
+                min-width: 60px;
+                padding: 3px 6px;
+            }
+            .file-number strong {
+                font-size: 10px;
+            }
+            .file-number b {
+                font-size: 8px;
+            }
+            .file-number small {
+                font-size: 5px;
+            }
+            .document-field span {
+                min-width: 60px;
+                font-size: 8px;
+            }
+            .document-field strong {
+                font-size: 9px;
+            }
+            .identity-section {
+                gap: 12px;
+            }
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5f5446;
+        }
+
+        .error-state i {
+            font-size: 50px;
+            color: #4a3d2e;
+            margin-bottom: 15px;
+        }
+
+        .error-state h3 {
+            font-family: "Cinzel", serif;
+            color: #8e8373;
+            font-size: 18px;
+        }
+
+        .error-state p {
+            font-size: 13px;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         OVERLAY DE AUTENTICACIÓN
+    ========================================================= -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="spinner"></div>
+        <p>VERIFICANDO ACCESO...</p>
+    </div>
+
+    <!-- =========================================================
+         CONTENIDO PRINCIPAL
+    ========================================================= -->
+    <div id="mainContent">
+
+        <header>
+            <div class="header-inner">
+                <div class="brand">
+                    <img src="./logo.png" alt="Logo">
+                    <h1>LIGA LOMBARDA</h1>
+                </div>
+                <nav>
+                    <a href="./index.html">INICIO</a>
+                    <a href="./documentos.html">DOCUMENTOS</a>
+                    <a href="./formulario.html">FORMULARIO</a>
+
+                    <div id="userNav" style="display: none;">
+                        <!-- Lo llena JavaScript -->
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="expediente-container">
+            <a href="./documentos.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> VOLVER AL REGISTRO
+            </a>
+
+            <div id="document">
+                <!-- Se llena con JavaScript -->
+                <div class="error-state" id="loadingState">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Cargando expediente...</h3>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align:center;color:#746b5e;font-size:9px;padding:30px;">
+            Liga Lombarda · Archivo Central · Expediente
+        </footer>
+
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- =========================================================
+         SKINVIEW3D
+    ========================================================= -->
+    <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js">
+    </script>
+
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================= -->
+    <script type="module">
+        // =========================================================
+        // IMPORTS DE FIREBASE
+        // =========================================================
+        import { 
+            auth, 
+            onAuthStateChanged, 
+            signOut,
+            database,
+            ref,
+            get
+        } from "./firebase-init.js";
+
+        // =========================================================
+        // REFERENCIAS DOM
+        // =========================================================
+        const authOverlay = document.getElementById('authOverlay');
+        const mainContent = document.getElementById('mainContent');
+        const userNav = document.getElementById('userNav');
+        const toast = document.getElementById('toast');
+        const documentContainer = document.getElementById('document');
+        const loadingState = document.getElementById('loadingState');
+
+        // =========================================================
+        // TOAST
+        // =========================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // =========================================================
+        // RENDERIZAR NAV
+        // =========================================================
+        function renderNav(user, isAdmin = false) {
+            if (user) {
+                userNav.style.display = 'flex';
+                userNav.innerHTML = `
+                    <span class="user-info">
+                        <span class="email">
+                            <i class="fas fa-user-circle"></i> ${user.email}
+                            ${isAdmin ? '<span style="color:var(--gold);margin-left:4px;">👑</span>' : ''}
+                        </span>
+                        <button class="logout-btn" id="logoutBtnNav">
+                            <i class="fas fa-sign-out-alt"></i> SALIR
+                        </button>
+                    </span>
+                `;
+
+                document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
+            }
+        }
+
+        // =========================================================
+        // VERIFICAR ADMIN
+        // =========================================================
+        async function checkIsAdmin(user) {
+            if (!user) return false;
+            try {
+                const adminRef = ref(database, `usuarios/${user.uid}/admin`);
+                const snapshot = await get(adminRef);
+                return snapshot.val() === true;
+            } catch (error) {
+                console.warn('No se pudo verificar rol de admin:', error);
+                return false;
+            }
+        }
+
+        // =========================================================
+        // LOGOUT
+        // =========================================================
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                showToast('👋 Sesión cerrada correctamente', 'info', 2000);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+                showToast('❌ Error al cerrar sesión', 'error', 3000);
+            }
+        }
+
+        // =========================================================
+        // OBTENER ID DE LA URL
+        // =========================================================
+        function getExpedienteId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // =========================================================
+        // CARGAR EXPEDIENTE
+        // =========================================================
+        async function cargarExpediente(id) {
+            if (!id) {
+                documentContainer.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>ID no especificado</h3>
+                        <p>No se proporcionó un ID de expediente válido.</p>
+                        <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
+                            <i class="fas fa-arrow-left"></i> Volver al registro
+                        </a>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const expedienteRef = ref(database, `expedientes/${id}`);
+                const snapshot = await get(expedienteRef);
+
+                if (!snapshot.exists()) {
+                    documentContainer.innerHTML = `
+                        <div class="error-state">
+                            <i class="fas fa-file-excel"></i>
+                            <h3>Expediente no encontrado</h3>
+                            <p>El expediente que buscas no existe o fue eliminado.</p>
+                            <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
+                                <i class="fas fa-arrow-left"></i> Volver al registro
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const data = snapshot.val();
+                renderizarExpediente(data);
+
+            } catch (error) {
+                console.error('Error al cargar expediente:', error);
+                documentContainer.innerHTML = `
+                    <div class="error-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error al cargar</h3>
+                        <p>No se pudo cargar el expediente. Intenta de nuevo.</p>
+                        <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
+                            <i class="fas fa-arrow-left"></i> Volver al registro
+                        </a>
+                    </div>
+                `;
+            }
+        }
+
+        // =========================================================
+        // RENDERIZAR EXPEDIENTE
+        // =========================================================
+        function renderizarExpediente(data) {
+            const name = data.name || 'SIN REGISTRO';
+            const alias = data.alias || '—';
+            const rank = data.rank || '—';
+            const nationality = data.nationality || '—';
+            const occupation = data.occupation || '—';
+            const status = data.status || '☑ ACTIVO';
+            const birthDate = data.birthDate || '—';
+            const gender = data.gender || '—';
+            const species = data.species || '—';
+            const marital = data.marital || '—';
+            const description = data.description || 'Sin descripción registrada.';
+            const fileNumber = data.fileNumber || 'LL-2026-0000';
+            const minecraftNick = data.minecraftNick || '';
+            const stats = data.stats || {};
+            const competencies = data.competencies || {};
+            const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '—';
+
+            // Generar HTML de estadísticas
+            const statNames = {
+                strength: 'Fuerza',
+                perception: 'Percepción',
+                endurance: 'Resistencia',
+                charisma: 'Carisma',
+                intelligence: 'Inteligencia',
+                agility: 'Agilidad',
+                luck: 'Suerte'
+            };
+
+            const compNames = {
+                combat: 'Combate',
+                building: 'Construcción',
+                farming: 'Farmeo',
+                redstone: 'Redstone'
+            };
+
+            let statsHtml = '';
+            Object.keys(statNames).forEach(key => {
+                const val = stats[key] || 0;
+                statsHtml += `
+                    <div class="rating-row">
+                        <i class="fas fa-${key === 'strength' ? 'dumbbell' : 
+                                    key === 'perception' ? 'eye' : 
+                                    key === 'endurance' ? 'shield-alt' : 
+                                    key === 'charisma' ? 'comment' : 
+                                    key === 'intelligence' ? 'brain' : 
+                                    key === 'agility' ? 'running' : 'clover'} stat-icon"></i>
+                        <span>${statNames[key]}</span>
+                        <div class="boxes">
+                            ${Array.from({length: 10}, (_, i) => 
+                                `<i class="${i < val ? 'fill' : ''}"></i>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            let compsHtml = '';
+            Object.keys(compNames).forEach(key => {
+                const val = competencies[key] || 0;
+                const icon = key === 'combat' ? 'hand-fist' : 
+                            key === 'building' ? 'hammer' : 
+                            key === 'farming' ? 'seedling' : 'bolt';
+                compsHtml += `
+                    <div class="rating-row">
+                        <i class="fa-solid fa-${icon} stat-icon"></i>
+                        <span>${compNames[key]}</span>
+                        <div class="boxes">
+                            ${Array.from({length: 10}, (_, i) => 
+                                `<i class="${i < val ? 'fill' : ''}"></i>`
+                            ).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Fecha actual
+            const now = new Date();
+            const dateStr = String(now.getDate()).padStart(2, '0') + ' / ' + 
+                           String(now.getMonth() + 1).padStart(2, '0') + ' / ' + 
+                           now.getFullYear();
+
+            documentContainer.innerHTML = `
+                <div class="document-header">
+                    <div class="crest">
+                        <div class="crest-symbol">
+                            <img src="./logo.png" alt="Liga Lombarda" class="crest-logo" />
+                        </div>
+                    </div>
+                    <div class="document-heading">
+                        <h1>LIGA LOMBARDA</h1>
+                        <h2>DOCUMENTO DE IDENTIDAD</h2>
+                        <p>REGISTRO OFICIAL DE CIUDADANOS</p>
+                    </div>
+                    <div class="file-number">
+                        <span>EXPEDIENTE Nº</span>
+                        <strong>${fileNumber}</strong>
+                        <small>CLASIFICACIÓN</small>
+                        <b>CIUDADANO</b>
+                    </div>
+                </div>
+
+                <div class="identity-section">
+                    <div class="portrait-box">
+                        <div class="portrait-background">
+                            <canvas id="portraitSkinCanvas"></canvas>
+                        </div>
+                        <div class="portrait-label">
+                            FOTOGRAFÍA OFICIAL<br />
+                            <small>VISTA DEL CIUDADANO</small>
+                        </div>
+                    </div>
+                    <div class="identity-info">
+                        <div class="document-field">
+                            <span>NOMBRE:</span>
+                            <strong>${name}</strong>
+                        </div>
+                        <div class="document-field">
+                            <span>ALIAS:</span>
+                            <strong>${alias}</strong>
+                        </div>
+                        <div class="document-field">
+                            <span>RANGO ACTUAL:</span>
+                            <strong>${rank}</strong>
+                        </div>
+                        <div class="document-field">
+                            <span>NACIONALIDAD:</span>
+                            <strong>${nationality}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-section">
+                    <div class="section-heading">INFORMACIÓN DEL CIUDADANO</div>
+                    <div class="info-columns">
+                        <div>
+                            <div class="info-line">
+                                <span>PROFESIÓN / OFICIO</span>
+                                <b>${occupation}</b>
+                            </div>
+                            <div class="info-line">
+                                <span>ESTADO ACTUAL:</span>
+                                <b>${status}</b>
+                            </div>
+                            <div class="info-line">
+                                <span>FECHA DE CUMPLEAÑOS:</span>
+                                <b>${birthDate}</b>
+                            </div>
+                            <div class="info-line">
+                                <span>GÉNERO:</span>
+                                <b>${gender}</b>
+                            </div>
+                            <div class="info-line">
+                                <span>ESPECIE:</span>
+                                <b>${species}</b>
+                            </div>
+                            <div class="info-line">
+                                <span>ESTADO CIVIL:</span>
+                                <b>${marital}</b>
+                            </div>
+                        </div>
+                        <div class="emblem-box">
+                            <span>EMBLEMA LOMBARDO</span>
+                            <img src="./img/escudo-Lombardo.png" alt="Escudo Lombardo" class="emblem-image" crossorigin="anonymous" />
+                        </div>
+                    </div>
+                    <div class="description-box">
+                        <span>DESCRIPCIÓN</span>
+                        <p>${description}</p>
+                    </div>
+                </div>
+
+                <div class="tables-section">
+                    <div class="document-table">
+                        <h3>EVALUACIÓN DE CAPACIDADES</h3>
+                        ${statsHtml}
+                    </div>
+                    <div class="document-table">
+                        <h3>COMPETENCIAS LOMBARDAS</h3>
+                        ${compsHtml}
+                    </div>
+                </div>
+
+                <div class="document-footer-certification">
+                    <div class="certification-text">
+                        SE CERTIFICA QUE LA INFORMACIÓN CONTENIDA EN ESTE EXPEDIENTE<br />
+                        ES VERÍDICA Y HA SIDO REGISTRADA EN EL ARCHIVO CENTRAL.
+                    </div>
+                    <div class="certification-bottom">
+                        <div class="certification-date">
+                            <span class="cert-label">FECHA DE EMISIÓN</span>
+                            <span class="cert-value">${dateStr}</span>
+                        </div>
+                        <div class="certification-signature">
+                            <img src="./img/Firma.png" alt="Firma del Registrador" class="signature-image" crossorigin="anonymous" />
+                            <span class="cert-label">FIRMA DEL REGISTRADOR</span>
+                        </div>
+                        <div class="certification-seal">
+                            <img src="./img/Sello.png" alt="Sello Oficial" class="seal-image" crossorigin="anonymous" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="document-motto">
+                    POR LA LIGA · POR LOMBARDOS · POR SIEMPRE
+                </div>
+            `;
+
+            // Cargar skin en el canvas del retrato
+            if (minecraftNick) {
+                const canvas = document.getElementById('portraitSkinCanvas');
+                if (canvas && typeof skinview3d !== 'undefined') {
+                    const skinURL = `https://mc-heads.net/skin/${encodeURIComponent(minecraftNick)}.png`;
+                    const poseData = data.pose?.values || null;
+
+                    try {
+                        const viewer = new skinview3d.SkinViewer({
+                            canvas: canvas,
+                            width: 150,
+                            height: 175
+                        });
+
+                        viewer.fov = 30;
+                        viewer.zoom = 0.9;
+                        viewer.autoRotate = false;
+                        viewer.controls.enableRotate = false;
+                        viewer.controls.enableZoom = false;
+                        viewer.controls.enablePan = false;
+                        viewer.globalLight.intensity = 2.5;
+                        viewer.cameraLight.intensity = 1.2;
+
+                        viewer.loadSkin(skinURL).then(() => {
+                            if (poseData && viewer.playerObject && viewer.playerObject.skin) {
+                                const skin = viewer.playerObject.skin;
+                                Object.keys(poseData).forEach(key => {
+                                    const [part, axis] = key.split('.');
+                                    if (skin[part]) {
+                                        skin[part].rotation[axis] = poseData[key];
+                                    }
+                                });
+                                viewer.render();
+                            }
+                        }).catch(() => {
+                            console.warn('Error cargando skin para:', minecraftNick);
+                        });
+                    } catch (error) {
+                        console.warn('Error al renderizar skin:', error);
+                    }
+                }
+            }
+        }
+
+        // =========================================================
+        // OBSERVER DE AUTENTICACIÓN
+        // =========================================================
+        onAuthStateChanged(auth, async (user) => {
+            authOverlay.classList.add('hidden');
+
+            if (!user) {
+                showToast('🔐 Debes iniciar sesión para ver el expediente', 'error', 2000);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+                return;
+            }
+
+            const isAdmin = await checkIsAdmin(user);
+            mainContent.classList.add('visible');
+            renderNav(user, isAdmin);
+
+            // Cargar expediente
+            const id = getExpedienteId();
+            await cargarExpediente(id);
+
+            console.log(`📄 Expediente - Usuario: ${user.email}`);
+        });
+    </script>
+
+</body>
+</html>
