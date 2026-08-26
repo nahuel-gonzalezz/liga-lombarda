@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expediente — Liga Lombarda</title>
+    <title>Documentos — Liga Lombarda</title>
 
     <link rel="icon" type="image/png" href="./logo.png" />
     <link rel="shortcut icon" href="./logo.png" />
@@ -29,6 +29,16 @@
             --gold: #a4864a;
             --border: #332c24;
             --gray: #81796c;
+            
+            /* Colores por rango */
+            --color-elite: #FFD700;
+            --color-caballero: #CC0000;
+            --color-infante: #933581;
+            --color-paladin: #855C88;
+            --color-pavesero: #028589;
+            --color-milicia: #BC4E00;
+            --color-ballestero: #10A1C3;
+            --color-ciudadano: #888888;
         }
 
         * {
@@ -89,7 +99,7 @@
         }
 
         /* =========================================================
-           CONTENIDO PRINCIPAL
+           CONTENIDO PRINCIPAL (oculto hasta autenticar)
         ========================================================= */
         #mainContent {
             display: none;
@@ -160,6 +170,14 @@
             color: var(--gold);
         }
 
+        nav a.active {
+            color: var(--gold);
+            border-bottom: 2px solid var(--gold);
+        }
+
+        /* =========================================================
+           USER INFO EN EL HEADER
+        ========================================================= */
         .user-info {
             display: flex;
             align-items: center;
@@ -241,475 +259,302 @@
         }
 
         /* =========================================================
-           CONTENEDOR DEL EXPEDIENTE
+           CONTENEDOR PRINCIPAL DE DOCUMENTOS
         ========================================================= */
-        .expediente-container {
-            width: min(900px, 94%);
+        .main-container {
+            width: min(1300px, 94%);
             margin: 30px auto 50px;
         }
 
-        .back-link {
-            display: inline-flex;
+        .page-title {
+            font-family: "Cinzel", serif;
+            font-size: 28px;
+            color: var(--paper);
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            color: var(--gold);
-            text-decoration: none;
-            font-family: "Montserrat", sans-serif;
-            font-size: 11px;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            transition: 0.2s;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .back-link:hover {
-            color: var(--gold-light);
+        .page-title small {
+            font-size: 12px;
+            color: #8e8373;
+            font-weight: 400;
+        }
+
+        .page-title .count {
+            font-size: 14px;
+            color: var(--gold);
+            font-weight: 400;
         }
 
         /* =========================================================
-           DOCUMENTO (casi igual al de formulario.html)
+           FILTRO DE BÚSQUEDA
         ========================================================= */
-        #document {
-            background: #f7f3e8;
-            color: #1a1a1a;
-            border: 2px solid #3a322b;
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: rgba(30, 28, 25, 0.8);
+            border: 1px solid #4a3d2e;
             border-radius: 8px;
-            padding: 28px 32px 18px 32px;
-            width: 100%;
-            font-family: "Libre Baskerville", Georgia, serif;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .document-header {
-            display: flex;
+            padding: 15px 20px;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 3px solid var(--red);
-            padding-bottom: 10px;
-            margin-bottom: 14px;
         }
 
-        .crest {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .crest-symbol {
-            width: 48px;
-            height: 52px;
-            border: 2px solid var(--gold);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #1a1715;
-            overflow: hidden;
-        }
-
-        .crest-logo {
-            width: 36px;
-            height: auto;
-            object-fit: contain;
-        }
-
-        .document-heading {
-            text-align: center;
+        .search-bar input {
             flex: 1;
-        }
-
-        .document-heading h1 {
-            font-family: "Cinzel";
-            font-size: 22px;
-            letter-spacing: 3px;
-            color: var(--red);
-            margin: 0;
-            line-height: 1.2;
-        }
-
-        .document-heading h2 {
-            font-family: "Cinzel";
+            background: #2a2722;
+            border: 1px solid #4a3d2e;
+            color: var(--paper);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-family: "Libre Baskerville", serif;
             font-size: 13px;
-            letter-spacing: 2px;
-            color: #3a322b;
-            margin: 0;
-            font-weight: 600;
+            outline: none;
+            min-width: 200px;
         }
 
-        .document-heading p {
-            font-size: 9px;
-            color: #6a5f4f;
-            letter-spacing: 1.5px;
-            margin: 2px 0 0 0;
+        .search-bar input:focus {
+            border-color: var(--gold);
         }
 
-        .file-number {
-            text-align: center;
-            border: 2px solid var(--red);
-            padding: 6px 14px;
-            background: #faf6ed;
-            min-width: 110px;
+        .search-bar input::placeholder {
+            color: #5f5446;
         }
 
-        .file-number span {
-            display: block;
-            font-size: 7px;
-            color: #6a5f4f;
-            letter-spacing: 1px;
+        .search-bar .filter-count {
+            color: #8e8373;
+            font-size: 11px;
+            font-family: "Montserrat", sans-serif;
+            white-space: nowrap;
+        }
+
+        .search-bar .filter-count span {
+            color: var(--gold);
             font-weight: 700;
         }
 
-        .file-number strong {
-            display: block;
-            font-size: 15px;
-            color: var(--red);
-            font-family: "Cinzel";
+        /* =========================================================
+           CONTENEDOR POR RANGO (separación)
+        ========================================================= */
+        .rank-section {
+            margin-bottom: 40px;
         }
 
-        .file-number small {
-            display: block;
-            font-size: 6px;
-            color: #6a5f4f;
-            letter-spacing: 1px;
-            margin-top: 2px;
+        .rank-section:last-child {
+            margin-bottom: 0;
         }
 
-        .file-number b {
-            display: block;
-            font-size: 10px;
-            color: #1a1a1a;
-            font-family: "Cinzel";
-        }
-
-        .identity-section {
+        .rank-section-header {
             display: flex;
-            gap: 28px;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #d4c8b2;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #4a3d2e;
         }
 
-        .portrait-box {
+        .rank-section-header .rank-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
             flex-shrink: 0;
-            text-align: center;
         }
 
-        .portrait-background {
-            width: 150px;
-            height: 175px;
-            border: 2px solid #a89885;
-            border-radius: 6px;
-            background: #e8e4da;
+        .rank-section-header .rank-label {
+            font-family: "Cinzel", serif;
+            font-size: 16px;
+            letter-spacing: 1px;
+            color: var(--paper);
+        }
+
+        .rank-section-header .rank-count {
+            font-size: 11px;
+            color: #8e8373;
+            font-family: "Montserrat", sans-serif;
+            margin-left: auto;
+        }
+
+        /* =========================================================
+           GRID DE TARJETAS (dentro de cada rango)
+        ========================================================= */
+        .rank-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        /* =========================================================
+           TARJETA INDIVIDUAL
+        ========================================================= */
+        .document-card {
+            background: #1f1c19;
+            border: 2px solid #4a3d2e;
+            border-radius: 10px;
             overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .document-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Borde de rango (color) */
+        .document-card[data-rank="Elite Urbana"] { border-color: var(--color-elite); }
+        .document-card[data-rank="Caballero Lombardo"] { border-color: var(--color-caballero); }
+        .document-card[data-rank="Infante Lombardo"] { border-color: var(--color-infante); }
+        .document-card[data-rank="Paladín Lombardo"] { border-color: var(--color-paladin); }
+        .document-card[data-rank="Pavesero Lombardo"] { border-color: var(--color-pavesero); }
+        .document-card[data-rank="Milicia Urbana"] { border-color: var(--color-milicia); }
+        .document-card[data-rank="Ballestero Genovés Condecorado"] { border-color: var(--color-ballestero); }
+        .document-card[data-rank="Ciudadano"] { border-color: var(--color-ciudadano); }
+
+        /* Insignia de rango (color de fondo) */
+        .document-card .rank-badge {
+            display: inline-block;
+            font-size: 7px;
+            font-family: "Cinzel", serif;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .document-card[data-rank="Elite Urbana"] .rank-badge { background: var(--color-elite); color: #1a1a1a; }
+        .document-card[data-rank="Caballero Lombardo"] .rank-badge { background: var(--color-caballero); color: white; }
+        .document-card[data-rank="Infante Lombardo"] .rank-badge { background: var(--color-infante); color: white; }
+        .document-card[data-rank="Paladín Lombardo"] .rank-badge { background: var(--color-paladin); color: white; }
+        .document-card[data-rank="Pavesero Lombardo"] .rank-badge { background: var(--color-pavesero); color: white; }
+        .document-card[data-rank="Milicia Urbana"] .rank-badge { background: var(--color-milicia); color: white; }
+        .document-card[data-rank="Ballestero Genovés Condecorado"] .rank-badge { background: var(--color-ballestero); color: white; }
+        .document-card[data-rank="Ciudadano"] .rank-badge { background: var(--color-ciudadano); color: white; }
+
+        /* Contenedor de la foto (skin) */
+        .card-skin {
+            width: 100%;
+            aspect-ratio: 1 / 0.9;
+            background: #1a1715;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            overflow: hidden;
         }
 
-        .portrait-background canvas {
+        .card-skin canvas {
             width: 100% !important;
             height: 100% !important;
             display: block !important;
             object-fit: contain;
-            position: relative;
-            z-index: 2;
         }
 
-        .portrait-bg-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 1;
-            display: none;
-        }
-
-        .portrait-bg-image.visible {
-            display: block;
-        }
-
-        .portrait-label {
-            font-size: 7px;
-            font-weight: 700;
+        .card-skin .no-skin {
             color: #5f5446;
-            letter-spacing: 0.5px;
-            margin-top: 4px;
+            font-size: 30px;
+            opacity: 0.3;
         }
 
-        .portrait-label small {
-            font-weight: 400;
-            color: #8a7d69;
+        /* Información de la tarjeta */
+        .card-info {
+            padding: 12px 14px 14px;
+            text-align: center;
+            background: #1f1c19;
+            border-top: 1px solid #4a3d2e;
         }
 
-        .identity-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .document-field {
-            display: flex;
-            border-bottom: 1px solid #d4c8b2;
-            padding: 3px 0;
-            font-size: 13px;
-        }
-
-        .document-field span {
-            font-weight: 700;
-            color: #5f5446;
-            min-width: 110px;
-            font-size: 11px;
+        .card-info .card-name {
+            font-family: "Cinzel", serif;
+            font-size: 14px;
+            color: var(--paper);
             letter-spacing: 0.5px;
         }
 
-        .document-field strong {
-            font-weight: 700;
-            color: #1a1a1a;
-            font-size: 13px;
+        .card-info .card-alias {
+            font-size: 10px;
+            color: #8e8373;
+            font-style: italic;
+            margin-top: 2px;
         }
 
-        .document-section {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #d4c8b2;
-        }
-
-        .section-heading {
-            font-family: "Cinzel";
-            font-size: 11px;
-            letter-spacing: 2px;
-            color: var(--red);
-            border-bottom: 2px solid var(--red);
-            padding-bottom: 4px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .info-columns {
-            display: flex;
-            gap: 24px;
-        }
-
-        .info-columns>div {
-            flex: 1;
-        }
-
-        .info-line {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dotted #d4c8b2;
-            padding: 2px 0;
-            font-size: 11px;
-        }
-
-        .info-line span {
-            color: #5f5446;
-            font-weight: 600;
-        }
-
-        .info-line b {
-            color: #1a1a1a;
-            font-weight: 700;
-        }
-
-        .emblem-box {
-            text-align: center;
-            border: 1px solid #a89885;
-            padding: 6px;
-            background: #faf6ed;
-            min-width: 110px;
-        }
-
-        .emblem-box span {
-            display: block;
-            font-size: 7px;
-            font-weight: 700;
-            color: #5f5446;
-            letter-spacing: 1px;
-        }
-
-        .emblem-image {
-            width: 65px;
-            height: auto;
-            max-height: 65px;
-            object-fit: contain;
-            margin: 4px auto;
-            opacity: 0.9;
-            filter: sepia(0.1) saturate(0.95);
-            display: block;
-        }
-
-        .description-box {
+        .card-info .card-rank {
             margin-top: 6px;
-            border: 1px solid #a89885;
-            padding: 6px 10px;
-            background: #faf6ed;
         }
 
-        .description-box span {
-            display: block;
+        .card-info .card-actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card-info .btn-view {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 5px 18px;
+            border-radius: 4px;
+            font-family: "Cinzel", serif;
             font-size: 8px;
-            font-weight: 700;
-            color: #5f5446;
             letter-spacing: 1px;
-            margin-bottom: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
 
-        .description-box p {
-            font-size: 11px;
-            line-height: 1.5;
+        .card-info .btn-view:hover {
+            background: var(--gold);
             color: #1a1a1a;
-            max-height: 50px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
         }
 
-        .tables-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 14px;
-        }
-
-        .document-table h3 {
-            font-family: "Cinzel";
-            font-size: 10px;
-            letter-spacing: 1px;
-            color: var(--red);
-            border-bottom: 2px solid var(--red);
-            padding-bottom: 3px;
-            margin-bottom: 6px;
+        /* =========================================================
+           ESTADO VACÍO
+        ========================================================= */
+        .empty-state {
+            grid-column: 1 / -1;
             text-align: center;
-        }
-
-        .rating-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 2px 0;
-            border-bottom: 1px dotted #d4c8b2;
-            font-size: 10px;
-        }
-
-        .stat-icon {
-            color: var(--red);
-            font-size: 12px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .rating-row span {
-            font-weight: 700;
-            color: #3a322b;
-            min-width: 80px;
-            font-size: 9px;
-        }
-
-        .boxes {
-            display: flex;
-            gap: 2px;
-            flex: 1;
-            justify-content: flex-end;
-            flex-wrap: wrap;
-        }
-
-        .boxes i {
-            width: 11px;
-            height: 11px;
-            border: 1px solid #888;
-            display: inline-block;
-            background: #fff;
-            font-style: normal;
-        }
-
-        .boxes i.fill {
-            background: var(--red);
-            border-color: #4a0000;
-        }
-
-        .document-footer-certification {
-            border-top: 2px solid var(--red);
-            padding-top: 10px;
-            margin-top: 4px;
-        }
-
-        .certification-text {
-            text-align: center;
-            font-size: 10px;
-            font-weight: 700;
-            color: #3a322b;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .certification-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            padding: 0 10px;
-        }
-
-        .certification-date {
-            text-align: center;
-        }
-
-        .cert-label {
-            display: block;
-            font-size: 7px;
-            font-weight: 700;
+            padding: 60px 20px;
             color: #5f5446;
-            letter-spacing: 0.5px;
         }
 
-        .cert-value {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--red);
-            font-family: "Cinzel";
+        .empty-state i {
+            font-size: 50px;
+            color: #4a3d2e;
+            margin-bottom: 15px;
         }
 
-        .certification-signature {
-            text-align: center;
+        .empty-state h3 {
+            font-family: "Cinzel", serif;
+            color: #8e8373;
+            font-size: 18px;
         }
 
-        .signature-image {
-            height: 30px;
-            width: auto;
-            max-width: 120px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-            opacity: 0.85;
-        }
-
-        .certification-seal {
-            text-align: center;
-        }
-
-        .seal-image {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            opacity: 0.9;
-            filter: sepia(0.15) saturate(0.9);
-        }
-
-        .document-motto {
-            text-align: center;
-            font-family: "Cinzel";
-            font-size: 9px;
-            letter-spacing: 2px;
-            color: var(--red);
-            padding-top: 8px;
-            border-top: 1px solid #d4c8b2;
+        .empty-state p {
+            font-size: 13px;
             margin-top: 8px;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+        footer {
+            text-align: center;
+            color: #746b5e;
+            font-size: 9px;
+            padding: 30px;
         }
 
         /* =========================================================
@@ -735,74 +580,28 @@
                 gap: 8px;
                 justify-content: center;
             }
-            #document {
-                padding: 16px 18px 12px 18px;
+            .page-title {
+                font-size: 22px;
             }
-            .document-header {
-                flex-wrap: wrap;
-                gap: 8px;
-                justify-content: center;
-            }
-            .document-heading h1 {
-                font-size: 18px;
-            }
-            .document-heading h2 {
-                font-size: 11px;
-            }
-            .identity-section {
+            .search-bar {
                 flex-direction: column;
-                align-items: center;
+                padding: 12px 15px;
             }
-            .portrait-background {
-                width: 120px;
-                height: 145px;
+            .search-bar input {
+                width: 100%;
             }
-            .info-columns {
-                flex-direction: column;
+            .rank-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
             }
-            .tables-section {
-                grid-template-columns: 1fr;
-            }
-            .certification-bottom {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 10px;
-            }
-            .file-number {
-                min-width: 80px;
-                padding: 4px 8px;
-            }
-            .file-number strong {
+            .card-info .card-name {
                 font-size: 12px;
             }
-            .document-field span {
-                min-width: 80px;
-                font-size: 10px;
+            .card-info .card-alias {
+                font-size: 9px;
             }
-            .document-field strong {
-                font-size: 11px;
-            }
-            .signature-image {
-                height: 24px;
-            }
-            .seal-image {
-                width: 40px;
-                height: 40px;
-            }
-            .emblem-box {
-                min-width: 80px;
-            }
-            .emblem-image {
-                width: 50px;
-                max-height: 50px;
-            }
-            .rating-row span {
-                min-width: 60px;
-                font-size: 8px;
-            }
-            .boxes i {
-                width: 9px;
-                height: 9px;
+            .rank-section-header .rank-label {
+                font-size: 14px;
             }
             .user-info .email {
                 font-size: 8px;
@@ -814,75 +613,42 @@
         }
 
         @media (max-width: 480px) {
-            #document {
-                padding: 12px 12px 8px 12px;
+            .rank-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
-            .portrait-background {
-                width: 100px;
-                height: 120px;
+            .card-info {
+                padding: 8px 8px 10px;
             }
-            .document-heading h1 {
-                font-size: 14px;
-            }
-            .document-heading h2 {
-                font-size: 9px;
-            }
-            .document-heading p {
-                font-size: 7px;
-            }
-            .crest-symbol {
-                width: 36px;
-                height: 40px;
-            }
-            .crest-logo {
-                width: 28px;
-            }
-            .file-number {
-                min-width: 60px;
-                padding: 3px 6px;
-            }
-            .file-number strong {
+            .card-info .card-name {
                 font-size: 10px;
             }
-            .file-number b {
+            .card-info .card-alias {
                 font-size: 8px;
             }
-            .file-number small {
-                font-size: 5px;
+            .card-info .btn-view {
+                font-size: 7px;
+                padding: 4px 10px;
             }
-            .document-field span {
-                min-width: 60px;
-                font-size: 8px;
+            .card-skin {
+                aspect-ratio: 1 / 0.85;
             }
-            .document-field strong {
-                font-size: 9px;
+            .page-title {
+                font-size: 18px;
             }
-            .identity-section {
-                gap: 12px;
+            .page-title small {
+                font-size: 10px;
             }
-        }
-
-        .error-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #5f5446;
-        }
-
-        .error-state i {
-            font-size: 50px;
-            color: #4a3d2e;
-            margin-bottom: 15px;
-        }
-
-        .error-state h3 {
-            font-family: "Cinzel", serif;
-            color: #8e8373;
-            font-size: 18px;
-        }
-
-        .error-state p {
-            font-size: 13px;
-            margin-top: 8px;
+            .rank-section-header .rank-label {
+                font-size: 12px;
+            }
+            .rank-section-header .rank-dot {
+                width: 10px;
+                height: 10px;
+            }
+            .rank-section {
+                margin-bottom: 25px;
+            }
         }
     </style>
 </head>
@@ -898,7 +664,7 @@
     </div>
 
     <!-- =========================================================
-         CONTENIDO PRINCIPAL
+         CONTENIDO PRINCIPAL (oculto hasta autenticar)
     ========================================================= -->
     <div id="mainContent">
 
@@ -910,9 +676,10 @@
                 </div>
                 <nav>
                     <a href="./index.html">INICIO</a>
-                    <a href="./documentos.html">DOCUMENTOS</a>
+                    <a href="./documentos.html" class="active">DOCUMENTOS</a>
                     <a href="./formulario.html">FORMULARIO</a>
 
+                    <!-- USER INFO (se renderiza con JS) -->
                     <div id="userNav" style="display: none;">
                         <!-- Lo llena JavaScript -->
                     </div>
@@ -920,22 +687,31 @@
             </div>
         </header>
 
-        <div class="expediente-container">
-            <a href="./documentos.html" class="back-link">
-                <i class="fas fa-arrow-left"></i> VOLVER AL REGISTRO
-            </a>
+        <div class="main-container">
 
-            <div id="document">
-                <!-- Se llena con JavaScript -->
-                <div class="error-state" id="loadingState">
-                    <i class="fas fa-spinner fa-spin"></i>
-                    <h3>Cargando expediente...</h3>
+            <div class="page-title">
+                <span><i class="fas fa-address-book" style="color:var(--gold);"></i> REGISTRO DE CIUDADANOS</span>
+                <div>
+                    <span class="count" id="totalCount">0</span>
+                    <small>expedientes</small>
                 </div>
             </div>
+
+            <!-- Barra de búsqueda -->
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, alias, nick, rango o número..." />
+                <span class="filter-count" id="filterCount">Mostrando <span id="visibleCount">0</span> de <span id="totalVisible">0</span></span>
+            </div>
+
+            <!-- Grid de documentos (se renderiza por rangos) -->
+            <div id="documentsContainer">
+                <!-- Los rangos se renderizan con JavaScript -->
+            </div>
+
         </div>
 
-        <footer style="text-align:center;color:#746b5e;font-size:9px;padding:30px;">
-            Liga Lombarda · Archivo Central · Expediente
+        <footer>
+            Liga Lombarda · Archivo Central · Registro de Ciudadanos
         </footer>
 
     </div>
@@ -949,7 +725,7 @@
     </script>
 
     <!-- =========================================================
-         SCRIPTS
+         SCRIPTS (módulo ES)
     ========================================================= -->
     <script type="module">
         // =========================================================
@@ -961,8 +737,15 @@
             signOut,
             database,
             ref,
-            get
+            get,
+            onValue
         } from "./firebase-init.js";
+
+        // Exponer Firebase para compatibilidad con el código existente
+        window.firebaseDB = database;
+        window.firebaseRef = ref;
+        window.firebaseGet = get;
+        window.firebaseOnValue = onValue;
 
         // =========================================================
         // REFERENCIAS DOM
@@ -971,8 +754,11 @@
         const mainContent = document.getElementById('mainContent');
         const userNav = document.getElementById('userNav');
         const toast = document.getElementById('toast');
-        const documentContainer = document.getElementById('document');
-        const loadingState = document.getElementById('loadingState');
+        const documentsContainer = document.getElementById('documentsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const totalCount = document.getElementById('totalCount');
+        const visibleCount = document.getElementById('visibleCount');
+        const totalVisible = document.getElementById('totalVisible');
 
         // =========================================================
         // TOAST
@@ -985,6 +771,9 @@
                 toast.classList.remove('show');
             }, duration);
         }
+
+        // Exponer showToast globalmente para el código existente
+        window.showToast = showToast;
 
         // =========================================================
         // RENDERIZAR NAV
@@ -1040,346 +829,287 @@
         }
 
         // =========================================================
-        // OBTENER ID DE LA URL
-        // =========================================================
-        function getExpedienteId() {
-            const params = new URLSearchParams(window.location.search);
-            return params.get('id');
-        }
-
-        // =========================================================
-        // CARGAR EXPEDIENTE
-        // =========================================================
-        async function cargarExpediente(id) {
-            if (!id) {
-                documentContainer.innerHTML = `
-                    <div class="error-state">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <h3>ID no especificado</h3>
-                        <p>No se proporcionó un ID de expediente válido.</p>
-                        <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
-                            <i class="fas fa-arrow-left"></i> Volver al registro
-                        </a>
-                    </div>
-                `;
-                return;
-            }
-
-            try {
-                const expedienteRef = ref(database, `expedientes/${id}`);
-                const snapshot = await get(expedienteRef);
-
-                if (!snapshot.exists()) {
-                    documentContainer.innerHTML = `
-                        <div class="error-state">
-                            <i class="fas fa-file-excel"></i>
-                            <h3>Expediente no encontrado</h3>
-                            <p>El expediente que buscas no existe o fue eliminado.</p>
-                            <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
-                                <i class="fas fa-arrow-left"></i> Volver al registro
-                            </a>
-                        </div>
-                    `;
-                    return;
-                }
-
-                const data = snapshot.val();
-                renderizarExpediente(data);
-
-            } catch (error) {
-                console.error('Error al cargar expediente:', error);
-                documentContainer.innerHTML = `
-                    <div class="error-state">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Error al cargar</h3>
-                        <p>No se pudo cargar el expediente. Intenta de nuevo.</p>
-                        <a href="./documentos.html" style="color:var(--gold);text-decoration:none;margin-top:15px;display:inline-block;">
-                            <i class="fas fa-arrow-left"></i> Volver al registro
-                        </a>
-                    </div>
-                `;
-            }
-        }
-
-        // =========================================================
-        // RENDERIZAR EXPEDIENTE
-        // =========================================================
-        function renderizarExpediente(data) {
-            const name = data.name || 'SIN REGISTRO';
-            const alias = data.alias || '—';
-            const rank = data.rank || '—';
-            const nationality = data.nationality || '—';
-            const occupation = data.occupation || '—';
-            const status = data.status || '☑ ACTIVO';
-            const birthDate = data.birthDate || '—';
-            const gender = data.gender || '—';
-            const species = data.species || '—';
-            const marital = data.marital || '—';
-            const description = data.description || 'Sin descripción registrada.';
-            const fileNumber = data.fileNumber || 'LL-2026-0000';
-            const minecraftNick = data.minecraftNick || '';
-            const stats = data.stats || {};
-            const competencies = data.competencies || {};
-            const createdAt = data.createdAt ? new Date(data.createdAt).toLocaleDateString() : '—';
-
-            // Generar HTML de estadísticas
-            const statNames = {
-                strength: 'Fuerza',
-                perception: 'Percepción',
-                endurance: 'Resistencia',
-                charisma: 'Carisma',
-                intelligence: 'Inteligencia',
-                agility: 'Agilidad',
-                luck: 'Suerte'
-            };
-
-            const compNames = {
-                combat: 'Combate',
-                building: 'Construcción',
-                farming: 'Farmeo',
-                redstone: 'Redstone'
-            };
-
-            let statsHtml = '';
-            Object.keys(statNames).forEach(key => {
-                const val = stats[key] || 0;
-                statsHtml += `
-                    <div class="rating-row">
-                        <i class="fas fa-${key === 'strength' ? 'dumbbell' : 
-                                    key === 'perception' ? 'eye' : 
-                                    key === 'endurance' ? 'shield-alt' : 
-                                    key === 'charisma' ? 'comment' : 
-                                    key === 'intelligence' ? 'brain' : 
-                                    key === 'agility' ? 'running' : 'clover'} stat-icon"></i>
-                        <span>${statNames[key]}</span>
-                        <div class="boxes">
-                            ${Array.from({length: 10}, (_, i) => 
-                                `<i class="${i < val ? 'fill' : ''}"></i>`
-                            ).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-
-            let compsHtml = '';
-            Object.keys(compNames).forEach(key => {
-                const val = competencies[key] || 0;
-                const icon = key === 'combat' ? 'hand-fist' : 
-                            key === 'building' ? 'hammer' : 
-                            key === 'farming' ? 'seedling' : 'bolt';
-                compsHtml += `
-                    <div class="rating-row">
-                        <i class="fa-solid fa-${icon} stat-icon"></i>
-                        <span>${compNames[key]}</span>
-                        <div class="boxes">
-                            ${Array.from({length: 10}, (_, i) => 
-                                `<i class="${i < val ? 'fill' : ''}"></i>`
-                            ).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-
-            // Fecha actual
-            const now = new Date();
-            const dateStr = String(now.getDate()).padStart(2, '0') + ' / ' + 
-                           String(now.getMonth() + 1).padStart(2, '0') + ' / ' + 
-                           now.getFullYear();
-
-            documentContainer.innerHTML = `
-                <div class="document-header">
-                    <div class="crest">
-                        <div class="crest-symbol">
-                            <img src="./logo.png" alt="Liga Lombarda" class="crest-logo" />
-                        </div>
-                    </div>
-                    <div class="document-heading">
-                        <h1>LIGA LOMBARDA</h1>
-                        <h2>DOCUMENTO DE IDENTIDAD</h2>
-                        <p>REGISTRO OFICIAL DE CIUDADANOS</p>
-                    </div>
-                    <div class="file-number">
-                        <span>EXPEDIENTE Nº</span>
-                        <strong>${fileNumber}</strong>
-                        <small>CLASIFICACIÓN</small>
-                        <b>CIUDADANO</b>
-                    </div>
-                </div>
-
-                <div class="identity-section">
-                    <div class="portrait-box">
-                        <div class="portrait-background">
-                            <canvas id="portraitSkinCanvas"></canvas>
-                        </div>
-                        <div class="portrait-label">
-                            FOTOGRAFÍA OFICIAL<br />
-                            <small>VISTA DEL CIUDADANO</small>
-                        </div>
-                    </div>
-                    <div class="identity-info">
-                        <div class="document-field">
-                            <span>NOMBRE:</span>
-                            <strong>${name}</strong>
-                        </div>
-                        <div class="document-field">
-                            <span>ALIAS:</span>
-                            <strong>${alias}</strong>
-                        </div>
-                        <div class="document-field">
-                            <span>RANGO ACTUAL:</span>
-                            <strong>${rank}</strong>
-                        </div>
-                        <div class="document-field">
-                            <span>NACIONALIDAD:</span>
-                            <strong>${nationality}</strong>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="document-section">
-                    <div class="section-heading">INFORMACIÓN DEL CIUDADANO</div>
-                    <div class="info-columns">
-                        <div>
-                            <div class="info-line">
-                                <span>PROFESIÓN / OFICIO</span>
-                                <b>${occupation}</b>
-                            </div>
-                            <div class="info-line">
-                                <span>ESTADO ACTUAL:</span>
-                                <b>${status}</b>
-                            </div>
-                            <div class="info-line">
-                                <span>FECHA DE CUMPLEAÑOS:</span>
-                                <b>${birthDate}</b>
-                            </div>
-                            <div class="info-line">
-                                <span>GÉNERO:</span>
-                                <b>${gender}</b>
-                            </div>
-                            <div class="info-line">
-                                <span>ESPECIE:</span>
-                                <b>${species}</b>
-                            </div>
-                            <div class="info-line">
-                                <span>ESTADO CIVIL:</span>
-                                <b>${marital}</b>
-                            </div>
-                        </div>
-                        <div class="emblem-box">
-                            <span>EMBLEMA LOMBARDO</span>
-                            <img src="./img/escudo-Lombardo.png" alt="Escudo Lombardo" class="emblem-image" crossorigin="anonymous" />
-                        </div>
-                    </div>
-                    <div class="description-box">
-                        <span>DESCRIPCIÓN</span>
-                        <p>${description}</p>
-                    </div>
-                </div>
-
-                <div class="tables-section">
-                    <div class="document-table">
-                        <h3>EVALUACIÓN DE CAPACIDADES</h3>
-                        ${statsHtml}
-                    </div>
-                    <div class="document-table">
-                        <h3>COMPETENCIAS LOMBARDAS</h3>
-                        ${compsHtml}
-                    </div>
-                </div>
-
-                <div class="document-footer-certification">
-                    <div class="certification-text">
-                        SE CERTIFICA QUE LA INFORMACIÓN CONTENIDA EN ESTE EXPEDIENTE<br />
-                        ES VERÍDICA Y HA SIDO REGISTRADA EN EL ARCHIVO CENTRAL.
-                    </div>
-                    <div class="certification-bottom">
-                        <div class="certification-date">
-                            <span class="cert-label">FECHA DE EMISIÓN</span>
-                            <span class="cert-value">${dateStr}</span>
-                        </div>
-                        <div class="certification-signature">
-                            <img src="./img/Firma.png" alt="Firma del Registrador" class="signature-image" crossorigin="anonymous" />
-                            <span class="cert-label">FIRMA DEL REGISTRADOR</span>
-                        </div>
-                        <div class="certification-seal">
-                            <img src="./img/Sello.png" alt="Sello Oficial" class="seal-image" crossorigin="anonymous" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="document-motto">
-                    POR LA LIGA · POR LOMBARDOS · POR SIEMPRE
-                </div>
-            `;
-
-            // Cargar skin en el canvas del retrato
-            if (minecraftNick) {
-                const canvas = document.getElementById('portraitSkinCanvas');
-                if (canvas && typeof skinview3d !== 'undefined') {
-                    const skinURL = `https://mc-heads.net/skin/${encodeURIComponent(minecraftNick)}.png`;
-                    const poseData = data.pose?.values || null;
-
-                    try {
-                        const viewer = new skinview3d.SkinViewer({
-                            canvas: canvas,
-                            width: 150,
-                            height: 175
-                        });
-
-                        viewer.fov = 30;
-                        viewer.zoom = 0.9;
-                        viewer.autoRotate = false;
-                        viewer.controls.enableRotate = false;
-                        viewer.controls.enableZoom = false;
-                        viewer.controls.enablePan = false;
-                        viewer.globalLight.intensity = 2.5;
-                        viewer.cameraLight.intensity = 1.2;
-
-                        viewer.loadSkin(skinURL).then(() => {
-                            if (poseData && viewer.playerObject && viewer.playerObject.skin) {
-                                const skin = viewer.playerObject.skin;
-                                Object.keys(poseData).forEach(key => {
-                                    const [part, axis] = key.split('.');
-                                    if (skin[part]) {
-                                        skin[part].rotation[axis] = poseData[key];
-                                    }
-                                });
-                                viewer.render();
-                            }
-                        }).catch(() => {
-                            console.warn('Error cargando skin para:', minecraftNick);
-                        });
-                    } catch (error) {
-                        console.warn('Error al renderizar skin:', error);
-                    }
-                }
-            }
-        }
-
-        // =========================================================
         // OBSERVER DE AUTENTICACIÓN
         // =========================================================
         onAuthStateChanged(auth, async (user) => {
+            // Ocultar overlay
             authOverlay.classList.add('hidden');
 
             if (!user) {
-                showToast('🔐 Debes iniciar sesión para ver el expediente', 'error', 2000);
+                // ❌ NO LOGUEADO → Redirigir a login
+                showToast('🔐 Debes iniciar sesión para ver los documentos', 'error', 2000);
                 setTimeout(() => {
                     window.location.href = 'login.html';
                 }, 500);
                 return;
             }
 
+            // ✅ USUARIO LOGUEADO → Mostrar contenido
             const isAdmin = await checkIsAdmin(user);
+            
+            // Mostrar contenido
             mainContent.classList.add('visible');
+            
+            // Renderizar nav
             renderNav(user, isAdmin);
 
-            // Cargar expediente
-            const id = getExpedienteId();
-            await cargarExpediente(id);
+            // Cargar documentos
+            cargarDocumentos();
 
-            console.log(`📄 Expediente - Usuario: ${user.email}`);
+            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+
+            console.log(`📄 Documentos - Usuario: ${user.email}`);
+            console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
         });
+
+        // =========================================================
+        // ORDEN DE RANGOS
+        // =========================================================
+        const RANK_ORDER = [
+            'Elite Urbana',
+            'Caballero Lombardo',
+            'Infante Lombardo',
+            'Paladín Lombardo',
+            'Pavesero Lombardo',
+            'Milicia Urbana',
+            'Ballestero Genovés Condecorado',
+            'Ciudadano'
+        ];
+
+        const RANK_COLORS = {
+            'Elite Urbana': '#FFD700',
+            'Caballero Lombardo': '#CC0000',
+            'Infante Lombardo': '#933581',
+            'Paladín Lombardo': '#855C88',
+            'Pavesero Lombardo': '#028589',
+            'Milicia Urbana': '#BC4E00',
+            'Ballestero Genovés Condecorado': '#10A1C3',
+            'Ciudadano': '#888888'
+        };
+
+        // =========================================================
+        // CARGAR SKIN EN CANVAS (con skinview3d)
+        // =========================================================
+        function cargarSkinEnCanvas(canvas, skinURL, poseData = null) {
+            if (typeof skinview3d === 'undefined') {
+                setTimeout(() => cargarSkinEnCanvas(canvas, skinURL, poseData), 300);
+                return;
+            }
+
+            try {
+                const viewer = new skinview3d.SkinViewer({
+                    canvas: canvas,
+                    width: 300,
+                    height: 270
+                });
+
+                viewer.fov = 30;
+                viewer.zoom = 1.0;
+                viewer.autoRotate = false;
+                viewer.controls.enableRotate = false;
+                viewer.controls.enableZoom = false;
+                viewer.controls.enablePan = false;
+                viewer.globalLight.intensity = 2.5;
+                viewer.cameraLight.intensity = 1.2;
+
+                viewer.loadSkin(skinURL).then(() => {
+                    if (poseData && viewer.playerObject && viewer.playerObject.skin) {
+                        const skin = viewer.playerObject.skin;
+                        Object.keys(poseData).forEach(key => {
+                            const [part, axis] = key.split('.');
+                            if (skin[part]) {
+                                skin[part].rotation[axis] = poseData[key];
+                            }
+                        });
+                        viewer.render();
+                    }
+                }).catch(() => {
+                    // Skin no encontrada, mostrar placeholder
+                    console.warn('Error cargando skin para:', skinURL);
+                });
+
+            } catch (error) {
+                console.warn('Error al renderizar skin:', error);
+            }
+        }
+
+        // =========================================================
+        // VER EXPEDIENTE
+        // =========================================================
+        function verExpediente(id) {
+            // Redirige a la vista detalle con el ID
+            window.location.href = `expediente.html?id=${id}`;
+        }
+        window.verExpediente = verExpediente;
+
+        // =========================================================
+        // RENDERIZAR POR RANGOS
+        // =========================================================
+        function renderizarPorRangos(expedientes, searchTerm = '') {
+            const searchLower = searchTerm.toLowerCase().trim();
+
+            // Convertir a array
+            let items = Object.keys(expedientes).map(key => ({
+                id: key,
+                ...expedientes[key]
+            }));
+
+            // Filtrar por búsqueda
+            if (searchLower) {
+                items = items.filter(item => {
+                    const name = (item.name || '').toLowerCase();
+                    const alias = (item.alias || '').toLowerCase();
+                    const nick = (item.minecraftNick || '').toLowerCase();
+                    const rank = (item.rank || '').toLowerCase();
+                    const fileNumber = (item.fileNumber || '').toLowerCase();
+                    return name.includes(searchLower) ||
+                        alias.includes(searchLower) ||
+                        nick.includes(searchLower) ||
+                        rank.includes(searchLower) ||
+                        fileNumber.includes(searchLower);
+                });
+            }
+
+            // Agrupar por rango
+            const grupos = {};
+            items.forEach(item => {
+                const rank = item.rank || 'Ciudadano';
+                if (!grupos[rank]) grupos[rank] = [];
+                grupos[rank].push(item);
+            });
+
+            // Ordenar los rangos según RANK_ORDER
+            const rangosOrdenados = RANK_ORDER.filter(r => grupos[r] && grupos[r].length > 0);
+
+            // Actualizar contadores
+            totalCount.textContent = Object.keys(expedientes).length;
+            visibleCount.textContent = items.length;
+            totalVisible.textContent = items.length;
+
+            if (items.length === 0) {
+                documentsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-address-book"></i>
+                        <h3>${searchLower ? 'No se encontraron resultados' : 'No hay expedientes registrados'}</h3>
+                        <p>${searchLower ? 'Intenta con otro término de búsqueda' : 'Completa el formulario para crear el primer expediente'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Generar HTML por rangos
+            let html = '';
+            rangosOrdenados.forEach(rank => {
+                const itemsDelRango = grupos[rank];
+                const color = RANK_COLORS[rank] || '#888888';
+
+                html += `
+                    <div class="rank-section">
+                        <div class="rank-section-header">
+                            <span class="rank-dot" style="background:${color};"></span>
+                            <span class="rank-label">${rank}</span>
+                            <span class="rank-count">${itemsDelRango.length} ciudadano${itemsDelRango.length > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="rank-grid">
+                `;
+
+                itemsDelRango.forEach(item => {
+                    const name = item.name || 'Sin nombre';
+                    const alias = item.alias || 'Sin alias';
+                    const nick = item.minecraftNick || '';
+                    const poseValues = item.pose?.values || null;
+
+                    let poseDataAttr = '';
+                    if (poseValues) {
+                        poseDataAttr = `data-pose='${JSON.stringify(poseValues)}'`;
+                    }
+
+                    const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
+
+                    html += `
+                        <div class="document-card" data-rank="${rank}" data-id="${item.id}" ${poseDataAttr}>
+                            <div class="card-skin">
+                                ${skinURL ? 
+                                    `<canvas id="skinCanvas_${item.id}" data-skin="${skinURL}"></canvas>` :
+                                    `<div class="no-skin"><i class="fas fa-user"></i></div>`
+                                }
+                            </div>
+                            <div class="card-info">
+                                <div class="card-name">${name}</div>
+                                <div class="card-alias">"${alias}"</div>
+                                <div class="card-rank">
+                                    <span class="rank-badge">${rank}</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-view" onclick="verExpediente('${item.id}')">
+                                        <i class="fas fa-eye"></i> VER
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            documentsContainer.innerHTML = html;
+
+            // Cargar skins
+            setTimeout(() => {
+                document.querySelectorAll('.card-skin canvas').forEach(canvas => {
+                    const skinURL = canvas.dataset.skin;
+                    if (skinURL) {
+                        const card = canvas.closest('.document-card');
+                        let poseData = null;
+                        if (card) {
+                            try {
+                                const poseAttr = card.dataset.pose;
+                                if (poseAttr) {
+                                    poseData = JSON.parse(poseAttr);
+                                }
+                            } catch (e) {}
+                        }
+                        cargarSkinEnCanvas(canvas, skinURL, poseData);
+                    }
+                });
+            }, 200);
+        }
+
+        // =========================================================
+        // CARGAR DOCUMENTOS DESDE FIREBASE
+        // =========================================================
+        function cargarDocumentos() {
+            const expedientesRef = ref(database, 'expedientes');
+
+            onValue(expedientesRef, (snapshot) => {
+                const firebaseData = snapshot.val() || {};
+                renderizarPorRangos(firebaseData, searchInput.value);
+            }, (error) => {
+                console.error('Error al cargar documentos:', error);
+                showToast('❌ Error al cargar los documentos', 'error', 3000);
+            });
+        }
+
+        // =========================================================
+        // BÚSQUEDA EN TIEMPO REAL
+        // =========================================================
+        let searchTimeout = null;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const expedientesRef = ref(database, 'expedientes');
+                get(expedientesRef).then((snapshot) => {
+                    const firebaseData = snapshot.val() || {};
+                    renderizarPorRangos(firebaseData, searchInput.value);
+                });
+            }, 300);
+        });
+
+        console.log('📄 Página de documentos con autenticación obligatoria');
     </script>
 
 </body>
