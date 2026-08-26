@@ -8,7 +8,7 @@
   <link rel="shortcut icon" href="./logo.png" />
   
   <!-- =========================================================
-       DETECCIÓN DE BOTS Y REDIRECCIÓN AL WORKER
+       🚨 DETECCIÓN DE BOTS - DEBE IR PRIMERO 🚨
   ========================================================= -->
   <script>
     (function() {
@@ -35,7 +35,6 @@
 
       // Si es un bot y hay un ID, redirigir al Worker
       if (isBot && id) {
-        // 🔴 CAMBIÁ ESTA URL POR LA DE TU WORKER
         const workerUrl = `https://liga-lombarda-og.nahuel-2ksiete.workers.dev/?key=${encodeURIComponent(id)}`;
         window.location.replace(workerUrl);
         return;
@@ -1649,7 +1648,7 @@
         </span>
       `;
       document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
-      document.getElementById('shareBtn').addEventListener('click', compartirDNI);
+      document.getElementById('shareBtn').addEventListener('click', compartirURL);
     }
   }
 
@@ -1693,42 +1692,39 @@
   }
 
   // =========================================================
-  // COMPARTIR DNI COMO PNG
+  // COMPARTIR URL (copia el enlace)
   // =========================================================
-  function compartirDNI() {
-    const dniCard = document.getElementById('dniCard');
-    if (!dniCard) {
-      showToast('❌ No se encontró el DNI para compartir', 'error', 3000);
-      return;
-    }
-
-    showToast('📸 Generando imagen...', 'info', 2000);
-
-    // Usar html2canvas para capturar el DNI
-    import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.esm.js').then((module) => {
-      const html2canvas = module.default;
-      
-      html2canvas(dniCard, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#f7f5ef',
-        logging: false,
-        allowTaint: true,
-        foreignObjectRendering: false
-      }).then((canvas) => {
-        const link = document.createElement('a');
-        link.download = `DNI_${document.getElementById('dniFileNumber').textContent}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('✅ Imagen descargada', 'success', 3000);
-      }).catch((error) => {
-        console.error('Error al generar imagen:', error);
-        showToast('❌ Error al generar la imagen', 'error', 3000);
+  function compartirURL() {
+    const urlCompleta = window.location.href;
+    
+    // Usar la API de clipboard si está disponible
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(urlCompleta).then(() => {
+        showToast('✅ Enlace copiado al portapapeles', 'success', 3000);
+      }).catch(() => {
+        // Si falla, usar el método alternativo
+        copiarURLAlternativo(urlCompleta);
       });
-    }).catch((error) => {
-      console.error('Error al cargar html2canvas:', error);
-      showToast('❌ Error al cargar la librería de imágenes', 'error', 3000);
-    });
+    } else {
+      copiarURLAlternativo(urlCompleta);
+    }
+  }
+
+  function copiarURLAlternativo(texto) {
+    // Crear un input temporal
+    const input = document.createElement('input');
+    input.value = texto;
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    try {
+      document.execCommand('copy');
+      showToast('✅ Enlace copiado al portapapeles', 'success', 3000);
+    } catch (e) {
+      showToast('❌ No se pudo copiar el enlace', 'error', 3000);
+    }
+    document.body.removeChild(input);
   }
 
   // =========================================================
