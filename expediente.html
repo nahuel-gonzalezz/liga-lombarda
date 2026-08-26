@@ -6,6 +6,46 @@
   <title>Expediente — Liga Lombarda</title>
   <link rel="icon" type="image/png" href="./logo.png" />
   <link rel="shortcut icon" href="./logo.png" />
+  
+  <!-- =========================================================
+       DETECCIÓN DE BOTS Y REDIRECCIÓN AL WORKER
+  ========================================================= -->
+  <script>
+    (function() {
+      // Detectar si es un bot de redes sociales
+      const userAgent = navigator.userAgent || '';
+      const isBot = 
+        userAgent.includes('Discordbot') ||
+        userAgent.includes('Twitterbot') ||
+        userAgent.includes('facebookexternalhit') ||
+        userAgent.includes('WhatsApp') ||
+        userAgent.includes('Slackbot') ||
+        userAgent.includes('TelegramBot') ||
+        userAgent.includes('Googlebot') ||
+        userAgent.includes('Bingbot') ||
+        userAgent.includes('embedly') ||
+        userAgent.includes('quora link preview') ||
+        userAgent.includes('LinkedInBot') ||
+        userAgent.includes('Pinterest') ||
+        userAgent.includes('redditbot');
+
+      // Obtener el ID de la URL
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id') || params.get('key');
+
+      // Si es un bot y hay un ID, redirigir al Worker
+      if (isBot && id) {
+        // 🔴 CAMBIÁ ESTA URL POR LA DE TU WORKER
+        const workerUrl = `https://tu-worker.workers.dev/?key=${encodeURIComponent(id)}`;
+        window.location.replace(workerUrl);
+        return;
+      }
+
+      // Si NO es bot, mostrar la página normal
+      // (el resto del código sigue ejecutándose)
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
