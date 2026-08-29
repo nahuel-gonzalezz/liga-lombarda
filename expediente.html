@@ -12,7 +12,6 @@
   ========================================================= -->
   <script>
     (function() {
-      // Detectar si es un bot de redes sociales
       const userAgent = navigator.userAgent || '';
       const isBot = 
         userAgent.includes('Discordbot') ||
@@ -29,19 +28,14 @@
         userAgent.includes('Pinterest') ||
         userAgent.includes('redditbot');
 
-      // Obtener el ID de la URL
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id') || params.get('key');
 
-      // Si es un bot y hay un ID, redirigir al Worker
       if (isBot && id) {
         const workerUrl = `https://liga-lombarda-og.nahuel-2ksiete.workers.dev/?key=${encodeURIComponent(id)}`;
         window.location.replace(workerUrl);
         return;
       }
-
-      // Si NO es bot, mostrar la página normal
-      // (el resto del código sigue ejecutándose)
     })();
   </script>
 
@@ -49,6 +43,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- skinview3d SE CARGA UNA SOLA VEZ AQUÍ -->
   <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
   
   <style>
@@ -202,7 +197,7 @@
     }
 
     /* =========================================================
-       RESTO DEL CSS (tu estilo existente)
+       RESTO DEL CSS
     ========================================================= */
     * {
       box-sizing: border-box;
@@ -1326,17 +1321,14 @@
     </div>
     <div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;">
       <div class="badge-archivo"><i class="fas fa-archive" style="margin-right:6px;"></i>ARCHIVO CENTRAL</div>
-      <!-- USER INFO (se renderiza con JS) -->
-      <div id="userNav" style="display: none;">
-        <!-- Lo llena JavaScript -->
-      </div>
+      <div id="userNav" style="display: none;"></div>
     </div>
   </div>
 
-  <!-- contenido vertical: foto arriba, documentos abajo -->
+  <!-- contenido vertical -->
   <div class="contenido-vertical">
 
-    <!-- PANEL PERSONA (ARRIBA) -->
+    <!-- PANEL PERSONA -->
     <div class="panel-persona">
       <div class="visor-skin">
         <canvas id="skin-container"></canvas>
@@ -1353,7 +1345,7 @@
       </div>
     </div>
 
-    <!-- PANEL DOCUMENTOS (ABAJO) -->
+    <!-- PANEL DOCUMENTOS -->
     <div class="panel-documentos">
 
       <!-- DNI -->
@@ -1587,11 +1579,6 @@
 <div id="toast" class="toast"></div>
 
 <!-- =========================================================
-     SKINVIEW3D
-========================================================= -->
-<script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
-
-<!-- =========================================================
      SCRIPT PRINCIPAL (MÓDULO)
 ========================================================= -->
 <script type="module">
@@ -1692,17 +1679,14 @@
   }
 
   // =========================================================
-  // COMPARTIR URL (copia el enlace)
+  // COMPARTIR URL
   // =========================================================
   function compartirURL() {
     const urlCompleta = window.location.href;
-    
-    // Usar la API de clipboard si está disponible
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(urlCompleta).then(() => {
         showToast('✅ Enlace copiado al portapapeles', 'success', 3000);
       }).catch(() => {
-        // Si falla, usar el método alternativo
         copiarURLAlternativo(urlCompleta);
       });
     } else {
@@ -1711,7 +1695,6 @@
   }
 
   function copiarURLAlternativo(texto) {
-    // Crear un input temporal
     const input = document.createElement('input');
     input.value = texto;
     input.style.position = 'fixed';
@@ -1725,6 +1708,282 @@
       showToast('❌ No se pudo copiar el enlace', 'error', 3000);
     }
     document.body.removeChild(input);
+  }
+
+  // =========================================================
+  // SKIN VIEWER CON ANIMACIONES (CORREGIDO)
+  // =========================================================
+  let viewer = null;
+  let animacionActiva = false;
+  let animFrameId = null;
+  let currentSkinNick = '';
+
+  // Estados de animación
+  let estadoAnimacion = 'WALKING';
+  let posX = 28;
+  const targetX = 0;
+  const walkSpeed = 0.22;
+  let gestureStartTime = 0;
+  let gestureDuration = 2500;
+  let nextGestureTime = 0;
+  const GESTURE_MIN_DELAY = 4000;
+  const GESTURE_MAX_DELAY = 10000;
+  const GESTURES = ['WAVING', 'LOOKING', 'SIXSEVEN'];
+
+  function programarProximoGesto() {
+    const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
+    nextGestureTime = performance.now() + delay;
+  }
+
+  function triggerRandomGesture() {
+    if (estadoAnimacion === 'IDLE' && viewer && viewer.playerObject) {
+      const gesture = GESTURES[Math.floor(Math.random() * GESTURES.length)];
+      estadoAnimacion = gesture;
+      gestureStartTime = performance.now();
+
+      if (gesture === 'LOOKING') gestureDuration = 3000;
+      else if (gesture === 'SIXSEVEN') gestureDuration = 2800;
+      else gestureDuration = 2500;
+
+      const delay = gestureDuration + GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
+      nextGestureTime = performance.now() + delay;
+    }
+  }
+
+  function iniciarAnimacion() {
+    // Detener animación anterior si existe
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+
+    if (!viewer || !viewer.playerObject || !viewer.playerObject.skin) {
+      // Reintentar después de un breve retraso
+      setTimeout(iniciarAnimacion, 300);
+      return;
+    }
+
+    animacionActiva = true;
+    estadoAnimacion = 'WALKING';
+    posX = 28;
+    
+    // Configurar posición inicial
+    const player = viewer.playerObject;
+    player.position.x = posX;
+    player.position.y = 0;
+    player.rotation.y = -Math.PI / 2;
+    
+    // Resetear extremidades
+    player.skin.leftArm.rotation.x = 0;
+    player.skin.rightArm.rotation.x = 0;
+    player.skin.leftLeg.rotation.x = 0;
+    player.skin.rightLeg.rotation.x = 0;
+    player.skin.head.rotation.y = 0;
+    player.skin.head.rotation.z = 0;
+    
+    programarProximoGesto();
+    viewer.render();
+
+    function animate(time) {
+      if (!animacionActiva || !viewer || !viewer.playerObject) {
+        animFrameId = null;
+        return;
+      }
+
+      const player = viewer.playerObject;
+      if (!player.skin) {
+        animFrameId = requestAnimationFrame(animate);
+        return;
+      }
+
+      const t = time * 0.005;
+
+      if (estadoAnimacion !== 'WALKING') {
+        player.rotation.y = 0;
+      }
+
+      // ===== WALKING =====
+      if (estadoAnimacion === 'WALKING') {
+        posX -= walkSpeed;
+        player.position.x = posX;
+        player.rotation.y = -Math.PI / 2;
+
+        const walkCycle = Math.sin(t * 6);
+        player.skin.leftArm.rotation.x = walkCycle * 0.5;
+        player.skin.rightArm.rotation.x = -walkCycle * 0.5;
+        player.skin.leftLeg.rotation.x = -walkCycle * 0.5;
+        player.skin.rightLeg.rotation.x = walkCycle * 0.5;
+        player.position.y = Math.abs(Math.sin(t * 12)) * 0.15;
+
+        if (posX <= targetX) {
+          posX = targetX;
+          player.position.x = targetX;
+          player.position.y = 0;
+          player.rotation.y = 0;
+          player.skin.leftArm.rotation.x = 0;
+          player.skin.rightArm.rotation.x = 0;
+          player.skin.leftLeg.rotation.x = 0;
+          player.skin.rightLeg.rotation.x = 0;
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // ===== IDLE =====
+      else if (estadoAnimacion === 'IDLE') {
+        const breathe = Math.sin(t * 1.5) * 0.08;
+        player.position.y = breathe;
+        player.skin.head.rotation.y = 0;
+        player.skin.leftArm.rotation.x = Math.sin(t * 1.5) * 0.04;
+        player.skin.leftArm.rotation.z = -0.08 - Math.cos(t * 1.5) * 0.02;
+        player.skin.rightArm.rotation.x = -Math.sin(t * 1.5) * 0.04;
+        player.skin.rightArm.rotation.z = 0.08 + Math.cos(t * 1.5) * 0.02;
+
+        if (time >= nextGestureTime) {
+          triggerRandomGesture();
+        }
+      }
+
+      // ===== WAVING =====
+      else if (estadoAnimacion === 'WAVING') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          player.skin.rightArm.rotation.x = Math.PI - 0.2;
+          player.skin.rightArm.rotation.z = -0.3 + Math.sin(progress * Math.PI * 8) * 0.3;
+        } else {
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // ===== LOOKING =====
+      else if (estadoAnimacion === 'LOOKING') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          player.skin.head.rotation.y = Math.sin(progress * Math.PI * 2) * 0.6;
+        } else {
+          player.skin.head.rotation.y = 0;
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      // ===== SIXSEVEN =====
+      else if (estadoAnimacion === 'SIXSEVEN') {
+        player.position.y = Math.sin(t * 1.5) * 0.08;
+        const elapsed = time - gestureStartTime;
+        const progress = elapsed / gestureDuration;
+        if (progress < 1) {
+          const rhythm = Math.sin(progress * Math.PI * 10);
+          player.skin.rightArm.rotation.x = -1.2 + rhythm * 0.15;
+          player.skin.rightArm.rotation.z = -0.2;
+          player.skin.leftArm.rotation.x = -1.2 - rhythm * 0.15;
+          player.skin.leftArm.rotation.z = 0.2;
+          player.skin.head.rotation.z = rhythm * 0.08;
+        } else {
+          player.skin.head.rotation.z = 0;
+          estadoAnimacion = 'IDLE';
+          programarProximoGesto();
+        }
+      }
+
+      viewer.render();
+      animFrameId = requestAnimationFrame(animate);
+    }
+
+    animFrameId = requestAnimationFrame(animate);
+  }
+
+  // =========================================================
+  // CARGAR SKIN CON ANIMACIÓN
+  // =========================================================
+  function cargarSkinConAnimacion(nick) {
+    if (!nick || nick === currentSkinNick) return;
+    currentSkinNick = nick;
+
+    const canvas = document.getElementById('skin-container');
+
+    // Crear viewer si no existe
+    if (!viewer) {
+      viewer = new skinview3d.SkinViewer({
+        canvas: canvas,
+        width: 220,
+        height: 180
+      });
+      viewer.camera.position.set(0, 8, 28);
+      viewer.controls.target.set(0, 6, 0);
+      viewer.controls.enableRotate = false;
+      viewer.controls.enableZoom = false;
+      viewer.controls.enablePan = false;
+      viewer.globalLight.intensity = 2.5;
+      viewer.cameraLight.intensity = 1.2;
+    }
+
+    const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
+    
+    viewer.loadSkin(skinUrl).then(() => {
+      const skin = viewer.playerObject?.skin;
+      if (skin) {
+        skin.traverse((child) => {
+          if (child.isMesh) {
+            child.material.side = 2;
+            child.material.transparent = true;
+            child.material.alphaTest = 0.1;
+          }
+        });
+        viewer.render();
+        
+        // Iniciar animación después de cargar la skin
+        setTimeout(() => {
+          iniciarAnimacion();
+          // Actualizar mini canvases
+          setTimeout(updateMiniCanvases, 500);
+        }, 200);
+      }
+    }).catch(() => {
+      // Fallback a minotar
+      viewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(nick)}`).then(() => {
+        setTimeout(() => {
+          iniciarAnimacion();
+          setTimeout(updateMiniCanvases, 500);
+        }, 200);
+      });
+    });
+  }
+
+  // =========================================================
+  // ACTUALIZAR MINI CANVASES
+  // =========================================================
+  function updateMiniCanvases() {
+    const mainCanvas = document.getElementById('skin-container');
+    const bookCanvas = document.getElementById('bookSkinCanvas');
+    const dniCanvas = document.getElementById('dniSkinCanvas');
+    if (!bookCanvas || !dniCanvas || !mainCanvas) return;
+    try {
+      const dataURL = mainCanvas.toDataURL('image/png');
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function() {
+        let ctx = bookCanvas.getContext('2d');
+        let size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
+        bookCanvas.width = size; bookCanvas.height = size;
+        ctx.clearRect(0,0,size,size);
+        let s = Math.min(size/img.width, size/img.height)*1.05;
+        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.04, img.width*s, img.height*s);
+
+        ctx = dniCanvas.getContext('2d');
+        size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
+        dniCanvas.width = size; dniCanvas.height = size;
+        ctx.clearRect(0,0,size,size);
+        s = Math.min(size/img.width, size/img.height)*1.7;
+        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.3, img.width*s, img.height*s);
+      };
+      img.src = dataURL;
+    } catch(e) {}
   }
 
   // =========================================================
@@ -1821,256 +2080,10 @@
       }
     });
 
-    // Cargar skin con animaciones
+    // Cargar skin con animación
     if (minecraftNick) {
-      cargarSkinConAnimacion(minecraftNick, data.pose?.values || null);
+      cargarSkinConAnimacion(minecraftNick);
     }
-  }
-
-  // =========================================================
-  // SKIN VIEWER CON ANIMACIONES
-  // =========================================================
-  let viewer = null;
-  let currentSkinNick = '';
-
-  function cargarSkinConAnimacion(nick, poseData = null) {
-    if (!nick || nick === currentSkinNick) return;
-    currentSkinNick = nick;
-
-    const canvas = document.getElementById('skin-container');
-
-    if (!viewer) {
-      viewer = new skinview3d.SkinViewer({
-        canvas: canvas,
-        width: 220,
-        height: 180
-      });
-      viewer.camera.position.set(0, 8, 28);
-      viewer.controls.target.set(0, 6, 0);
-      viewer.controls.enableRotate = false;
-      viewer.controls.enableZoom = false;
-      viewer.controls.enablePan = false;
-      viewer.globalLight.intensity = 2.5;
-      viewer.cameraLight.intensity = 1.2;
-    }
-
-    const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
-    viewer.loadSkin(skinUrl).then(() => {
-      if (viewer.playerObject && viewer.playerObject.skin) {
-        const skin = viewer.playerObject.skin;
-        skin.traverse((child) => {
-          if (child.isMesh) {
-            child.material.side = 2;
-            child.material.transparent = true;
-            child.material.alphaTest = 0.1;
-          }
-        });
-
-        // Aplicar pose si existe
-        if (poseData) {
-          Object.keys(poseData).forEach(key => {
-            const [part, axis] = key.split('.');
-            if (skin[part]) {
-              skin[part].rotation[axis] = poseData[key];
-            }
-          });
-        }
-        viewer.render();
-        
-        // Iniciar animaciones
-        iniciarAnimaciones();
-        
-        // Actualizar mini canvases
-        setTimeout(updateMiniCanvases, 500);
-      }
-    }).catch(() => {
-      viewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(nick)}`).then(() => {
-        setTimeout(updateMiniCanvases, 500);
-      });
-    });
-  }
-
-  // =========================================================
-  // ANIMACIONES (caminar, saludar, etc.)
-  // =========================================================
-  let animacionActiva = true;
-  let estadoAnimacion = 'WALKING';
-  let posX = 28;
-  const targetX = 0;
-  const walkSpeed = 0.22;
-  let gestureStartTime = 0;
-  let gestureDuration = 2500;
-  let nextGestureTime = 0;
-  const GESTURE_MIN_DELAY = 4000;
-  const GESTURE_MAX_DELAY = 10000;
-  const GESTURES = ['WAVING', 'LOOKING', 'SIXSEVEN'];
-
-  function programarProximoGesto() {
-    const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
-    nextGestureTime = performance.now() + delay;
-  }
-
-  function triggerRandomGesture() {
-    if (estadoAnimacion === 'IDLE') {
-      const gesture = GESTURES[Math.floor(Math.random() * GESTURES.length)];
-      estadoAnimacion = gesture;
-      gestureStartTime = performance.now();
-
-      if (gesture === 'LOOKING') gestureDuration = 3000;
-      else if (gesture === 'SIXSEVEN') gestureDuration = 2800;
-      else gestureDuration = 2500;
-
-      const delay = gestureDuration + GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
-      nextGestureTime = performance.now() + delay;
-    }
-  }
-
-  function iniciarAnimaciones() {
-    if (!viewer || !viewer.playerObject || !viewer.playerObject.skin) return;
-    
-    estadoAnimacion = 'WALKING';
-    posX = 28;
-    if (viewer.playerObject) {
-      viewer.playerObject.position.x = posX;
-    }
-    programarProximoGesto();
-    
-    function animate(time) {
-      if (!animacionActiva) return;
-      requestAnimationFrame(animate);
-
-      const player = viewer.playerObject;
-      if (!player || !player.skin) return;
-
-      const t = time * 0.005;
-
-      if (estadoAnimacion !== 'WALKING') {
-        player.rotation.y = 0;
-      }
-
-      // WALKING
-      if (estadoAnimacion === 'WALKING') {
-        posX -= walkSpeed;
-        player.position.x = posX;
-        player.rotation.y = -Math.PI / 2;
-
-        const walkCycle = Math.sin(t * 6);
-        player.skin.leftArm.rotation.x = walkCycle * 0.5;
-        player.skin.rightArm.rotation.x = -walkCycle * 0.5;
-        player.skin.leftLeg.rotation.x = -walkCycle * 0.5;
-        player.skin.rightLeg.rotation.x = walkCycle * 0.5;
-        player.position.y = Math.abs(Math.sin(t * 12)) * 0.15;
-
-        if (posX <= targetX) {
-          posX = targetX;
-          player.position.x = targetX;
-          player.position.y = 0;
-          player.rotation.y = 0;
-          player.skin.leftArm.rotation.x = 0;
-          player.skin.rightArm.rotation.x = 0;
-          player.skin.leftLeg.rotation.x = 0;
-          player.skin.rightLeg.rotation.x = 0;
-          estadoAnimacion = 'IDLE';
-          programarProximoGesto();
-        }
-      }
-
-      // IDLE
-      else if (estadoAnimacion === 'IDLE') {
-        const breathe = Math.sin(t * 1.5) * 0.08;
-        player.position.y = breathe;
-        player.skin.head.rotation.y = 0;
-        player.skin.leftArm.rotation.x = Math.sin(t * 1.5) * 0.04;
-        player.skin.leftArm.rotation.z = -0.08 - Math.cos(t * 1.5) * 0.02;
-        player.skin.rightArm.rotation.x = -Math.sin(t * 1.5) * 0.04;
-        player.skin.rightArm.rotation.z = 0.08 + Math.cos(t * 1.5) * 0.02;
-
-        if (time >= nextGestureTime) {
-          triggerRandomGesture();
-        }
-      }
-
-      // WAVING
-      else if (estadoAnimacion === 'WAVING') {
-        player.position.y = Math.sin(t * 1.5) * 0.08;
-        const elapsed = time - gestureStartTime;
-        const progress = elapsed / gestureDuration;
-        if (progress < 1) {
-          player.skin.rightArm.rotation.x = Math.PI - 0.2;
-          player.skin.rightArm.rotation.z = -0.3 + Math.sin(progress * Math.PI * 8) * 0.3;
-        } else {
-          estadoAnimacion = 'IDLE';
-          programarProximoGesto();
-        }
-      }
-
-      // LOOKING
-      else if (estadoAnimacion === 'LOOKING') {
-        player.position.y = Math.sin(t * 1.5) * 0.08;
-        const elapsed = time - gestureStartTime;
-        const progress = elapsed / gestureDuration;
-        if (progress < 1) {
-          player.skin.head.rotation.y = Math.sin(progress * Math.PI * 2) * 0.6;
-        } else {
-          estadoAnimacion = 'IDLE';
-          programarProximoGesto();
-        }
-      }
-
-      // SIXSEVEN
-      else if (estadoAnimacion === 'SIXSEVEN') {
-        player.position.y = Math.sin(t * 1.5) * 0.08;
-        const elapsed = time - gestureStartTime;
-        const progress = elapsed / gestureDuration;
-        if (progress < 1) {
-          const rhythm = Math.sin(progress * Math.PI * 10);
-          player.skin.rightArm.rotation.x = -1.2 + rhythm * 0.15;
-          player.skin.rightArm.rotation.z = -0.2;
-          player.skin.leftArm.rotation.x = -1.2 - rhythm * 0.15;
-          player.skin.leftArm.rotation.z = 0.2;
-          player.skin.head.rotation.z = rhythm * 0.08;
-        } else {
-          player.skin.head.rotation.z = 0;
-          estadoAnimacion = 'IDLE';
-          programarProximoGesto();
-        }
-      }
-
-      viewer.render();
-    }
-
-    requestAnimationFrame(animate);
-  }
-
-  // =========================================================
-  // ACTUALIZAR MINI CANVASES
-  // =========================================================
-  function updateMiniCanvases() {
-    const mainCanvas = document.getElementById('skin-container');
-    const bookCanvas = document.getElementById('bookSkinCanvas');
-    const dniCanvas = document.getElementById('dniSkinCanvas');
-    if (!bookCanvas || !dniCanvas || !mainCanvas) return;
-    try {
-      const dataURL = mainCanvas.toDataURL('image/png');
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function() {
-        let ctx = bookCanvas.getContext('2d');
-        let size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
-        bookCanvas.width = size; bookCanvas.height = size;
-        ctx.clearRect(0,0,size,size);
-        let s = Math.min(size/img.width, size/img.height)*1.05;
-        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.04, img.width*s, img.height*s);
-
-        ctx = dniCanvas.getContext('2d');
-        size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
-        dniCanvas.width = size; dniCanvas.height = size;
-        ctx.clearRect(0,0,size,size);
-        s = Math.min(size/img.width, size/img.height)*1.7;
-        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.3, img.width*s, img.height*s);
-      };
-      img.src = dataURL;
-    } catch(e) {}
   }
 
   // =========================================================
@@ -2194,7 +2207,7 @@
     console.log(`📄 Expediente - Usuario: ${user.email}`);
   });
 
-  console.log('📄 Página de expediente con autenticación y animaciones');
+  console.log('📄 Página de expediente con autenticación y animaciones corregidas');
 </script>
 
 </body>
