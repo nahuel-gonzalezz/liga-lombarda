@@ -7,9 +7,6 @@
   <link rel="icon" type="image/png" href="./logo.png" />
   <link rel="shortcut icon" href="./logo.png" />
   
-  <!-- =========================================================
-       🚨 DETECCIÓN DE BOTS - DEBE IR PRIMERO 🚨
-  ========================================================= -->
   <script>
     (function() {
       const userAgent = navigator.userAgent || '';
@@ -46,9 +43,6 @@
   <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
   
   <style>
-    /* =========================================================
-       OVERLAY DE AUTENTICACIÓN
-    ========================================================= */
     .auth-overlay {
       position: fixed;
       top: 0;
@@ -64,11 +58,7 @@
       gap: 20px;
       backdrop-filter: blur(8px);
     }
-
-    .auth-overlay.hidden {
-      display: none;
-    }
-
+    .auth-overlay.hidden { display: none; }
     .auth-overlay .spinner {
       width: 50px;
       height: 50px;
@@ -77,22 +67,17 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-
     .auth-overlay p {
       color: #b7a98f;
       font-family: "Cinzel", serif;
       font-size: 14px;
       letter-spacing: 2px;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
 
-    /* =========================================================
-       TOAST
-    ========================================================= */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -110,50 +95,25 @@
       max-width: 90%;
       text-align: center;
     }
+    .toast.show { opacity: 1; pointer-events: auto; }
+    .toast.success { background: #1a4a2a; color: #b8e0b8; border: 1px solid #2a6a3a; }
+    .toast.error { background: #4a1a1a; color: #e0b8b8; border: 1px solid #6a2a2a; }
+    .toast.info { background: #1a2a4a; color: #b8c8e0; border: 1px solid #2a3a6a; }
 
-    .toast.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .toast.success {
-      background: #1a4a2a;
-      color: #b8e0b8;
-      border: 1px solid #2a6a3a;
-    }
-
-    .toast.error {
-      background: #4a1a1a;
-      color: #e0b8b8;
-      border: 1px solid #6a2a2a;
-    }
-
-    .toast.info {
-      background: #1a2a4a;
-      color: #b8c8e0;
-      border: 1px solid #2a3a6a;
-    }
-
-    /* =========================================================
-       USER INFO EN CABECERA
-    ========================================================= */
     .user-info {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-
     .user-info .email {
       color: #b7a98f;
       font-size: 10px;
       font-family: "Montserrat", sans-serif;
     }
-
     .user-info .email i {
       color: #a4864a;
       margin-right: 4px;
     }
-
     .logout-btn {
       background: transparent;
       border: 1px solid #4a3d2e;
@@ -166,13 +126,11 @@
       letter-spacing: 1px;
       transition: all 0.3s;
     }
-
     .logout-btn:hover {
       background: #76251c;
       border-color: #76251c;
       color: white;
     }
-
     .btn-share {
       background: #a4864a;
       border: none;
@@ -189,15 +147,11 @@
       align-items: center;
       gap: 6px;
     }
-
     .btn-share:hover {
       background: #d4b76c;
       transform: scale(1.02);
     }
 
-    /* =========================================================
-       RESTO DEL CSS
-    ========================================================= */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -529,7 +483,6 @@
       flex: 1;
       min-height: 110px;
     }
-    /* FOTO MUCHO MÁS GRANDE */
     .dni-photo-frame {
       width: 150px;
       height: 170px;
@@ -612,7 +565,6 @@
       flex-wrap: wrap;
       gap: 8px;
     }
-    /* FIRMA ELIMINADA - solo fecha y sello */
     .dni-issue {
       text-align: right;
       padding-right: 20px;
@@ -659,20 +611,20 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO ======= */
+    /* ======= LIBRO MEJORADO - MÁS GRANDE Y CON ICONOS ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       flex-shrink: 0;
-      margin-top: 4px;
+      margin-top: 10px;
     }
     .book-container {
       perspective: 1500px;
       width: 100%;
-      max-width: 420px;
-      aspect-ratio: 420/540;
+      max-width: 520px;
+      aspect-ratio: 520/680;
       position: relative;
       margin: 0 auto;
     }
@@ -705,13 +657,13 @@
       backface-visibility: hidden;
       background: #f1ebd9;
       border: 1px solid #b8a98f;
-      padding: 16px 14px;
+      padding: 20px 18px;
       box-shadow: inset 0 0 20px rgba(0,0,0,0.08), 0 5px 15px rgba(0,0,0,0.4);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow-y: auto;
-      font-size: 10px;
+      font-size: 13px;
       color: #222 !important;
     }
     .back { transform: rotateY(180deg); }
@@ -729,7 +681,7 @@
     .cover .front * { color: #d4af37 !important; }
     .cover-border {
       border: 2px solid #d4af37;
-      padding: 20px 10px;
+      padding: 30px 15px;
       width: 100%;
       height: 100%;
       display: flex;
@@ -738,34 +690,34 @@
       align-items: center;
     }
     .cover-logo {
-      width: 50px;
+      width: 70px;
       height: auto;
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       object-fit: contain;
     }
     .cover h1 {
-      font-size: 1.2rem;
-      letter-spacing: 2px;
+      font-size: 1.8rem;
+      letter-spacing: 3px;
       font-family: "Cinzel";
       color: #d4af37 !important;
     }
     .subtitle {
-      font-size: 0.55rem;
-      margin-top: 3px;
+      font-size: 0.8rem;
+      margin-top: 5px;
       color: #e6cb75 !important;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
     }
     .seal-gold {
-      margin-top: 20px;
+      margin-top: 25px;
       border: 1px solid #d4af37;
-      padding: 4px 8px;
-      font-size: 0.5rem;
+      padding: 6px 12px;
+      font-size: 0.7rem;
       font-weight: bold;
       color: #d4af37 !important;
     }
     .click-hint {
-      margin-top: 20px;
-      font-size: 0.45rem;
+      margin-top: 25px;
+      font-size: 0.6rem;
       opacity: 0.6;
       color: #d4af37 !important;
     }
@@ -779,21 +731,23 @@
       color: #666 !important;
     }
     .inner-cover * { color: #666 !important; }
+    .inner-cover h3 { font-size: 1.4rem; font-family: "Cinzel"; }
+    .inner-cover p { font-size: 0.8rem; margin-top: 10px; }
 
     .header-doc {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #8c2323;
-      padding-bottom: 4px;
+      padding-bottom: 8px;
       flex-wrap: wrap;
-      gap: 2px;
+      gap: 4px;
       color: #222 !important;
     }
     .header-doc * { color: #222 !important; }
     .logo-box {
-      width: 28px;
-      height: 30px;
+      width: 36px;
+      height: 38px;
       border: 1px solid #8c2323;
       display: flex;
       justify-content: center;
@@ -801,52 +755,53 @@
       overflow: hidden;
       background: #e8dbc2;
     }
-    .logo-box img { width: 20px; height: auto; object-fit: contain; }
+    .logo-box img { width: 26px; height: auto; object-fit: contain; }
     .header-title {
       text-align: center;
       color: #222 !important;
     }
     .header-title h2 {
-      font-size: 0.7rem;
+      font-size: 0.9rem;
       color: #111 !important;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       font-family: "Cinzel";
       margin: 0;
     }
     .header-title span {
-      font-size: 0.4rem;
+      font-size: 0.55rem;
       color: #8c2323 !important;
       font-weight: bold;
       display: block;
     }
     .header-title small {
-      font-size: 0.35rem;
+      font-size: 0.45rem;
       color: #555 !important;
       display: block;
     }
     .expediente-box {
       border: 1px solid #aaa;
-      padding: 2px 5px;
-      font-size: 0.4rem;
+      padding: 3px 8px;
+      font-size: 0.5rem;
       text-align: center;
     }
     .expediente-box label {
       display: block;
       color: #666 !important;
-      font-size: 0.3rem;
+      font-size: 0.4rem;
       margin: 0;
     }
     .red-text {
       color: #a00 !important;
       font-weight: bold;
-      font-size: 0.5rem;
+      font-size: 0.65rem;
     }
 
     .main-info {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-top: 6px;
+      gap: 8px;
+      margin-top: 10px;
+      flex: 1;
     }
     .photo-section {
       width: 100%;
@@ -856,9 +811,9 @@
     }
     .photo-frame {
       width: 55%;
-      height: 130px;
+      height: 160px;
       border: 1px solid #666;
-      padding: 3px;
+      padding: 4px;
       background: #fff;
       overflow: hidden;
     }
@@ -869,20 +824,20 @@
       object-fit: contain;
     }
     .photo-label {
-      font-size: 0.45rem;
+      font-size: 0.6rem;
       text-align: center;
-      margin-top: 2px;
+      margin-top: 3px;
       color: #444 !important;
       font-weight: bold;
     }
     .fields-section {
       width: 100%;
-      margin-top: 2px;
+      margin-top: 4px;
     }
     .field-row {
-      margin-bottom: 1px;
+      margin-bottom: 2px;
       border-bottom: 1px solid #bbb;
-      padding-bottom: 1px;
+      padding-bottom: 2px;
       display: flex;
       justify-content: space-between;
       align-items: baseline;
@@ -890,23 +845,23 @@
     .field-row label {
       font-weight: bold;
       color: #333 !important;
-      font-size: 0.5rem;
+      font-size: 0.65rem;
       margin: 0;
     }
     .line-fill {
       color: #111 !important;
-      font-size: 0.6rem;
+      font-size: 0.75rem;
       font-weight: bold;
     }
     .boxes-row {
       display: flex;
-      gap: 10px;
-      margin-top: 3px;
+      gap: 14px;
+      margin-top: 6px;
       justify-content: center;
     }
     .dashed-box {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       border: 2px dashed #666;
       background: rgba(0,0,0,0.02);
     }
@@ -917,16 +872,16 @@
       border-bottom: 1px solid #8c2323;
       color: #8c2323 !important;
       font-weight: bold;
-      font-size: 0.55rem;
-      padding: 2px 0;
-      margin-bottom: 6px;
+      font-size: 0.8rem;
+      padding: 4px 0;
+      margin-bottom: 8px;
       font-family: "Cinzel";
     }
     .info-list p {
-      font-size: 0.5rem;
-      margin-bottom: 3px;
+      font-size: 0.7rem;
+      margin-bottom: 4px;
       border-bottom: 1px dotted #ccc;
-      padding-bottom: 2px;
+      padding-bottom: 3px;
       color: #222 !important;
     }
     .info-list p * { color: #222 !important; }
@@ -934,8 +889,8 @@
     .emblem-container {
       border: 1px solid #786954;
       text-align: center;
-      padding: 4px;
-      margin: 5px 0;
+      padding: 6px;
+      margin: 6px 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -943,46 +898,46 @@
     }
     .emblem-container>span {
       font-family: "Cinzel";
-      font-size: 0.45rem;
-      margin-bottom: 2px;
+      font-size: 0.6rem;
+      margin-bottom: 3px;
       display: block;
       color: #555 !important;
     }
     .emblem-img {
-      width: 60px;
+      width: 70px;
       height: auto;
-      max-height: 60px;
+      max-height: 70px;
       object-fit: contain;
       opacity: 0.9;
       filter: sepia(0.1) saturate(0.95);
     }
     .description-box {
       border: 1px solid #aaa;
-      padding: 4px;
-      font-size: 0.5rem;
+      padding: 6px;
+      font-size: 0.65rem;
       background: #faf8f2;
       flex: 1;
-      min-height: 30px;
+      min-height: 40px;
     }
     .description-box label {
       font-weight: bold;
       display: block;
-      margin-bottom: 1px;
+      margin-bottom: 2px;
       color: #333 !important;
-      font-size: 0.4rem;
+      font-size: 0.55rem;
     }
     .description-box p {
-      font-size: 0.5rem;
-      line-height: 1.2;
+      font-size: 0.65rem;
+      line-height: 1.3;
       color: #222 !important;
     }
 
     .stat-title {
       color: #8c2323 !important;
-      font-size: 0.55rem;
+      font-size: 0.75rem;
       border-bottom: 2px solid #8c2323;
-      padding-bottom: 2px;
-      margin-bottom: 4px;
+      padding-bottom: 4px;
+      margin-bottom: 6px;
       text-align: center;
       font-family: "Cinzel";
     }
@@ -994,8 +949,8 @@
       border-bottom: 1px dotted #ccc;
     }
     .stat-table td {
-      padding: 2px 0;
-      font-size: 0.45rem;
+      padding: 4px 0;
+      font-size: 0.6rem;
       font-weight: bold;
       color: #222 !important;
     }
@@ -1004,13 +959,13 @@
     }
     .boxes-container {
       display: flex;
-      gap: 2px;
+      gap: 3px;
       justify-content: flex-end;
       flex-wrap: wrap;
     }
     .boxes-container i {
-      width: 7px;
-      height: 7px;
+      width: 9px;
+      height: 9px;
       border: 1px solid #666;
       display: inline-block;
       background: #fff;
@@ -1027,47 +982,47 @@
       background: rgba(46,125,50,0.08);
       font-weight: bold;
       text-align: center;
-      padding: 2px;
-      font-size: 0.5rem;
+      padding: 4px;
+      font-size: 0.7rem;
       letter-spacing: 1px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
     .audit-info {
-      font-size: 0.5rem;
-      line-height: 1.2;
+      font-size: 0.65rem;
+      line-height: 1.3;
       color: #222 !important;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .audit-info * { color: #222 !important; }
     .audit-info p {
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       border-bottom: 1px dotted #ccc;
-      padding-bottom: 2px;
+      padding-bottom: 3px;
     }
     .obs-section {
       border: 1px solid #a0a0a0;
       background: #faf8f2;
-      padding: 4px;
+      padding: 6px;
       flex: 1;
-      min-height: 40px;
+      min-height: 50px;
       display: flex;
       flex-direction: column;
     }
     .obs-section label {
       font-weight: bold;
-      font-size: 0.4rem;
+      font-size: 0.55rem;
       color: #8c2323 !important;
       border-bottom: 1px solid #8c2323;
-      padding-bottom: 2px;
-      margin-bottom: 3px;
+      padding-bottom: 3px;
+      margin-bottom: 4px;
       display: block;
     }
     .obs-lines {
-      background-image: repeating-linear-gradient(transparent, transparent 12px, #ccc 12px, #ccc 13px);
-      line-height: 13px;
+      background-image: repeating-linear-gradient(transparent, transparent 16px, #ccc 16px, #ccc 17px);
+      line-height: 17px;
       flex: 1;
-      min-height: 40px;
-      font-size: 0.45rem;
+      min-height: 50px;
+      font-size: 0.6rem;
       color: #444 !important;
     }
 
@@ -1080,21 +1035,21 @@
     }
     .cert-content * { color: #222 !important; }
     .cert-text {
-      font-size: 0.5rem;
-      line-height: 1.2;
+      font-size: 0.7rem;
+      line-height: 1.4;
       color: #222 !important;
       border: 1px solid #bbb;
-      padding: 6px;
+      padding: 10px;
       background: #faf8f2;
     }
     .cert-date {
-      font-size: 0.5rem;
-      margin-top: 6px;
+      font-size: 0.7rem;
+      margin-top: 8px;
       color: #222 !important;
     }
     .cert-date * { color: #222 !important; }
     .signature-area {
-      margin-top: 8px;
+      margin-top: 10px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -1102,64 +1057,64 @@
     }
     .sig-img {
       width: auto;
-      height: 20px;
-      max-width: 80px;
+      height: 28px;
+      max-width: 100px;
       object-fit: contain;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
       opacity: 0.85;
     }
     .sig-line {
       border-top: 1px solid #333;
       width: 50%;
-      margin: 0 auto 2px auto;
+      margin: 0 auto 3px auto;
     }
     .sig-label {
-      font-size: 0.4rem;
+      font-size: 0.55rem;
       color: #555 !important;
     }
     .seal-container {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 4px auto;
+      margin: 6px auto;
     }
     .seal-img {
-      width: 40px;
-      height: 40px;
+      width: 50px;
+      height: 50px;
       object-fit: contain;
       opacity: 0.9;
       filter: sepia(0.15) saturate(0.9);
     }
     .motto {
-      font-size: 0.45rem;
-      letter-spacing: 1px;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
       color: #777 !important;
       font-weight: bold;
       border-top: 1px solid #8c2323;
-      padding-top: 3px;
+      padding-top: 5px;
       font-family: "Cinzel";
     }
     .page-number {
-      font-size: 0.4rem;
+      font-size: 0.55rem;
       color: #888 !important;
       text-align: center;
-      margin-top: 3px;
+      margin-top: 4px;
     }
 
     .book-controls {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin: 8px 0 2px 0;
+      gap: 15px;
+      margin: 12px 0 2px 0;
     }
     .book-controls button {
       background: #333;
       color: #d4af37;
       border: 1px solid #d4af37;
-      padding: 6px 14px;
+      padding: 8px 18px;
       cursor: pointer;
       font-family: "Cinzel";
-      font-size: 0.6rem;
+      font-size: 0.75rem;
       transition: 0.2s;
       border-radius: 4px;
     }
@@ -1214,12 +1169,13 @@
       .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
       .dni-issue-date { font-size: 0.65rem; }
-      .book-container { max-width: 320px; }
+      .book-container { max-width: 400px; }
       .book.open { transform: translateX(35%) !important; }
-      .photo-frame { height: 100px; }
+      .photo-frame { height: 120px; }
       .panel-documentos { padding: 14px; }
       .user-info .email { font-size: 8px; }
       .logout-btn { font-size: 8px; padding: 4px 10px; }
+      .front, .back { font-size: 11px; padding: 15px 12px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1227,7 +1183,7 @@
       .brand-crest img { width: 24px; }
       .visor-skin { width: 140px; height: 120px; }
       .nombre-bajo { font-size: 20px; }
-      .book-container { max-width: 280px; }
+      .book-container { max-width: 320px; }
       .dni-card { padding: 8px 10px 0 10px; min-height: 180px; }
       .dni-title { font-size: 0.85rem; }
       .dni-subtitle { font-size: 0.45rem; letter-spacing: 1px; }
@@ -1246,25 +1202,22 @@
       .dni-seal { width: 28px; height: 28px; right: 2px; bottom: 2px; }
       .dni-bottom-bar { font-size: 0.25rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -10px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
       .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 16px; }
+      .front, .back { font-size: 9px; padding: 10px 8px; }
+      .photo-frame { height: 90px; }
+      .cover h1 { font-size: 1.2rem; }
+      .cover-logo { width: 50px; }
     }
   </style>
 </head>
 <body>
 
-<!-- =========================================================
-     OVERLAY DE AUTENTICACIÓN
-========================================================= -->
 <div class="auth-overlay" id="authOverlay">
     <div class="spinner"></div>
     <p>VERIFICANDO ACCESO...</p>
 </div>
 
-<!-- =========================================================
-     ESCENARIO PRINCIPAL
-========================================================= -->
 <div class="escenario" id="mainContent" style="display:none;">
 
-  <!-- cabecera -->
   <div class="cabecera">
     <div class="brand">
       <div class="brand-crest"><img src="./logo.png" alt="Liga Lombarda" /></div>
@@ -1276,10 +1229,8 @@
     </div>
   </div>
 
-  <!-- contenido vertical -->
   <div class="contenido-vertical">
 
-    <!-- PANEL PERSONA -->
     <div class="panel-persona">
       <div class="visor-skin">
         <canvas id="skin-container"></canvas>
@@ -1296,10 +1247,9 @@
       </div>
     </div>
 
-    <!-- PANEL DOCUMENTOS -->
     <div class="panel-documentos">
 
-      <!-- DNI MEJORADO -->
+      <!-- DNI -->
       <div class="dni-container" id="dniContainer">
         <div class="dni-card" id="dniCard">
           <div class="dni-inner-border"></div>
@@ -1322,11 +1272,9 @@
             </div>
             <div class="dni-separator"></div>
             <div class="dni-body">
-              <!-- FOTO MÁS GRANDE (150x170) -->
               <div class="dni-photo-frame">
                 <div class="dni-photo-inner"><canvas id="dniSkinCanvas"></canvas></div>
               </div>
-              <!-- DATOS MÁS GRANDES -->
               <div class="dni-grid">
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-user"></i></div><div class="dni-text"><span class="dni-label">NOMBRE</span><span class="dni-value" id="dniName">—</span></div></div>
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-calendar-days"></i></div><div class="dni-text"><span class="dni-label">FECHA NAC.</span><span class="dni-value" id="dniBirthday">—</span></div></div>
@@ -1340,14 +1288,11 @@
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-circle-dot"></i></div><div class="dni-text"><span class="dni-label">ESTADO</span><span class="dni-value active" id="dniStatus">—</span></div></div>
               </div>
             </div>
-            <!-- FOOTER SIN FIRMA, SOLO FECHA Y SELLO -->
             <div class="dni-footer">
-              <!-- FECHA DE EMISIÓN - Con margen para que no la tape el sello -->
               <div class="dni-issue">
                 <div class="dni-issue-label">EMISIÓN</div>
                 <div class="dni-issue-date" id="dniDate">__/__/____</div>
               </div>
-              <!-- SELLO - Ahora con z-index mayor y posición ajustada -->
               <img class="dni-seal" src="./img/Sello.png" alt="Sello" />
             </div>
             <div class="dni-bottom-bar">POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE</div>
@@ -1355,7 +1300,7 @@
         </div>
       </div>
 
-      <!-- LIBRO -->
+      <!-- LIBRO MEJORADO -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -1367,13 +1312,13 @@
                   <h1>LIGA LOMBARDA</h1>
                   <p class="subtitle">REGISTRO OFICIAL DE CIUDADANOS</p>
                   <div class="seal-gold">EXPEDIENTE CONFIDENCIAL</div>
-                  <p class="click-hint">Haz clic o usa los botones</p>
+                  <p class="click-hint"><i class="fas fa-hand-pointer"></i> Haz clic o usa los botones</p>
                 </div>
               </div>
               <div class="back">
                 <div class="inner-cover">
                   <h3>REPÚBLICA DE LOMBARDA</h3>
-                  <p style="font-size: 0.55rem; margin-top: 6px;">Documento Oficial e Intransferible</p>
+                  <p><i class="fas fa-gavel"></i> Documento Oficial e Intransferible</p>
                 </div>
               </div>
             </div>
@@ -1396,13 +1341,13 @@
                   <div class="main-info">
                     <div class="photo-section">
                       <div class="photo-frame"><canvas id="bookSkinCanvas"></canvas></div>
-                      <p class="photo-label">FOTOGRAFÍA OFICIAL</p>
+                      <p class="photo-label"><i class="fas fa-camera"></i> FOTOGRAFÍA OFICIAL</p>
                     </div>
                     <div class="fields-section">
-                      <div class="field-row"><label>NOMBRE:</label><span class="line-fill" id="bookName">—</span></div>
-                      <div class="field-row"><label>ALIAS:</label><span class="line-fill" id="bookAlias">—</span></div>
-                      <div class="field-row"><label>RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
-                      <div class="field-row"><label>NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
+                      <div class="field-row"><label><i class="fas fa-user"></i> NOMBRE:</label><span class="line-fill" id="bookName">—</span></div>
+                      <div class="field-row"><label><i class="fas fa-tag"></i> ALIAS:</label><span class="line-fill" id="bookAlias">—</span></div>
+                      <div class="field-row"><label><i class="fas fa-chess-king"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
+                      <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
                       <div class="boxes-row"><div class="dashed-box"></div><div class="dashed-box"></div></div>
                     </div>
                   </div>
@@ -1412,21 +1357,21 @@
               <div class="back">
                 <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between;">
                   <div>
-                    <div class="section-title">INFORMACIÓN DEL CIUDADANO</div>
+                    <div class="section-title"><i class="fas fa-id-card"></i> INFORMACIÓN DEL CIUDADANO</div>
                     <div class="info-list">
-                      <p><strong>PROFESIÓN / OFICIO:</strong> <span id="bookOccupation">—</span></p>
-                      <p><strong>ESTADO ACTUAL:</strong> <span id="bookStatus">—</span></p>
-                      <p><strong>FECHA NACIMIENTO:</strong> <span id="bookBirthday">—</span></p>
-                      <p><strong>GÉNERO:</strong> <span id="bookGender">—</span></p>
-                      <p><strong>ESPECIE:</strong> <span id="bookSpecies">—</span></p>
-                      <p><strong>ESTADO CIVIL:</strong> <span id="bookMarital">—</span></p>
+                      <p><i class="fas fa-briefcase"></i> <strong>PROFESIÓN / OFICIO:</strong> <span id="bookOccupation">—</span></p>
+                      <p><i class="fas fa-circle-dot"></i> <strong>ESTADO ACTUAL:</strong> <span id="bookStatus">—</span></p>
+                      <p><i class="fas fa-calendar-days"></i> <strong>FECHA NACIMIENTO:</strong> <span id="bookBirthday">—</span></p>
+                      <p><i class="fas fa-mars"></i> <strong>GÉNERO:</strong> <span id="bookGender">—</span></p>
+                      <p><i class="fas fa-paw"></i> <strong>ESPECIE:</strong> <span id="bookSpecies">—</span></p>
+                      <p><i class="fas fa-heart"></i> <strong>ESTADO CIVIL:</strong> <span id="bookMarital">—</span></p>
                     </div>
                     <div class="emblem-container">
-                      <span>EMBLEMA LOMBARDO</span>
+                      <span><i class="fas fa-shield"></i> EMBLEMA LOMBARDO</span>
                       <img src="./img/escudo-Lombardo.png" alt="Escudo" class="emblem-img" crossorigin="anonymous" />
                     </div>
                     <div class="description-box">
-                      <label>DESCRIPCIÓN:</label>
+                      <label><i class="fas fa-align-left"></i> DESCRIPCIÓN:</label>
                       <p id="bookDescription">Sin descripción registrada.</p>
                     </div>
                   </div>
@@ -1439,22 +1384,22 @@
               <div class="front">
                 <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between;">
                   <div>
-                    <div class="stat-title">CAPACIDADES</div>
+                    <div class="stat-title"><i class="fas fa-chart-simple"></i> CAPACIDADES</div>
                     <table class="stat-table" id="bookStatsTable">
-                      <tr><td>🏋️ Fuerza</td><td><div class="boxes-container" id="bookStrength"></div></td></tr>
-                      <tr><td>👁️ Percepción</td><td><div class="boxes-container" id="bookPerception"></div></td></tr>
-                      <tr><td>🛡️ Resistencia</td><td><div class="boxes-container" id="bookEndurance"></div></td></tr>
-                      <tr><td>🗣️ Carisma</td><td><div class="boxes-container" id="bookCharisma"></div></td></tr>
-                      <tr><td>🧠 Inteligencia</td><td><div class="boxes-container" id="bookIntelligence"></div></td></tr>
-                      <tr><td>🏃 Agilidad</td><td><div class="boxes-container" id="bookAgility"></div></td></tr>
-                      <tr><td>🍀 Suerte</td><td><div class="boxes-container" id="bookLuck"></div></td></tr>
+                      <tr><td><i class="fas fa-dumbbell"></i> Fuerza</td><td><div class="boxes-container" id="bookStrength"></div></td></tr>
+                      <tr><td><i class="fas fa-eye"></i> Percepción</td><td><div class="boxes-container" id="bookPerception"></div></td></tr>
+                      <tr><td><i class="fas fa-shield"></i> Resistencia</td><td><div class="boxes-container" id="bookEndurance"></div></td></tr>
+                      <tr><td><i class="fas fa-comments"></i> Carisma</td><td><div class="boxes-container" id="bookCharisma"></div></td></tr>
+                      <tr><td><i class="fas fa-brain"></i> Inteligencia</td><td><div class="boxes-container" id="bookIntelligence"></div></td></tr>
+                      <tr><td><i class="fas fa-person-running"></i> Agilidad</td><td><div class="boxes-container" id="bookAgility"></div></td></tr>
+                      <tr><td><i class="fas fa-clover"></i> Suerte</td><td><div class="boxes-container" id="bookLuck"></div></td></tr>
                     </table>
-                    <div class="stat-title" style="margin-top:6px;">COMPETENCIAS</div>
+                    <div class="stat-title" style="margin-top:8px;"><i class="fas fa-crosshairs"></i> COMPETENCIAS</div>
                     <table class="stat-table" id="bookCompetenciesTable">
-                      <tr><td>🥊 Combate</td><td><div class="boxes-container" id="bookCombat"></div></td></tr>
-                      <tr><td>🔨 Construcción</td><td><div class="boxes-container" id="bookBuilding"></div></td></tr>
-                      <tr><td>🌾 Farmeo</td><td><div class="boxes-container" id="bookFarming"></div></td></tr>
-                      <tr><td>⚡ Redstone</td><td><div class="boxes-container" id="bookRedstone"></div></td></tr>
+                      <tr><td><i class="fas fa-fist-raised"></i> Combate</td><td><div class="boxes-container" id="bookCombat"></div></td></tr>
+                      <tr><td><i class="fas fa-hammer"></i> Construcción</td><td><div class="boxes-container" id="bookBuilding"></div></td></tr>
+                      <tr><td><i class="fas fa-wheat-awn"></i> Farmeo</td><td><div class="boxes-container" id="bookFarming"></div></td></tr>
+                      <tr><td><i class="fas fa-bolt"></i> Redstone</td><td><div class="boxes-container" id="bookRedstone"></div></td></tr>
                     </table>
                   </div>
                   <div class="page-number">- 3 -</div>
@@ -1463,14 +1408,14 @@
               <div class="back">
                 <div style="height:100%;display:flex;flex-direction:column;justify-content:space-between;">
                   <div>
-                    <div class="section-title">ANTECEDENTES</div>
-                    <div class="status-badge">SIN ANTECEDENTES</div>
+                    <div class="section-title"><i class="fas fa-scale-balanced"></i> ANTECEDENTES</div>
+                    <div class="status-badge"><i class="fas fa-check-circle"></i> SIN ANTECEDENTES</div>
                     <div class="audit-info">
-                      <p><strong>EVALUACIÓN JUDICIAL:</strong> No se registran sanciones.</p>
-                      <p><strong>ÚLTIMA VERIFICACIÓN:</strong> <span id="bookLastVerification">—</span></p>
+                      <p><i class="fas fa-gavel"></i> <strong>EVALUACIÓN JUDICIAL:</strong> No se registran sanciones.</p>
+                      <p><i class="fas fa-clock"></i> <strong>ÚLTIMA VERIFICACIÓN:</strong> <span id="bookLastVerification">—</span></p>
                     </div>
                     <div class="obs-section">
-                      <label>OBSERVACIONES:</label>
+                      <label><i class="fas fa-pen"></i> OBSERVACIONES:</label>
                       <div class="obs-lines" id="bookObservations">Sin observaciones.</div>
                     </div>
                   </div>
@@ -1483,26 +1428,29 @@
               <div class="front">
                 <div class="cert-content">
                   <div>
-                    <div class="section-title">CERTIFICACIÓN</div>
-                    <div class="cert-text">SE CERTIFICA QUE LA INFORMACIÓN ES VERÍDICA Y REGISTRADA EN EL ARCHIVO CENTRAL.</div>
-                    <div class="cert-date">FECHA DE EMISIÓN:<br><strong id="bookCertDate">__/__/____</strong></div>
+                    <div class="section-title"><i class="fas fa-certificate"></i> CERTIFICACIÓN</div>
+                    <div class="cert-text"><i class="fas fa-check"></i> SE CERTIFICA QUE LA INFORMACIÓN ES VERÍDICA Y REGISTRADA EN EL ARCHIVO CENTRAL.</div>
+                    <div class="cert-date"><i class="fas fa-calendar-day"></i> FECHA DE EMISIÓN:<br><strong id="bookCertDate">__/__/____</strong></div>
                     <div class="signature-area">
                       <img src="./img/Firma.png" alt="Firma" class="sig-img" crossorigin="anonymous" />
                       <div class="sig-line"></div>
-                      <span class="sig-label">REGISTRADOR</span>
+                      <span class="sig-label"><i class="fas fa-pen"></i> REGISTRADOR</span>
                     </div>
                     <div class="seal-container"><img src="./img/Sello.png" alt="Sello" class="seal-img" crossorigin="anonymous" /></div>
                   </div>
                   <div>
-                    <div class="motto">POR LA LIGA · POR LOMBARDOS</div>
+                    <div class="motto"><i class="fas fa-shield-halved"></i> POR LA LIGA · POR LOMBARDOS</div>
                     <div class="page-number">- 5 -</div>
                   </div>
                 </div>
               </div>
               <div class="back" style="background:#2a0808;color:#d4af37;display:flex;align-items:center;justify-content:center;border:3px solid #1a0505;">
-                <div style="text-align:center;padding:15px;">
-                  <h3 style="font-family:'Cinzel';font-size:1.6rem;color:#d4af37;letter-spacing:3px;">FIN</h3>
-                  <p style="margin-top:12px;font-size:0.6rem;color:#b8964a;letter-spacing:2px;font-family:'Cinzel';">DOCUMENTO OFICIAL</p>
+                <div style="text-align:center;padding:20px;">
+                  <i class="fas fa-flag-checkered" style="font-size:3rem;color:#d4af37;margin-bottom:10px;"></i>
+                  <h3 style="font-family:'Cinzel';font-size:2rem;color:#d4af37;letter-spacing:3px;">FIN</h3>
+                  <p style="margin-top:15px;font-size:0.8rem;color:#b8964a;letter-spacing:2px;font-family:'Cinzel';">
+                    <i class="fas fa-file-signature"></i> DOCUMENTO OFICIAL
+                  </p>
                 </div>
               </div>
             </div>
@@ -1518,18 +1466,9 @@
   </div>
 </div>
 
-<!-- =========================================================
-     TOAST
-========================================================= -->
 <div id="toast" class="toast"></div>
 
-<!-- =========================================================
-     SCRIPT PRINCIPAL (MÓDULO)
-========================================================= -->
 <script type="module">
-  // =========================================================
-  // IMPORTS DE FIREBASE
-  // =========================================================
   import { 
     auth, 
     onAuthStateChanged, 
@@ -1539,17 +1478,11 @@
     get
   } from "./firebase-init.js";
 
-  // =========================================================
-  // REFERENCIAS DOM
-  // =========================================================
   const authOverlay = document.getElementById('authOverlay');
   const mainContent = document.getElementById('mainContent');
   const userNav = document.getElementById('userNav');
   const toast = document.getElementById('toast');
 
-  // =========================================================
-  // TOAST
-  // =========================================================
   function showToast(message, type = 'info', duration = 4000) {
     toast.textContent = message;
     toast.className = 'toast ' + type + ' show';
@@ -1559,9 +1492,6 @@
     }, duration);
   }
 
-  // =========================================================
-  // RENDERIZAR NAV
-  // =========================================================
   function renderNav(user, isAdmin = false) {
     if (user) {
       userNav.style.display = 'flex';
@@ -1584,9 +1514,6 @@
     }
   }
 
-  // =========================================================
-  // VERIFICAR ADMIN
-  // =========================================================
   async function checkIsAdmin(user) {
     if (!user) return false;
     try {
@@ -1599,9 +1526,6 @@
     }
   }
 
-  // =========================================================
-  // LOGOUT
-  // =========================================================
   async function handleLogout() {
     try {
       await signOut(auth);
@@ -1615,17 +1539,11 @@
     }
   }
 
-  // =========================================================
-  // OBTENER ID DE LA URL
-  // =========================================================
   function getExpedienteId() {
     const params = new URLSearchParams(window.location.search);
     return params.get('id');
   }
 
-  // =========================================================
-  // COMPARTIR URL
-  // =========================================================
   function compartirURL() {
     const urlCompleta = window.location.href;
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1656,7 +1574,7 @@
   }
 
   // =========================================================
-  // SKIN VIEWER CON ANIMACIONES (CORREGIDO)
+  // SKIN VIEWER CON ANIMACIONES
   // =========================================================
   let viewer = null;
   let animacionActiva = false;
@@ -1684,11 +1602,9 @@
       const gesture = GESTURES[Math.floor(Math.random() * GESTURES.length)];
       estadoAnimacion = gesture;
       gestureStartTime = performance.now();
-
       if (gesture === 'LOOKING') gestureDuration = 3000;
       else if (gesture === 'SIXSEVEN') gestureDuration = 2800;
       else gestureDuration = 2500;
-
       const delay = gestureDuration + GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
       nextGestureTime = performance.now() + delay;
     }
@@ -1699,28 +1615,23 @@
       cancelAnimationFrame(animFrameId);
       animFrameId = null;
     }
-
     if (!viewer || !viewer.playerObject || !viewer.playerObject.skin) {
       setTimeout(iniciarAnimacion, 300);
       return;
     }
-
     animacionActiva = true;
     estadoAnimacion = 'WALKING';
     posX = 28;
-    
     const player = viewer.playerObject;
     player.position.x = posX;
     player.position.y = 0;
     player.rotation.y = -Math.PI / 2;
-    
     player.skin.leftArm.rotation.x = 0;
     player.skin.rightArm.rotation.x = 0;
     player.skin.leftLeg.rotation.x = 0;
     player.skin.rightLeg.rotation.x = 0;
     player.skin.head.rotation.y = 0;
     player.skin.head.rotation.z = 0;
-    
     programarProximoGesto();
     viewer.render();
 
@@ -1729,31 +1640,25 @@
         animFrameId = null;
         return;
       }
-
       const player = viewer.playerObject;
       if (!player.skin) {
         animFrameId = requestAnimationFrame(animate);
         return;
       }
-
       const t = time * 0.005;
-
       if (estadoAnimacion !== 'WALKING') {
         player.rotation.y = 0;
       }
-
       if (estadoAnimacion === 'WALKING') {
         posX -= walkSpeed;
         player.position.x = posX;
         player.rotation.y = -Math.PI / 2;
-
         const walkCycle = Math.sin(t * 6);
         player.skin.leftArm.rotation.x = walkCycle * 0.5;
         player.skin.rightArm.rotation.x = -walkCycle * 0.5;
         player.skin.leftLeg.rotation.x = -walkCycle * 0.5;
         player.skin.rightLeg.rotation.x = walkCycle * 0.5;
         player.position.y = Math.abs(Math.sin(t * 12)) * 0.15;
-
         if (posX <= targetX) {
           posX = targetX;
           player.position.x = targetX;
@@ -1774,7 +1679,6 @@
         player.skin.leftArm.rotation.z = -0.08 - Math.cos(t * 1.5) * 0.02;
         player.skin.rightArm.rotation.x = -Math.sin(t * 1.5) * 0.04;
         player.skin.rightArm.rotation.z = 0.08 + Math.cos(t * 1.5) * 0.02;
-
         if (time >= nextGestureTime) {
           triggerRandomGesture();
         }
@@ -1817,23 +1721,16 @@
           programarProximoGesto();
         }
       }
-
       viewer.render();
       animFrameId = requestAnimationFrame(animate);
     }
-
     animFrameId = requestAnimationFrame(animate);
   }
 
-  // =========================================================
-  // CARGAR SKIN CON ANIMACIÓN
-  // =========================================================
   function cargarSkinConAnimacion(nick) {
     if (!nick || nick === currentSkinNick) return;
     currentSkinNick = nick;
-
     const canvas = document.getElementById('skin-container');
-
     if (!viewer) {
       viewer = new skinview3d.SkinViewer({
         canvas: canvas,
@@ -1848,9 +1745,7 @@
       viewer.globalLight.intensity = 2.5;
       viewer.cameraLight.intensity = 1.2;
     }
-
     const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
-    
     viewer.loadSkin(skinUrl).then(() => {
       const skin = viewer.playerObject?.skin;
       if (skin) {
@@ -1862,7 +1757,6 @@
           }
         });
         viewer.render();
-        
         setTimeout(() => {
           iniciarAnimacion();
           setTimeout(updateMiniCanvases, 500);
@@ -1878,9 +1772,6 @@
     });
   }
 
-  // =========================================================
-  // ACTUALIZAR MINI CANVASES
-  // =========================================================
   function updateMiniCanvases() {
     const mainCanvas = document.getElementById('skin-container');
     const bookCanvas = document.getElementById('bookSkinCanvas');
@@ -1897,7 +1788,6 @@
         ctx.clearRect(0,0,size,size);
         let s = Math.min(size/img.width, size/img.height)*1.05;
         ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.04, img.width*s, img.height*s);
-
         ctx = dniCanvas.getContext('2d');
         size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
         dniCanvas.width = size; dniCanvas.height = size;
@@ -1909,9 +1799,6 @@
     } catch(e) {}
   }
 
-  // =========================================================
-  // ACTUALIZAR UI CON DATOS DEL EXPEDIENTE
-  // =========================================================
   function actualizarUI(data) {
     const name = data.name || 'SIN REGISTRO';
     const alias = data.alias || '—';
@@ -2001,9 +1888,6 @@
     }
   }
 
-  // =========================================================
-  // CARGAR DATOS DESDE FIREBASE
-  // =========================================================
   async function cargarExpediente(id) {
     if (!id) {
       mainContent.innerHTML = `
@@ -2017,11 +1901,9 @@
       mainContent.style.display = 'block';
       return;
     }
-
     try {
       const expedienteRef = ref(database, `expedientes/${id}`);
       const snapshot = await get(expedienteRef);
-
       if (!snapshot.exists()) {
         mainContent.innerHTML = `
           <div class="error-state">
@@ -2034,10 +1916,8 @@
         mainContent.style.display = 'block';
         return;
       }
-
       const data = snapshot.val();
       actualizarUI(data);
-
     } catch (error) {
       console.error('Error al cargar expediente:', error);
       mainContent.innerHTML = `
@@ -2079,7 +1959,6 @@
       updateBookState(); 
     } 
   };
-
   window.prevPage = function() { 
     if (currentStep > 0) { 
       currentStep--; 
@@ -2103,7 +1982,6 @@
   // =========================================================
   onAuthStateChanged(auth, async (user) => {
     authOverlay.classList.add('hidden');
-
     if (!user) {
       showToast('🔐 Debes iniciar sesión para ver el expediente', 'error', 2000);
       setTimeout(() => {
@@ -2111,14 +1989,11 @@
       }, 500);
       return;
     }
-
     const isAdmin = await checkIsAdmin(user);
     mainContent.style.display = 'block';
     renderNav(user, isAdmin);
-
     const id = getExpedienteId();
     await cargarExpediente(id);
-
     console.log(`📄 Expediente - Usuario: ${user.email}`);
   });
 
