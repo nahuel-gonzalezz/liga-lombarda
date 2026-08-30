@@ -654,7 +654,7 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO CON CONTENIDO QUE OCUPA TODA LA ALTURA ======= */
+    /* ======= LIBRO ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
@@ -710,7 +710,6 @@
     .back { transform: rotateY(180deg); }
     .page.flipped { transform: rotateY(-180deg); }
 
-    /* PORTADA */
     .cover .front {
       background: #4a1010;
       color: #d4af37 !important;
@@ -776,19 +775,16 @@
     .inner-cover h3 { font-size: 1.2rem; }
     .inner-cover p { font-size: 0.8rem; }
 
-    /* CONTENEDOR DE PÁGINA - ocupa toda la altura */
     .page-inner {
       display: flex;
       flex-direction: column;
       height: 100%;
       flex: 1;
     }
-
     .page-inner > *:last-child {
       margin-top: auto;
     }
 
-    /* HEADER DE DOCUMENTOS */
     .header-doc {
       display: flex;
       justify-content: space-between;
@@ -852,7 +848,6 @@
       font-size: 0.65rem;
     }
 
-    /* CONTENIDO PRINCIPAL - ocupa todo el espacio disponible */
     .main-content-area {
       flex: 1;
       display: flex;
@@ -861,7 +856,6 @@
       gap: 4px;
       padding: 4px 0;
     }
-
     .main-content-area > *:last-child {
       margin-top: auto;
     }
@@ -935,7 +929,6 @@
       background: rgba(0,0,0,0.02);
     }
 
-    /* Títulos y secciones */
     .section-title {
       text-align: center;
       border-top: 2px solid #8c2323;
@@ -1017,7 +1010,6 @@
       flex: 1;
     }
 
-    /* Estadísticas */
     .stat-title {
       color: #8c2323 !important;
       font-size: 0.65rem;
@@ -1070,7 +1062,6 @@
       border-color: #4a0000;
     }
 
-    /* Antecedentes */
     .status-badge {
       border: 2px solid #2e7d32;
       color: #2e7d32 !important;
@@ -1126,7 +1117,6 @@
       color: #444 !important;
     }
 
-    /* Certificación */
     .cert-content {
       text-align: center;
       height: 100%;
@@ -1427,7 +1417,7 @@
         </div>
       </div>
 
-      <!-- LIBRO CON CONTENIDO QUE OCUPA TODA LA ALTURA -->
+      <!-- LIBRO -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -1450,7 +1440,7 @@
                 </div>
               </div>
             </div>
-            <!-- hoja 1: IDENTIDAD -->
+            <!-- hoja 1 -->
             <div class="page" id="page-1">
               <div class="front">
                 <div class="page-inner">
@@ -1508,7 +1498,7 @@
                 </div>
               </div>
             </div>
-            <!-- hoja 2: ESTADÍSTICAS -->
+            <!-- hoja 2 -->
             <div class="page" id="page-2">
               <div class="front">
                 <div class="page-inner">
@@ -1552,7 +1542,7 @@
                 </div>
               </div>
             </div>
-            <!-- hoja 3: CERTIFICACIÓN -->
+            <!-- hoja 3 -->
             <div class="page" id="page-3">
               <div class="front">
                 <div class="cert-content">
@@ -1638,14 +1628,13 @@
   // =========================================================
   // RENDERIZAR NAV
   // =========================================================
-  function renderNav(user, isAdmin = false) {
+  function renderNav(user) {
     if (user) {
       userNav.style.display = 'flex';
       userNav.innerHTML = `
         <span class="user-info">
           <span class="email">
             <i class="fas fa-user-circle"></i> ${user.email}
-            ${isAdmin ? '<span style="color:#a4864a;margin-left:4px;">👑</span>' : ''}
           </span>
           <button class="logout-btn" id="logoutBtnNav">
             <i class="fas fa-sign-out-alt"></i> SALIR
@@ -1657,21 +1646,6 @@
       `;
       document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
       document.getElementById('shareBtn').addEventListener('click', compartirURL);
-    }
-  }
-
-  // =========================================================
-  // VERIFICAR ADMIN
-  // =========================================================
-  async function checkIsAdmin(user) {
-    if (!user) return false;
-    try {
-      const adminRef = ref(database, `usuarios/${user.uid}/admin`);
-      const snapshot = await get(adminRef);
-      return snapshot.val() === true;
-    } catch (error) {
-      console.warn('No se pudo verificar rol de admin:', error);
-      return false;
     }
   }
 
@@ -1761,9 +1735,35 @@
       viewer.cameraLight.intensity = 1.2;
     }
 
-    const skinUrl = `https://crafatar.com/skins/${encodeURIComponent(nick)}`;
-    
-    viewer.loadSkin(skinUrl).then(() => {
+    // Intentar con diferentes fuentes
+    const skinSources = [
+      `https://crafatar.com/skins/${encodeURIComponent(nick)}`,
+      `https://minotar.net/skin/${encodeURIComponent(nick)}`,
+      `https://mc-heads.net/skin/${encodeURIComponent(nick)}`,
+      // Skin por defecto de Steve si falla todo
+      `https://crafatar.com/skins/steve`
+    ];
+
+    let intento = 0;
+
+    function intentarCargar() {
+      if (intento >= skinSources.length) {
+        // Si todo falla, usar Steve
+        viewer.loadSkin('https://crafatar.com/skins/steve').then(() => {
+          configurarSkinQuieto();
+        });
+        return;
+      }
+
+      viewer.loadSkin(skinSources[intento]).then(() => {
+        configurarSkinQuieto();
+      }).catch(() => {
+        intento++;
+        intentarCargar();
+      });
+    }
+
+    function configurarSkinQuieto() {
       const skin = viewer.playerObject?.skin;
       if (skin) {
         skin.traverse((child) => {
@@ -1773,7 +1773,6 @@
             child.material.alphaTest = 0.1;
           }
         });
-        // Posición quieta
         const player = viewer.playerObject;
         if (player) {
           player.position.x = 0;
@@ -1790,36 +1789,16 @@
         }
         viewer.render();
         skinLoaded = true;
-        // Actualizar mini canvases después de un breve retraso
         setTimeout(updateMiniCanvases, 600);
         setTimeout(updateMiniCanvases, 1200);
       }
-    }).catch(() => {
-      viewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(nick)}`).then(() => {
-        const player = viewer.playerObject;
-        if (player) {
-          player.position.x = 0;
-          player.position.y = 0;
-          player.rotation.y = 0;
-          if (player.skin) {
-            player.skin.leftArm.rotation.x = 0;
-            player.skin.rightArm.rotation.x = 0;
-            player.skin.leftLeg.rotation.x = 0;
-            player.skin.rightLeg.rotation.x = 0;
-            player.skin.head.rotation.y = 0;
-            player.skin.head.rotation.z = 0;
-          }
-        }
-        viewer.render();
-        skinLoaded = true;
-        setTimeout(updateMiniCanvases, 600);
-        setTimeout(updateMiniCanvases, 1200);
-      });
-    });
+    }
+
+    intentarCargar();
   }
 
   // =========================================================
-  // ACTUALIZAR MINI CANVASES (DNI y LIBRO)
+  // ACTUALIZAR MINI CANVASES
   // =========================================================
   function updateMiniCanvases() {
     const mainCanvas = document.getElementById('skin-container');
@@ -1854,7 +1833,7 @@
   }
 
   // =========================================================
-  // ACTUALIZAR UI CON DATOS DEL EXPEDIENTE
+  // ACTUALIZAR UI
   // =========================================================
   function actualizarUI(data) {
     const name = data.name || 'SIN REGISTRO';
@@ -1873,7 +1852,6 @@
     const stats = data.stats || {};
     const competencies = data.competencies || {};
 
-    // Panel persona
     document.getElementById('displayName').textContent = name;
     document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
     document.getElementById('displayRank').textContent = rank;
@@ -1881,7 +1859,6 @@
     document.getElementById('displayOccupation').textContent = occupation;
     document.getElementById('displayStatus').textContent = status;
 
-    // DNI
     document.getElementById('dniName').textContent = name;
     document.getElementById('dniAlias').textContent = alias;
     document.getElementById('dniRank').textContent = rank;
@@ -1898,7 +1875,6 @@
     const f = String(hoy.getDate()).padStart(2,'0')+'/'+String(hoy.getMonth()+1).padStart(2,'0')+'/'+hoy.getFullYear();
     document.getElementById('dniDate').textContent = f;
 
-    // Libro
     document.getElementById('bookName').textContent = name;
     document.getElementById('bookAlias').textContent = alias;
     document.getElementById('bookRank').textContent = rank;
@@ -1915,10 +1891,8 @@
     document.getElementById('bookCertDate').textContent = f;
     document.getElementById('bookLastVerification').textContent = f;
 
-    // Estadísticas
     const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
-    const statLabels = ['Fuerza','Percepción','Resistencia','Carisma','Inteligencia','Agilidad','Suerte'];
-    statKeys.forEach((key, idx) => {
+    statKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
       if (container) {
         const val = stats[key] || 0;
@@ -1931,7 +1905,6 @@
       }
     });
 
-    // Competencias
     const compKeys = ['combat','building','farming','redstone'];
     compKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
@@ -1946,7 +1919,6 @@
       }
     });
 
-    // Cargar skin
     if (minecraftNick) {
       cargarSkinQuieto(minecraftNick);
     }
@@ -2063,9 +2035,8 @@
       return;
     }
 
-    const isAdmin = await checkIsAdmin(user);
     mainContent.style.display = 'block';
-    renderNav(user, isAdmin);
+    renderNav(user);
 
     const id = getExpedienteId();
     await cargarExpediente(id);
