@@ -529,9 +529,10 @@
       flex: 1;
       min-height: 110px;
     }
+    /* FOTO MUCHO MÁS GRANDE */
     .dni-photo-frame {
-      width: 120px;
-      height: 145px;
+      width: 150px;
+      height: 170px;
       border: 2px solid #a89885;
       border-radius: 12px;
       padding: 4px;
@@ -605,43 +606,18 @@
     .dni-footer {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       padding: 4px 6px 2px 6px;
       position: relative;
       flex-wrap: wrap;
       gap: 8px;
     }
-    .dni-signature {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-    }
-    .dni-signature-img {
-      font-family: 'Great Vibes', cursive;
-      font-size: 1.6rem;
-      color: #111;
-      line-height: 1;
-      margin-bottom: -2px;
-      transform: rotate(-3deg);
-    }
-    .dni-signature-line {
-      width: 100px;
-      height: 1.5px;
-      background: #1a1a1a;
-      margin-bottom: 1px;
-    }
-    .dni-signature-label {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.4rem;
-      font-weight: 800;
-      color: #665c54;
-      letter-spacing: 0.5px;
-    }
+    /* FIRMA ELIMINADA - solo fecha y sello */
     .dni-issue {
       text-align: right;
-      padding-right: 30px;
+      padding-right: 20px;
+      position: relative;
+      z-index: 6;
     }
     .dni-issue-label {
       font-family: 'Montserrat', sans-serif;
@@ -652,17 +628,17 @@
       margin-bottom: 0;
     }
     .dni-issue-date {
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       font-weight: 800;
       color: #500a0e;
       letter-spacing: 1px;
     }
     .dni-seal {
       position: absolute;
-      right: 6px;
-      bottom: 2px;
-      width: 44px;
-      height: 44px;
+      right: 8px;
+      bottom: 4px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
       z-index: 5;
     }
@@ -1230,21 +1206,20 @@
       .dni-card { padding: 12px 14px 0 14px; min-height: 220px; }
       .dni-title { font-size: 1.1rem; }
       .dni-shield { width: 34px; }
-      .dni-photo-frame { width: 80px; height: 100px; }
+      .dni-photo-frame { width: 100px; height: 120px; }
       .dni-grid { gap: 2px 8px; }
       .dni-value { font-size: 0.55rem; }
       .dni-footer { padding: 2px 2px 0 2px; }
-      .dni-seal { width: 32px; height: 32px; right: 4px; bottom: 0px; }
+      .dni-seal { width: 36px; height: 36px; right: 4px; bottom: 2px; }
       .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
+      .dni-issue-date { font-size: 0.65rem; }
       .book-container { max-width: 320px; }
       .book.open { transform: translateX(35%) !important; }
       .photo-frame { height: 100px; }
       .panel-documentos { padding: 14px; }
       .user-info .email { font-size: 8px; }
       .logout-btn { font-size: 8px; padding: 4px 10px; }
-      .dni-signature-img { font-size: 1.2rem; }
-      .dni-signature-line { width: 70px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1259,18 +1234,16 @@
       .dni-shield { width: 26px; }
       .dni-expediente { padding: 2px 8px; }
       .dni-exp-num { font-size: 0.55rem; }
-      .dni-photo-frame { width: 60px; height: 75px; }
+      .dni-photo-frame { width: 75px; height: 90px; }
       .dni-grid { gap: 1px 4px; }
       .dni-item { gap: 3px; }
       .dni-icon { font-size: 0.45rem; width: 14px; }
       .dni-label { font-size: 0.28rem; }
       .dni-value { font-size: 0.45rem; }
       .dni-footer { padding: 1px 0 0 0; }
-      .dni-signature-img { font-size: 1rem; }
-      .dni-signature-line { width: 50px; }
-      .dni-issue { padding-right: 15px; }
+      .dni-issue { padding-right: 10px; }
       .dni-issue-date { font-size: 0.5rem; }
-      .dni-seal { width: 24px; height: 24px; right: 2px; bottom: 0px; }
+      .dni-seal { width: 28px; height: 28px; right: 2px; bottom: 2px; }
       .dni-bottom-bar { font-size: 0.25rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -10px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
       .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 16px; }
     }
@@ -1349,7 +1322,7 @@
             </div>
             <div class="dni-separator"></div>
             <div class="dni-body">
-              <!-- FOTO MÁS GRANDE -->
+              <!-- FOTO MÁS GRANDE (150x170) -->
               <div class="dni-photo-frame">
                 <div class="dni-photo-inner"><canvas id="dniSkinCanvas"></canvas></div>
               </div>
@@ -1367,18 +1340,14 @@
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-circle-dot"></i></div><div class="dni-text"><span class="dni-label">ESTADO</span><span class="dni-value active" id="dniStatus">—</span></div></div>
               </div>
             </div>
-            <!-- FOOTER SIN QR, SOLO FIRMA Y FECHA -->
+            <!-- FOOTER SIN FIRMA, SOLO FECHA Y SELLO -->
             <div class="dni-footer">
-              <!-- FIRMA MÁS GRANDE -->
-              <div class="dni-signature">
-                <div class="dni-signature-img" id="dniSignature">—</div>
-                <div class="dni-signature-line"></div>
-                <div class="dni-signature-label">FIRMA</div>
-              </div>
+              <!-- FECHA DE EMISIÓN - Con margen para que no la tape el sello -->
               <div class="dni-issue">
                 <div class="dni-issue-label">EMISIÓN</div>
                 <div class="dni-issue-date" id="dniDate">__/__/____</div>
               </div>
+              <!-- SELLO - Ahora con z-index mayor y posición ajustada -->
               <img class="dni-seal" src="./img/Sello.png" alt="Sello" />
             </div>
             <div class="dni-bottom-bar">POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE</div>
@@ -1977,7 +1946,6 @@
     document.getElementById('dniGender').textContent = gender;
     document.getElementById('dniSpecies').textContent = species;
     document.getElementById('dniMarital').textContent = marital;
-    document.getElementById('dniSignature').textContent = name;
     document.getElementById('dniFileNumber').textContent = fileNumber;
     
     const hoy = new Date();
