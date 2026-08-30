@@ -43,7 +43,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- skinview3d SE CARGA UNA SOLA VEZ AQUÍ -->
   <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
   
   <style>
@@ -366,23 +365,23 @@
       flex: 1;
     }
 
-    /* ======= DNI ======= */
+    /* ======= DNI MEJORADO ======= */
     .dni-container {
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
       margin: 0 auto;
       flex-shrink: 0;
       position: relative;
     }
     .dni-card {
       width: 100%;
-      aspect-ratio: 700/340;
-      max-width: 700px;
+      aspect-ratio: 750/380;
+      max-width: 750px;
       margin: 0 auto;
       position: relative;
       background-color: #f7f5ef;
       border-radius: 20px;
-      padding: 18px 24px 0 24px;
+      padding: 20px 28px 0 28px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       overflow: hidden;
       border: 2px solid #3a322b;
@@ -390,7 +389,7 @@
       flex-direction: column;
       justify-content: space-between;
       font-family: "Libre Baskerville", Georgia, serif;
-      min-height: 260px;
+      min-height: 290px;
     }
     .dni-watermark {
       position: absolute;
@@ -433,16 +432,16 @@
     .dni-header-left {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
     .dni-shield {
-      width: 40px;
+      width: 48px;
       height: auto;
       object-fit: contain;
     }
     .dni-title {
       font-family: "Cinzel";
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       font-weight: 800;
       color: #1a1a1a;
       letter-spacing: 2px;
@@ -451,7 +450,7 @@
     }
     .dni-subtitle {
       font-family: "Cinzel";
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #500a0e;
       letter-spacing: 2px;
@@ -460,20 +459,20 @@
       background-color: #500a0e;
       color: #fff;
       border-radius: 8px;
-      padding: 4px 12px;
+      padding: 4px 14px;
       text-align: center;
       border: 2px solid #8d2328;
       box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
     }
     .dni-exp-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.4rem;
+      font-size: 0.5rem;
       font-weight: 700;
       letter-spacing: 1px;
       opacity: 0.9;
     }
     .dni-exp-num {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       font-weight: 800;
       letter-spacing: 1px;
       margin: 0;
@@ -496,13 +495,13 @@
     }
     .dni-class-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.35rem;
+      font-size: 0.45rem;
       font-weight: 700;
       letter-spacing: 1px;
       opacity: 0.8;
     }
     .dni-class-val {
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       font-weight: 800;
       letter-spacing: 1px;
     }
@@ -526,16 +525,16 @@
     }
     .dni-body {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       flex: 1;
-      min-height: 100px;
+      min-height: 110px;
     }
     .dni-photo-frame {
-      width: 90px;
-      height: 115px;
-      border: 1.5px solid #a89885;
-      border-radius: 10px;
-      padding: 3px;
+      width: 120px;
+      height: 145px;
+      border: 2px solid #a89885;
+      border-radius: 12px;
+      padding: 4px;
       background-color: rgba(255,255,255,0.4);
       flex-shrink: 0;
       overflow: hidden;
@@ -544,7 +543,7 @@
       width: 100%;
       height: 100%;
       border: 1px solid #a89885;
-      border-radius: 6px;
+      border-radius: 8px;
       overflow: hidden;
       background: #e8e4da;
       display: flex;
@@ -560,20 +559,21 @@
     .dni-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2px 10px;
+      gap: 4px 14px;
       flex: 1;
+      padding-top: 2px;
     }
     .dni-item {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
       border-bottom: 1px solid rgba(140,120,99,0.2);
-      padding-bottom: 1px;
+      padding-bottom: 2px;
     }
     .dni-icon {
-      font-size: 0.55rem;
+      font-size: 0.7rem;
       color: #500a0e;
-      width: 14px;
+      width: 18px;
       text-align: center;
       flex-shrink: 0;
     }
@@ -584,14 +584,14 @@
     }
     .dni-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.32rem;
+      font-size: 0.4rem;
       font-weight: 800;
       color: #665c54;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
     .dni-value {
-      font-size: 0.5rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #1a1a1a;
       white-space: nowrap;
@@ -609,53 +609,32 @@
       padding: 4px 6px 2px 6px;
       position: relative;
       flex-wrap: wrap;
-      gap: 4px;
-    }
-    .dni-qr {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dni-qr-code {
-      width: 36px;
-      height: 36px;
-      background: #fff;
-      padding: 2px;
-      border: 1px solid #bbb;
-      border-radius: 3px;
-    }
-    .dni-qr-text {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 0.28rem;
-      font-weight: 700;
-      color: #665c54;
-      line-height: 1.2;
-      max-width: 65px;
-      letter-spacing: 0.3px;
+      gap: 8px;
     }
     .dni-signature {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      flex: 1;
     }
     .dni-signature-img {
       font-family: 'Great Vibes', cursive;
-      font-size: 1rem;
+      font-size: 1.6rem;
       color: #111;
       line-height: 1;
       margin-bottom: -2px;
       transform: rotate(-3deg);
     }
     .dni-signature-line {
-      width: 70px;
-      height: 1px;
+      width: 100px;
+      height: 1.5px;
       background: #1a1a1a;
       margin-bottom: 1px;
     }
     .dni-signature-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.28rem;
+      font-size: 0.4rem;
       font-weight: 800;
       color: #665c54;
       letter-spacing: 0.5px;
@@ -666,14 +645,14 @@
     }
     .dni-issue-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.32rem;
+      font-size: 0.4rem;
       font-weight: 800;
       color: #665c54;
       letter-spacing: 0.5px;
       margin-bottom: 0;
     }
     .dni-issue-date {
-      font-size: 0.55rem;
+      font-size: 0.7rem;
       font-weight: 800;
       color: #500a0e;
       letter-spacing: 1px;
@@ -682,8 +661,8 @@
       position: absolute;
       right: 6px;
       bottom: 2px;
-      width: 40px;
-      height: 40px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
       z-index: 5;
     }
@@ -692,11 +671,11 @@
       color: #fff;
       text-align: center;
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.38rem;
+      font-size: 0.45rem;
       font-weight: 700;
       letter-spacing: 2px;
       padding: 3px 0;
-      margin: 0 -24px;
+      margin: 0 -28px;
       border-bottom-left-radius: 18px;
       border-bottom-right-radius: 18px;
       position: relative;
@@ -1248,16 +1227,15 @@
       .nombre-bajo { font-size: 24px; }
       .datos-persona { align-items: center; }
       .detalles-extra { justify-content: center; }
-      .dni-card { padding: 10px 12px 0 12px; min-height: 200px; }
-      .dni-title { font-size: 0.9rem; }
-      .dni-shield { width: 28px; }
-      .dni-photo-frame { width: 60px; height: 78px; }
-      .dni-grid { gap: 1px 4px; }
-      .dni-value { font-size: 0.4rem; }
+      .dni-card { padding: 12px 14px 0 14px; min-height: 220px; }
+      .dni-title { font-size: 1.1rem; }
+      .dni-shield { width: 34px; }
+      .dni-photo-frame { width: 80px; height: 100px; }
+      .dni-grid { gap: 2px 8px; }
+      .dni-value { font-size: 0.55rem; }
       .dni-footer { padding: 2px 2px 0 2px; }
-      .dni-qr-code { width: 28px; height: 28px; }
-      .dni-seal { width: 28px; height: 28px; right: 4px; bottom: 0px; }
-      .dni-bottom-bar { font-size: 0.28rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+      .dni-seal { width: 32px; height: 32px; right: 4px; bottom: 0px; }
+      .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
       .book-container { max-width: 320px; }
       .book.open { transform: translateX(35%) !important; }
@@ -1265,6 +1243,8 @@
       .panel-documentos { padding: 14px; }
       .user-info .email { font-size: 8px; }
       .logout-btn { font-size: 8px; padding: 4px 10px; }
+      .dni-signature-img { font-size: 1.2rem; }
+      .dni-signature-line { width: 70px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1273,28 +1253,26 @@
       .visor-skin { width: 140px; height: 120px; }
       .nombre-bajo { font-size: 20px; }
       .book-container { max-width: 280px; }
-      .dni-card { padding: 6px 8px 0 8px; min-height: 160px; }
-      .dni-title { font-size: 0.7rem; }
-      .dni-subtitle { font-size: 0.4rem; letter-spacing: 1px; }
-      .dni-shield { width: 22px; }
+      .dni-card { padding: 8px 10px 0 10px; min-height: 180px; }
+      .dni-title { font-size: 0.85rem; }
+      .dni-subtitle { font-size: 0.45rem; letter-spacing: 1px; }
+      .dni-shield { width: 26px; }
       .dni-expediente { padding: 2px 8px; }
-      .dni-exp-num { font-size: 0.5rem; }
-      .dni-photo-frame { width: 45px; height: 60px; }
-      .dni-grid { gap: 0 3px; }
-      .dni-item { gap: 2px; }
-      .dni-icon { font-size: 0.35rem; width: 10px; }
-      .dni-label { font-size: 0.2rem; }
-      .dni-value { font-size: 0.35rem; }
+      .dni-exp-num { font-size: 0.55rem; }
+      .dni-photo-frame { width: 60px; height: 75px; }
+      .dni-grid { gap: 1px 4px; }
+      .dni-item { gap: 3px; }
+      .dni-icon { font-size: 0.45rem; width: 14px; }
+      .dni-label { font-size: 0.28rem; }
+      .dni-value { font-size: 0.45rem; }
       .dni-footer { padding: 1px 0 0 0; }
-      .dni-qr-code { width: 20px; height: 20px; }
-      .dni-qr-text { font-size: 0.2rem; max-width: 35px; }
-      .dni-signature-img { font-size: 0.7rem; }
-      .dni-signature-line { width: 40px; }
+      .dni-signature-img { font-size: 1rem; }
+      .dni-signature-line { width: 50px; }
       .dni-issue { padding-right: 15px; }
-      .dni-issue-date { font-size: 0.35rem; }
-      .dni-seal { width: 20px; height: 20px; right: 2px; bottom: 0px; }
-      .dni-bottom-bar { font-size: 0.2rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -8px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
-      .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 14px; }
+      .dni-issue-date { font-size: 0.5rem; }
+      .dni-seal { width: 24px; height: 24px; right: 2px; bottom: 0px; }
+      .dni-bottom-bar { font-size: 0.25rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -10px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+      .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 16px; }
     }
   </style>
 </head>
@@ -1348,7 +1326,7 @@
     <!-- PANEL DOCUMENTOS -->
     <div class="panel-documentos">
 
-      <!-- DNI -->
+      <!-- DNI MEJORADO -->
       <div class="dni-container" id="dniContainer">
         <div class="dni-card" id="dniCard">
           <div class="dni-inner-border"></div>
@@ -1371,9 +1349,11 @@
             </div>
             <div class="dni-separator"></div>
             <div class="dni-body">
+              <!-- FOTO MÁS GRANDE -->
               <div class="dni-photo-frame">
                 <div class="dni-photo-inner"><canvas id="dniSkinCanvas"></canvas></div>
               </div>
+              <!-- DATOS MÁS GRANDES -->
               <div class="dni-grid">
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-user"></i></div><div class="dni-text"><span class="dni-label">NOMBRE</span><span class="dni-value" id="dniName">—</span></div></div>
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-calendar-days"></i></div><div class="dni-text"><span class="dni-label">FECHA NAC.</span><span class="dni-value" id="dniBirthday">—</span></div></div>
@@ -1387,13 +1367,9 @@
                 <div class="dni-item"><div class="dni-icon"><i class="fas fa-circle-dot"></i></div><div class="dni-text"><span class="dni-label">ESTADO</span><span class="dni-value active" id="dniStatus">—</span></div></div>
               </div>
             </div>
+            <!-- FOOTER SIN QR, SOLO FIRMA Y FECHA -->
             <div class="dni-footer">
-              <div class="dni-qr">
-                <svg class="dni-qr-code" viewBox="0 0 100 100">
-                  <path d="M0 0h30v30H0zM40 0h10v10H40zM60 0h40v40H60zM10 10h10v10H10zM70 10h20v20H70zM0 40h10v20H0zM20 40h20v10H20zM50 40h20v20H50zM80 50h20v10H80zM0 70h30v30H0zM10 80h10v10H10zM40 70h10v30H40zM60 80h20v20H60zM90 70h10v30H90z" fill="#000"/>
-                </svg>
-                <div class="dni-qr-text">IDENTIDAD REGISTRADA EN LA LIGA LOMBARDA</div>
-              </div>
+              <!-- FIRMA MÁS GRANDE -->
               <div class="dni-signature">
                 <div class="dni-signature-img" id="dniSignature">—</div>
                 <div class="dni-signature-line"></div>
@@ -1718,7 +1694,6 @@
   let animFrameId = null;
   let currentSkinNick = '';
 
-  // Estados de animación
   let estadoAnimacion = 'WALKING';
   let posX = 28;
   const targetX = 0;
@@ -1751,14 +1726,12 @@
   }
 
   function iniciarAnimacion() {
-    // Detener animación anterior si existe
     if (animFrameId) {
       cancelAnimationFrame(animFrameId);
       animFrameId = null;
     }
 
     if (!viewer || !viewer.playerObject || !viewer.playerObject.skin) {
-      // Reintentar después de un breve retraso
       setTimeout(iniciarAnimacion, 300);
       return;
     }
@@ -1767,13 +1740,11 @@
     estadoAnimacion = 'WALKING';
     posX = 28;
     
-    // Configurar posición inicial
     const player = viewer.playerObject;
     player.position.x = posX;
     player.position.y = 0;
     player.rotation.y = -Math.PI / 2;
     
-    // Resetear extremidades
     player.skin.leftArm.rotation.x = 0;
     player.skin.rightArm.rotation.x = 0;
     player.skin.leftLeg.rotation.x = 0;
@@ -1802,7 +1773,6 @@
         player.rotation.y = 0;
       }
 
-      // ===== WALKING =====
       if (estadoAnimacion === 'WALKING') {
         posX -= walkSpeed;
         player.position.x = posX;
@@ -1827,10 +1797,7 @@
           estadoAnimacion = 'IDLE';
           programarProximoGesto();
         }
-      }
-
-      // ===== IDLE =====
-      else if (estadoAnimacion === 'IDLE') {
+      } else if (estadoAnimacion === 'IDLE') {
         const breathe = Math.sin(t * 1.5) * 0.08;
         player.position.y = breathe;
         player.skin.head.rotation.y = 0;
@@ -1842,10 +1809,7 @@
         if (time >= nextGestureTime) {
           triggerRandomGesture();
         }
-      }
-
-      // ===== WAVING =====
-      else if (estadoAnimacion === 'WAVING') {
+      } else if (estadoAnimacion === 'WAVING') {
         player.position.y = Math.sin(t * 1.5) * 0.08;
         const elapsed = time - gestureStartTime;
         const progress = elapsed / gestureDuration;
@@ -1856,10 +1820,7 @@
           estadoAnimacion = 'IDLE';
           programarProximoGesto();
         }
-      }
-
-      // ===== LOOKING =====
-      else if (estadoAnimacion === 'LOOKING') {
+      } else if (estadoAnimacion === 'LOOKING') {
         player.position.y = Math.sin(t * 1.5) * 0.08;
         const elapsed = time - gestureStartTime;
         const progress = elapsed / gestureDuration;
@@ -1870,10 +1831,7 @@
           estadoAnimacion = 'IDLE';
           programarProximoGesto();
         }
-      }
-
-      // ===== SIXSEVEN =====
-      else if (estadoAnimacion === 'SIXSEVEN') {
+      } else if (estadoAnimacion === 'SIXSEVEN') {
         player.position.y = Math.sin(t * 1.5) * 0.08;
         const elapsed = time - gestureStartTime;
         const progress = elapsed / gestureDuration;
@@ -1907,7 +1865,6 @@
 
     const canvas = document.getElementById('skin-container');
 
-    // Crear viewer si no existe
     if (!viewer) {
       viewer = new skinview3d.SkinViewer({
         canvas: canvas,
@@ -1937,15 +1894,12 @@
         });
         viewer.render();
         
-        // Iniciar animación después de cargar la skin
         setTimeout(() => {
           iniciarAnimacion();
-          // Actualizar mini canvases
           setTimeout(updateMiniCanvases, 500);
         }, 200);
       }
     }).catch(() => {
-      // Fallback a minotar
       viewer.loadSkin(`https://minotar.net/skin/${encodeURIComponent(nick)}`).then(() => {
         setTimeout(() => {
           iniciarAnimacion();
@@ -1990,7 +1944,6 @@
   // ACTUALIZAR UI CON DATOS DEL EXPEDIENTE
   // =========================================================
   function actualizarUI(data) {
-    // Datos básicos
     const name = data.name || 'SIN REGISTRO';
     const alias = data.alias || '—';
     const rank = data.rank || 'Ciudadano';
@@ -2007,7 +1960,6 @@
     const stats = data.stats || {};
     const competencies = data.competencies || {};
 
-    // Panel persona
     document.getElementById('displayName').textContent = name;
     document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
     document.getElementById('displayRank').textContent = rank;
@@ -2015,7 +1967,6 @@
     document.getElementById('displayOccupation').textContent = occupation;
     document.getElementById('displayStatus').textContent = status;
 
-    // DNI
     document.getElementById('dniName').textContent = name;
     document.getElementById('dniAlias').textContent = alias;
     document.getElementById('dniRank').textContent = rank;
@@ -2033,7 +1984,6 @@
     const f = String(hoy.getDate()).padStart(2,'0')+'/'+String(hoy.getMonth()+1).padStart(2,'0')+'/'+hoy.getFullYear();
     document.getElementById('dniDate').textContent = f;
 
-    // Libro
     document.getElementById('bookName').textContent = name;
     document.getElementById('bookAlias').textContent = alias;
     document.getElementById('bookRank').textContent = rank;
@@ -2050,7 +2000,6 @@
     document.getElementById('bookCertDate').textContent = f;
     document.getElementById('bookLastVerification').textContent = f;
 
-    // Estadísticas
     const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
     statKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
@@ -2065,7 +2014,6 @@
       }
     });
 
-    // Competencias
     const compKeys = ['combat','building','farming','redstone'];
     compKeys.forEach((key) => {
       const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
@@ -2080,7 +2028,6 @@
       }
     });
 
-    // Cargar skin con animación
     if (minecraftNick) {
       cargarSkinConAnimacion(minecraftNick);
     }
