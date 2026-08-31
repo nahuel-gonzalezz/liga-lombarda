@@ -654,14 +654,14 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO ======= */
+    /* ======= LIBRO CORREGIDO - 150px más abajo ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       flex-shrink: 0;
-      margin-top: 12px;
+      margin-top: 150px; /* Aumentado de 12px a 150px */
     }
     .book-container {
       perspective: 1500px;
@@ -691,13 +691,17 @@
       transform-style: preserve-3d;
       transition: transform 0.8s ease-in-out;
       cursor: pointer;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
     .page:last-child { cursor: default; }
+    
     .front, .back {
       position: absolute;
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
       background: #f1ebd9;
       border: 1px solid #b8a98f;
       padding: 16px 18px;
@@ -707,9 +711,32 @@
       color: #222 !important;
       overflow-y: auto;
     }
-    .back { transform: rotateY(180deg); }
-    .page.flipped { transform: rotateY(-180deg); }
+    .back { 
+      transform: rotateY(180deg); 
+    }
+    .page.flipped { 
+      transform: rotateY(-180deg) !important; 
+      z-index: 10 !important;
+    }
 
+    /* Asegurar que las páginas no se superpongan mal durante la transición */
+    .page {
+      z-index: 1;
+    }
+    .page.flipped {
+      z-index: 10 !important;
+    }
+    .page:not(.flipped) {
+      z-index: 5;
+    }
+    .page:first-child {
+      z-index: 2;
+    }
+    .page.flipped:first-child {
+      z-index: 11 !important;
+    }
+
+    /* PORTADA */
     .cover .front {
       background: #4a1010;
       color: #d4af37 !important;
@@ -1277,6 +1304,7 @@
       .stat-table td { font-size: 0.45rem; }
       .stat-title { font-size: 0.55rem; }
       .dni-title { font-size: 1.1rem; }
+      .book-wrapper { margin-top: 100px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1313,6 +1341,7 @@
       .stat-title { font-size: 0.45rem; }
       .photo-frame { height: 70px; }
       .dni-photo-frame { width: 65px; height: 80px; }
+      .book-wrapper { margin-top: 70px; }
     }
   </style>
 </head>
@@ -1417,7 +1446,7 @@
         </div>
       </div>
 
-      <!-- LIBRO -->
+      <!-- LIBRO - 150px más abajo -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -1737,10 +1766,9 @@
 
   let skinLoaded = false;
   let currentNick = '';
-  let currentSkinUrl = '';
 
   // =========================================================
-  // SKIN VIEWER PARA DNI (ESTÁTICO, SIN ANIMACIÓN)
+  // SKIN VIEWER PARA DNI (ESTÁTICO)
   // =========================================================
   const dniCanvas = document.getElementById('dniSkinCanvas');
   const dniViewer = new skinview3d.SkinViewer({
@@ -2188,7 +2216,7 @@
   }
 
   // =========================================================
-  // NAVEGACIÓN DEL LIBRO
+  // NAVEGACIÓN DEL LIBRO CORREGIDA
   // =========================================================
   let currentStep = 1;
   const pages = document.querySelectorAll('.page');
@@ -2197,17 +2225,34 @@
 
   function updateBookState() {
     pages.forEach((page, index) => {
-      if (index < currentStep) page.classList.add('flipped');
-      else page.classList.remove('flipped');
-      page.style.zIndex = (index < currentStep) ? index + 1 : totalPages - index;
+      // Quitar o añadir clase flipped según corresponda
+      if (index < currentStep) {
+        page.classList.add('flipped');
+      } else {
+        page.classList.remove('flipped');
+      }
+      
+      // Asignar z-index para evitar superposiciones durante la transición
+      if (index < currentStep) {
+        // Páginas ya volteadas (detrás)
+        page.style.zIndex = index + 1;
+      } else {
+        // Páginas no volteadas (adelante)
+        page.style.zIndex = totalPages - index + 1;
+      }
     });
+    
+    // Aplicar clase open al libro
     book.classList.toggle('open', currentStep > 0 && currentStep < totalPages);
+    
+    // Actualizar botones
     const prevBtn = document.getElementById('prevBookBtn');
     const nextBtn = document.getElementById('nextBookBtn');
     if (prevBtn) prevBtn.disabled = (currentStep <= 0);
     if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
   }
 
+  // Funciones globales para los botones
   window.nextPage = function() { 
     if (currentStep < totalPages - 1) { 
       currentStep++; 
@@ -2222,6 +2267,7 @@
     } 
   };
 
+  // Click en páginas
   setTimeout(() => {
     pages.forEach((p, i) => {
       p.addEventListener('click', () => {
@@ -2261,7 +2307,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con 3 viewers: principal, DNI y libro');
+  console.log('📄 Página de expediente con libro corregido y 150px más abajo');
 </script>
 
 </body>
