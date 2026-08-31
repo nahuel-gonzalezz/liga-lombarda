@@ -1706,7 +1706,7 @@
   }
 
   // =========================================================
-  // SKIN VIEWER ANIMADO
+  // SKIN VIEWER PRINCIPAL (ANIMADO)
   // =========================================================
   const canvas = document.getElementById('skin-container');
 
@@ -1737,7 +1737,47 @@
 
   let skinLoaded = false;
   let currentNick = '';
+  let currentSkinUrl = '';
 
+  // =========================================================
+  // SKIN VIEWER PARA DNI (ESTÁTICO, SIN ANIMACIÓN)
+  // =========================================================
+  const dniCanvas = document.getElementById('dniSkinCanvas');
+  const dniViewer = new skinview3d.SkinViewer({
+    canvas: dniCanvas,
+    width: 150,
+    height: 170
+  });
+
+  dniViewer.camera.position.set(0, 10, 32);
+  dniViewer.controls.target.set(0, 8, 0);
+  dniViewer.controls.enableRotate = false;
+  dniViewer.controls.enableZoom = false;
+  dniViewer.controls.enablePan = false;
+  dniViewer.globalLight.intensity = 2.5;
+  dniViewer.cameraLight.intensity = 1.2;
+
+  // =========================================================
+  // SKIN VIEWER PARA LIBRO (ESTÁTICO)
+  // =========================================================
+  const bookCanvas = document.getElementById('bookSkinCanvas');
+  const bookViewer = new skinview3d.SkinViewer({
+    canvas: bookCanvas,
+    width: 110,
+    height: 110
+  });
+
+  bookViewer.camera.position.set(0, 10, 32);
+  bookViewer.controls.target.set(0, 8, 0);
+  bookViewer.controls.enableRotate = false;
+  bookViewer.controls.enableZoom = false;
+  bookViewer.controls.enablePan = false;
+  bookViewer.globalLight.intensity = 2.5;
+  bookViewer.cameraLight.intensity = 1.2;
+
+  // =========================================================
+  // FUNCIONES DE CARGA DE SKIN
+  // =========================================================
   function programarProximoGesto() {
     const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
     nextGestureTime = performance.now() + delay;
@@ -1797,14 +1837,10 @@
       viewer.render();
       skinLoaded = true;
       resetToWalking();
-      // Actualizar mini canvases
-      setTimeout(updateMiniCanvases, 300);
-      setTimeout(updateMiniCanvases, 600);
-      setTimeout(updateMiniCanvases, 1000);
     }
   }
 
-  function cargarSkin(nick) {
+  function cargarSkinEnViewers(nick) {
     if (!nick) return;
     if (nick === currentNick && skinLoaded) return;
     currentNick = nick;
@@ -1822,12 +1858,16 @@
       if (intento >= skinSources.length) {
         viewer.loadSkin('https://crafatar.com/skins/steve').then(() => {
           configurarSkin();
+          cargarSkinEnDNI('https://crafatar.com/skins/steve');
+          cargarSkinEnLibro('https://crafatar.com/skins/steve');
         });
         return;
       }
 
       viewer.loadSkin(skinSources[intento]).then(() => {
         configurarSkin();
+        cargarSkinEnDNI(skinSources[intento]);
+        cargarSkinEnLibro(skinSources[intento]);
       }).catch(() => {
         intento++;
         intentarCargar();
@@ -1837,7 +1877,69 @@
     intentarCargar();
   }
 
-  // ====== ANIMACIÓN ======
+  function cargarSkinEnDNI(skinUrl) {
+    dniViewer.loadSkin(skinUrl).then(() => {
+      const skin = dniViewer.playerObject?.skin;
+      if (skin) {
+        skin.traverse((child) => {
+          if (child.isMesh) {
+            child.material.side = 2;
+            child.material.transparent = true;
+            child.material.alphaTest = 0.1;
+          }
+        });
+        const player = dniViewer.playerObject;
+        if (player) {
+          player.position.x = 0;
+          player.position.y = 0;
+          player.rotation.y = 0;
+          if (player.skin) {
+            player.skin.leftArm.rotation.x = 0;
+            player.skin.rightArm.rotation.x = 0;
+            player.skin.leftLeg.rotation.x = 0;
+            player.skin.rightLeg.rotation.x = 0;
+            player.skin.head.rotation.y = 0;
+            player.skin.head.rotation.z = 0;
+            player.skin.body.rotation.z = 0;
+          }
+        }
+        dniViewer.render();
+      }
+    });
+  }
+
+  function cargarSkinEnLibro(skinUrl) {
+    bookViewer.loadSkin(skinUrl).then(() => {
+      const skin = bookViewer.playerObject?.skin;
+      if (skin) {
+        skin.traverse((child) => {
+          if (child.isMesh) {
+            child.material.side = 2;
+            child.material.transparent = true;
+            child.material.alphaTest = 0.1;
+          }
+        });
+        const player = bookViewer.playerObject;
+        if (player) {
+          player.position.x = 0;
+          player.position.y = 0;
+          player.rotation.y = 0;
+          if (player.skin) {
+            player.skin.leftArm.rotation.x = 0;
+            player.skin.rightArm.rotation.x = 0;
+            player.skin.leftLeg.rotation.x = 0;
+            player.skin.rightLeg.rotation.x = 0;
+            player.skin.head.rotation.y = 0;
+            player.skin.head.rotation.z = 0;
+            player.skin.body.rotation.z = 0;
+          }
+        }
+        bookViewer.render();
+      }
+    });
+  }
+
+  // ====== ANIMACIÓN PRINCIPAL ======
   function animate(time) {
     requestAnimationFrame(animate);
 
@@ -1943,48 +2045,6 @@
   }
 
   // =========================================================
-  // ACTUALIZAR MINI CANVASES (DNI y LIBRO)
-  // =========================================================
-  function updateMiniCanvases() {
-    const mainCanvas = document.getElementById('skin-container');
-    const bookCanvas = document.getElementById('bookSkinCanvas');
-    const dniCanvas = document.getElementById('dniSkinCanvas');
-    
-    if (!bookCanvas || !dniCanvas || !mainCanvas) return;
-    
-    try {
-      // Capturar la imagen del canvas principal
-      const dataURL = mainCanvas.toDataURL('image/png');
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      
-      img.onload = function() {
-        // DNI - imagen más grande
-        let ctx = dniCanvas.getContext('2d');
-        let size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
-        dniCanvas.width = size;
-        dniCanvas.height = size;
-        ctx.clearRect(0, 0, size, size);
-        let s = Math.min(size / img.width, size / img.height) * 1.7;
-        ctx.drawImage(img, (size - img.width * s) / 2, (size - img.height * s) / 2 + size * 0.3, img.width * s, img.height * s);
-
-        // Libro
-        ctx = bookCanvas.getContext('2d');
-        size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
-        bookCanvas.width = size;
-        bookCanvas.height = size;
-        ctx.clearRect(0, 0, size, size);
-        s = Math.min(size / img.width, size / img.height) * 1.05;
-        ctx.drawImage(img, (size - img.width * s) / 2, (size - img.height * s) / 2 + size * 0.04, img.width * s, img.height * s);
-      };
-      
-      img.src = dataURL;
-    } catch(e) {
-      console.warn('Error al actualizar mini canvases:', e);
-    }
-  }
-
-  // =========================================================
   // ACTUALIZAR UI
   // =========================================================
   function actualizarUI(data) {
@@ -2072,7 +2132,7 @@
     });
 
     if (minecraftNick) {
-      cargarSkin(minecraftNick);
+      cargarSkinEnViewers(minecraftNick);
     }
   }
 
@@ -2201,7 +2261,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con skin animado y foto en DNI');
+  console.log('📄 Página de expediente con 3 viewers: principal, DNI y libro');
 </script>
 
 </body>
