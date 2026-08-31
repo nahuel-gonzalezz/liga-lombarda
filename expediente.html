@@ -1706,24 +1706,21 @@
   }
 
   // =========================================================
-  // SKIN VIEWER ANIMADO - VERSIÓN CORREGIDA
+  // SKIN VIEWER ANIMADO
   // =========================================================
   const canvas = document.getElementById('skin-container');
 
-  // Crear el viewer con el tamaño correcto
   const viewer = new skinview3d.SkinViewer({
     canvas: canvas,
     width: 280,
     height: 280
   });
 
-  // Ajustar cámara para ver el cuerpo completo
   viewer.camera.position.set(0, 10, 32);
   viewer.controls.target.set(0, 8, 0);
   viewer.globalLight.intensity = 2.5;
   viewer.cameraLight.intensity = 1.2;
 
-  // Variables de animación
   const START_X = 28;
   let state = "WALKING";
   let posX = START_X;
@@ -1740,7 +1737,6 @@
 
   let skinLoaded = false;
   let currentNick = '';
-  let animFrameId = null;
 
   function programarProximoGesto() {
     const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
@@ -1801,7 +1797,7 @@
       viewer.render();
       skinLoaded = true;
       resetToWalking();
-      // Actualizar mini canvases después de cargar la skin
+      // Actualizar mini canvases
       setTimeout(updateMiniCanvases, 300);
       setTimeout(updateMiniCanvases, 600);
       setTimeout(updateMiniCanvases, 1000);
@@ -1814,7 +1810,6 @@
     currentNick = nick;
     skinLoaded = false;
 
-    // Lista de fuentes para intentar
     const skinSources = [
       `https://crafatar.com/skins/${encodeURIComponent(nick)}`,
       `https://minotar.net/skin/${encodeURIComponent(nick)}`,
@@ -1825,12 +1820,8 @@
 
     function intentarCargar() {
       if (intento >= skinSources.length) {
-        // Si todo falla, usar Steve
         viewer.loadSkin('https://crafatar.com/skins/steve').then(() => {
           configurarSkin();
-        }).catch(() => {
-          // Si Steve también falla, mostrar mensaje
-          console.warn('No se pudo cargar ninguna skin');
         });
         return;
       }
@@ -1846,16 +1837,15 @@
     intentarCargar();
   }
 
-  // ====== ANIMACIÓN PRINCIPAL ======
+  // ====== ANIMACIÓN ======
   function animate(time) {
-    animFrameId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
     const player = viewer.playerObject;
     if (!player || !player.skin || !skinLoaded) return;
 
     const t = time * 0.005;
 
-    // --- CAMINANDO ---
     if (state === "WALKING") {
       posX -= walkSpeed;
       player.position.x = posX;
@@ -1884,10 +1874,7 @@
         state = "IDLE";
         programarProximoGesto();
       }
-    }
-
-    // --- IDLE ---
-    else if (state === "IDLE") {
+    } else if (state === "IDLE") {
       const breathe = Math.sin(t * 1.5) * 0.08;
       player.position.y = breathe;
       player.skin.leftArm.rotation.x = Math.sin(t * 1.5) * 0.04;
@@ -1900,10 +1887,7 @@
       if (time >= nextGestureTime) {
         triggerRandomGesture();
       }
-    }
-
-    // --- WAVING ---
-    else if (state === "WAVING") {
+    } else if (state === "WAVING") {
       player.position.y = Math.sin(t * 1.5) * 0.08;
       const elapsed = time - gestureStartTime;
       const progress = elapsed / gestureDuration;
@@ -1918,10 +1902,7 @@
         player.skin.head.rotation.z = 0;
         programarProximoGesto();
       }
-    }
-
-    // --- LOOKING ---
-    else if (state === "LOOKING") {
+    } else if (state === "LOOKING") {
       player.position.y = Math.sin(t * 1.5) * 0.08;
       const elapsed = time - gestureStartTime;
       const progress = elapsed / gestureDuration;
@@ -1934,10 +1915,7 @@
         player.skin.body.rotation.y = 0;
         programarProximoGesto();
       }
-    }
-
-    // --- SIXSEVEN ---
-    else if (state === "SIXSEVEN") {
+    } else if (state === "SIXSEVEN") {
       player.position.y = Math.sin(t * 1.5) * 0.08;
       const elapsed = time - gestureStartTime;
       const progress = elapsed / gestureDuration;
@@ -1971,28 +1949,35 @@
     const mainCanvas = document.getElementById('skin-container');
     const bookCanvas = document.getElementById('bookSkinCanvas');
     const dniCanvas = document.getElementById('dniSkinCanvas');
+    
     if (!bookCanvas || !dniCanvas || !mainCanvas) return;
+    
     try {
+      // Capturar la imagen del canvas principal
       const dataURL = mainCanvas.toDataURL('image/png');
       const img = new Image();
       img.crossOrigin = 'anonymous';
+      
       img.onload = function() {
-        // Libro
-        let ctx = bookCanvas.getContext('2d');
-        let size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
-        bookCanvas.width = size; bookCanvas.height = size;
-        ctx.clearRect(0,0,size,size);
-        let s = Math.min(size/img.width, size/img.height)*1.05;
-        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.04, img.width*s, img.height*s);
+        // DNI - imagen más grande
+        let ctx = dniCanvas.getContext('2d');
+        let size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
+        dniCanvas.width = size;
+        dniCanvas.height = size;
+        ctx.clearRect(0, 0, size, size);
+        let s = Math.min(size / img.width, size / img.height) * 1.7;
+        ctx.drawImage(img, (size - img.width * s) / 2, (size - img.height * s) / 2 + size * 0.3, img.width * s, img.height * s);
 
-        // DNI
-        ctx = dniCanvas.getContext('2d');
-        size = Math.min(dniCanvas.parentElement.clientWidth || 60, 90);
-        dniCanvas.width = size; dniCanvas.height = size;
-        ctx.clearRect(0,0,size,size);
-        s = Math.min(size/img.width, size/img.height)*1.7;
-        ctx.drawImage(img, (size - img.width*s)/2, (size - img.height*s)/2 + size*0.3, img.width*s, img.height*s);
+        // Libro
+        ctx = bookCanvas.getContext('2d');
+        size = Math.min(bookCanvas.parentElement.clientWidth || 80, 110);
+        bookCanvas.width = size;
+        bookCanvas.height = size;
+        ctx.clearRect(0, 0, size, size);
+        s = Math.min(size / img.width, size / img.height) * 1.05;
+        ctx.drawImage(img, (size - img.width * s) / 2, (size - img.height * s) / 2 + size * 0.04, img.width * s, img.height * s);
       };
+      
       img.src = dataURL;
     } catch(e) {
       console.warn('Error al actualizar mini canvases:', e);
@@ -2214,11 +2199,9 @@
   // =========================================================
   // INICIAR ANIMACIÓN DEL SKIN
   // =========================================================
-  if (animFrameId === null) {
-    requestAnimationFrame(animate);
-  }
+  requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con skin animado y miniaturas sincronizadas');
+  console.log('📄 Página de expediente con skin animado y foto en DNI');
 </script>
 
 </body>
