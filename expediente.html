@@ -303,15 +303,17 @@
       border: 1px solid #6b5f4e;
       overflow: hidden;
       position: relative;
-      pointer-events: none;
-      user-select: none;
     }
     #skin-container {
       width: 100% !important;
       height: 100% !important;
       display: block;
       cursor: default;
-      pointer-events: none;
+      pointer-events: none !important;
+    }
+    .visor-skin canvas {
+      pointer-events: none !important;
+      cursor: default !important;
     }
     .datos-persona {
       display: flex;
@@ -657,7 +659,7 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO ======= */
+    /* ======= LIBRO - 150px más abajo ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
@@ -694,8 +696,6 @@
       transform-style: preserve-3d;
       transition: transform 0.8s ease-in-out;
       cursor: pointer;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
     }
     .page:last-child { cursor: default; }
     .front, .back {
@@ -703,7 +703,6 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
       background: #f1ebd9;
       border: 1px solid #b8a98f;
       padding: 16px 18px;
@@ -712,25 +711,9 @@
       flex-direction: column;
       color: #222 !important;
       overflow-y: auto;
-      box-sizing: border-box;
     }
-    .back { 
-      transform: rotateY(180deg); 
-    }
-    .page.flipped { 
-      transform: rotateY(-180deg) !important; 
-    }
-
-    /* Las páginas que no están volteadas no deben ser visibles por detrás */
-    .page:not(.flipped) .back {
-      display: none;
-    }
-    .page.flipped .front {
-      display: none;
-    }
-    .page.flipped .back {
-      display: flex;
-    }
+    .back { transform: rotateY(180deg); }
+    .page.flipped { transform: rotateY(-180deg); }
 
     .cover .front {
       background: #4a1010;
@@ -1284,6 +1267,7 @@
       .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
       .dni-issue-date { font-size: 0.65rem; }
+      .book-wrapper { margin-top: 80px; }
       .book-container { max-width: 340px; }
       .book.open { transform: translateX(35%) !important; }
       .photo-frame { height: 100px; }
@@ -1299,7 +1283,6 @@
       .stat-table td { font-size: 0.45rem; }
       .stat-title { font-size: 0.55rem; }
       .dni-title { font-size: 1.1rem; }
-      .book-wrapper { margin-top: 80px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1307,6 +1290,7 @@
       .brand-crest img { width: 24px; }
       .visor-skin { width: 180px; height: 180px; }
       .nombre-bajo { font-size: 20px; }
+      .book-wrapper { margin-top: 60px; }
       .book-container { max-width: 300px; }
       .dni-card { padding: 8px 10px 0 10px; min-height: 180px; }
       .dni-title { font-size: 0.85rem; }
@@ -1336,7 +1320,6 @@
       .stat-title { font-size: 0.45rem; }
       .photo-frame { height: 70px; }
       .dni-photo-frame { width: 65px; height: 80px; }
-      .book-wrapper { margin-top: 60px; }
     }
   </style>
 </head>
@@ -1441,7 +1424,7 @@
         </div>
       </div>
 
-      <!-- LIBRO - 150px más abajo -->
+      <!-- LIBRO - ahora con margin-top: 150px -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -1742,13 +1725,11 @@
 
   viewer.camera.position.set(0, 10, 32);
   viewer.controls.target.set(0, 8, 0);
+  viewer.controls.enableRotate = false;   // ← DESACTIVAR ROTACIÓN
+  viewer.controls.enableZoom = false;     // ← DESACTIVAR ZOOM
+  viewer.controls.enablePan = false;      // ← DESACTIVAR PAN
   viewer.globalLight.intensity = 2.5;
   viewer.cameraLight.intensity = 1.2;
-  
-  // BLOQUEAR INTERACCIÓN DEL MOUSE
-  viewer.controls.enableRotate = false;
-  viewer.controls.enableZoom = false;
-  viewer.controls.enablePan = false;
 
   const START_X = 28;
   let state = "WALKING";
@@ -2216,32 +2197,20 @@
   }
 
   // =========================================================
-  // NAVEGACIÓN DEL LIBRO - CORREGIDA
+  // NAVEGACIÓN DEL LIBRO
   // =========================================================
-  let currentStep = 0;
+  let currentStep = 1;
   const pages = document.querySelectorAll('.page');
   const book = document.getElementById('book');
   const totalPages = pages.length;
 
   function updateBookState() {
-    // Ocultar/mostrar caras correctamente
     pages.forEach((page, index) => {
-      if (index < currentStep) {
-        page.classList.add('flipped');
-      } else {
-        page.classList.remove('flipped');
-      }
-      // Asegurar z-index correcto para el efecto 3D
-      page.style.zIndex = totalPages - index;
+      if (index < currentStep) page.classList.add('flipped');
+      else page.classList.remove('flipped');
+      page.style.zIndex = (index < currentStep) ? index + 1 : totalPages - index;
     });
-    
-    // La última página (contraportada) no debe tener flipped
-    if (currentStep >= totalPages - 1) {
-      pages[totalPages - 1].classList.remove('flipped');
-    }
-    
-    book.classList.toggle('open', currentStep > 0 && currentStep < totalPages - 1);
-    
+    book.classList.toggle('open', currentStep > 0 && currentStep < totalPages);
     const prevBtn = document.getElementById('prevBookBtn');
     const nextBtn = document.getElementById('nextBookBtn');
     if (prevBtn) prevBtn.disabled = (currentStep <= 0);
@@ -2262,41 +2231,16 @@
     } 
   };
 
-  // Inicializar navegación del libro
   setTimeout(() => {
-    // Establecer estado inicial: portada visible
-    currentStep = 0;
-    pages.forEach((page, index) => {
-      if (index === 0) {
-        page.classList.remove('flipped');
-      } else {
-        page.classList.add('flipped');
-      }
-      page.style.zIndex = totalPages - index;
-    });
-    book.classList.remove('open');
-    document.getElementById('prevBookBtn').disabled = true;
-    document.getElementById('nextBookBtn').disabled = false;
-    
-    // Eventos de click en páginas
     pages.forEach((p, i) => {
-      p.addEventListener('click', (e) => {
-        // Si es la portada y está visible, ir a la siguiente
-        if (i === 0 && !p.classList.contains('flipped')) {
-          window.nextPage();
-          return;
-        }
-        // Si es la última página (contraportada), no hacer nada
+      p.addEventListener('click', () => {
         if (i === totalPages - 1) return;
-        // Si es una página intermedia
-        if (i === currentStep) {
-          window.nextPage();
-        } else if (i === currentStep - 1) {
-          window.prevPage();
-        }
+        if (i === currentStep) window.nextPage();
+        else if (i === currentStep - 1) window.prevPage();
       });
     });
-  }, 200);
+    updateBookState();
+  }, 300);
 
   // =========================================================
   // OBSERVER DE AUTENTICACIÓN
@@ -2326,7 +2270,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con skin bloqueada y libro corregido');
+  console.log('📄 Página de expediente con 3 viewers, libro 150px abajo y skin sin interacción');
 </script>
 
 </body>
