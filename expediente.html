@@ -303,12 +303,15 @@
       border: 1px solid #6b5f4e;
       overflow: hidden;
       position: relative;
+      pointer-events: none;
+      user-select: none;
     }
     #skin-container {
       width: 100% !important;
       height: 100% !important;
       display: block;
       cursor: default;
+      pointer-events: none;
     }
     .datos-persona {
       display: flex;
@@ -654,14 +657,14 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO CORREGIDO - 150px más abajo ======= */
+    /* ======= LIBRO ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       flex-shrink: 0;
-      margin-top: 150px; /* Aumentado de 12px a 150px */
+      margin-top: 150px;
     }
     .book-container {
       perspective: 1500px;
@@ -695,7 +698,6 @@
       -webkit-backface-visibility: hidden;
     }
     .page:last-child { cursor: default; }
-    
     .front, .back {
       position: absolute;
       width: 100%;
@@ -710,33 +712,26 @@
       flex-direction: column;
       color: #222 !important;
       overflow-y: auto;
+      box-sizing: border-box;
     }
     .back { 
       transform: rotateY(180deg); 
     }
     .page.flipped { 
       transform: rotateY(-180deg) !important; 
-      z-index: 10 !important;
     }
 
-    /* Asegurar que las páginas no se superpongan mal durante la transición */
-    .page {
-      z-index: 1;
+    /* Las páginas que no están volteadas no deben ser visibles por detrás */
+    .page:not(.flipped) .back {
+      display: none;
     }
-    .page.flipped {
-      z-index: 10 !important;
+    .page.flipped .front {
+      display: none;
     }
-    .page:not(.flipped) {
-      z-index: 5;
-    }
-    .page:first-child {
-      z-index: 2;
-    }
-    .page.flipped:first-child {
-      z-index: 11 !important;
+    .page.flipped .back {
+      display: flex;
     }
 
-    /* PORTADA */
     .cover .front {
       background: #4a1010;
       color: #d4af37 !important;
@@ -1304,7 +1299,7 @@
       .stat-table td { font-size: 0.45rem; }
       .stat-title { font-size: 0.55rem; }
       .dni-title { font-size: 1.1rem; }
-      .book-wrapper { margin-top: 100px; }
+      .book-wrapper { margin-top: 80px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1341,7 +1336,7 @@
       .stat-title { font-size: 0.45rem; }
       .photo-frame { height: 70px; }
       .dni-photo-frame { width: 65px; height: 80px; }
-      .book-wrapper { margin-top: 70px; }
+      .book-wrapper { margin-top: 60px; }
     }
   </style>
 </head>
@@ -1735,7 +1730,7 @@
   }
 
   // =========================================================
-  // SKIN VIEWER PRINCIPAL (ANIMADO)
+  // SKIN VIEWER PRINCIPAL (ANIMADO - SIN INTERACCIÓN)
   // =========================================================
   const canvas = document.getElementById('skin-container');
 
@@ -1749,6 +1744,11 @@
   viewer.controls.target.set(0, 8, 0);
   viewer.globalLight.intensity = 2.5;
   viewer.cameraLight.intensity = 1.2;
+  
+  // BLOQUEAR INTERACCIÓN DEL MOUSE
+  viewer.controls.enableRotate = false;
+  viewer.controls.enableZoom = false;
+  viewer.controls.enablePan = false;
 
   const START_X = 28;
   let state = "WALKING";
@@ -2216,43 +2216,38 @@
   }
 
   // =========================================================
-  // NAVEGACIÓN DEL LIBRO CORREGIDA
+  // NAVEGACIÓN DEL LIBRO - CORREGIDA
   // =========================================================
-  let currentStep = 1;
+  let currentStep = 0;
   const pages = document.querySelectorAll('.page');
   const book = document.getElementById('book');
   const totalPages = pages.length;
 
   function updateBookState() {
+    // Ocultar/mostrar caras correctamente
     pages.forEach((page, index) => {
-      // Quitar o añadir clase flipped según corresponda
       if (index < currentStep) {
         page.classList.add('flipped');
       } else {
         page.classList.remove('flipped');
       }
-      
-      // Asignar z-index para evitar superposiciones durante la transición
-      if (index < currentStep) {
-        // Páginas ya volteadas (detrás)
-        page.style.zIndex = index + 1;
-      } else {
-        // Páginas no volteadas (adelante)
-        page.style.zIndex = totalPages - index + 1;
-      }
+      // Asegurar z-index correcto para el efecto 3D
+      page.style.zIndex = totalPages - index;
     });
     
-    // Aplicar clase open al libro
-    book.classList.toggle('open', currentStep > 0 && currentStep < totalPages);
+    // La última página (contraportada) no debe tener flipped
+    if (currentStep >= totalPages - 1) {
+      pages[totalPages - 1].classList.remove('flipped');
+    }
     
-    // Actualizar botones
+    book.classList.toggle('open', currentStep > 0 && currentStep < totalPages - 1);
+    
     const prevBtn = document.getElementById('prevBookBtn');
     const nextBtn = document.getElementById('nextBookBtn');
     if (prevBtn) prevBtn.disabled = (currentStep <= 0);
     if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
   }
 
-  // Funciones globales para los botones
   window.nextPage = function() { 
     if (currentStep < totalPages - 1) { 
       currentStep++; 
@@ -2267,17 +2262,41 @@
     } 
   };
 
-  // Click en páginas
+  // Inicializar navegación del libro
   setTimeout(() => {
+    // Establecer estado inicial: portada visible
+    currentStep = 0;
+    pages.forEach((page, index) => {
+      if (index === 0) {
+        page.classList.remove('flipped');
+      } else {
+        page.classList.add('flipped');
+      }
+      page.style.zIndex = totalPages - index;
+    });
+    book.classList.remove('open');
+    document.getElementById('prevBookBtn').disabled = true;
+    document.getElementById('nextBookBtn').disabled = false;
+    
+    // Eventos de click en páginas
     pages.forEach((p, i) => {
-      p.addEventListener('click', () => {
+      p.addEventListener('click', (e) => {
+        // Si es la portada y está visible, ir a la siguiente
+        if (i === 0 && !p.classList.contains('flipped')) {
+          window.nextPage();
+          return;
+        }
+        // Si es la última página (contraportada), no hacer nada
         if (i === totalPages - 1) return;
-        if (i === currentStep) window.nextPage();
-        else if (i === currentStep - 1) window.prevPage();
+        // Si es una página intermedia
+        if (i === currentStep) {
+          window.nextPage();
+        } else if (i === currentStep - 1) {
+          window.prevPage();
+        }
       });
     });
-    updateBookState();
-  }, 300);
+  }, 200);
 
   // =========================================================
   // OBSERVER DE AUTENTICACIÓN
@@ -2307,7 +2326,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con libro corregido y 150px más abajo');
+  console.log('📄 Página de expediente con skin bloqueada y libro corregido');
 </script>
 
 </body>
