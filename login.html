@@ -81,26 +81,6 @@
             letter-spacing: 3px;
         }
 
-        .login-header p {
-            color: #8e8373;
-            font-size: 12px;
-            letter-spacing: 1px;
-            margin-top: 4px;
-        }
-
-        .login-header .version {
-            display: inline-block;
-            background: rgba(164, 134, 74, 0.15);
-            border: 1px solid #4a3d2e;
-            color: #a4864a;
-            font-size: 9px;
-            padding: 3px 12px;
-            border-radius: 20px;
-            margin-top: 8px;
-            font-family: "Montserrat", sans-serif;
-            letter-spacing: 0.5px;
-        }
-
         /* =========================================================
            FORMULARIO
         ========================================================= */
@@ -231,22 +211,6 @@
             letter-spacing: 0.5px;
         }
 
-        .login-footer .security-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(164, 134, 74, 0.08);
-            border: 1px solid #3a322b;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 9px;
-            color: #8e8373;
-        }
-
-        .login-footer .security-badge i {
-            color: #a4864a;
-        }
-
         /* =========================================================
            SPINNER
         ========================================================= */
@@ -343,8 +307,6 @@
         <div class="login-header">
             <img src="./logo.png" alt="Liga Lombarda" />
             <h1>LIGA LOMBARDA</h1>
-            <p>ACCESO AL ARCHIVO CENTRAL</p>
-            <span class="version"><i class="fas fa-shield-alt"></i> Sistema Seguro v2.0</span>
         </div>
 
         <!-- ERROR MESSAGE -->
@@ -387,10 +349,7 @@
 
         <!-- FOOTER -->
         <div class="login-footer">
-            <div class="security-badge">
-                <i class="fas fa-shield-alt"></i>
-                Conexión segura · Solo personal autorizado
-            </div>
+            <span>Liga Lombarda · Archivo Central</span>
         </div>
 
     </div>
@@ -550,33 +509,36 @@
             } catch (error) {
                 console.error('Error de login:', error);
                 
-                // Manejar errores específicos de Firebase
-                let message = 'Error al iniciar sesión.';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        message = 'No existe una cuenta con este correo.';
-                        break;
-                    case 'auth/wrong-password':
-                        message = 'Contraseña incorrecta.';
-                        break;
-                    case 'auth/invalid-email':
-                        message = 'El formato del correo no es válido.';
-                        break;
-                    case 'auth/too-many-requests':
-                        message = 'Demasiados intentos. Esperá un momento.';
-                        break;
-                    case 'auth/user-disabled':
-                        message = 'Esta cuenta ha sido deshabilitada.';
-                        break;
-                    default:
-                        message = error.message || 'Error desconocido.';
+                // Solo mostrar error si fue un error real de autenticación
+                // (no cuando el usuario ya está autenticado)
+                if (error.code) {
+                    let message = 'Error al iniciar sesión.';
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            message = 'No existe una cuenta con este correo.';
+                            break;
+                        case 'auth/wrong-password':
+                            message = 'Contraseña incorrecta.';
+                            break;
+                        case 'auth/invalid-email':
+                            message = 'El formato del correo no es válido.';
+                            break;
+                        case 'auth/too-many-requests':
+                            message = 'Demasiados intentos. Esperá un momento.';
+                            break;
+                        case 'auth/user-disabled':
+                            message = 'Esta cuenta ha sido deshabilitada.';
+                            break;
+                        default:
+                            message = error.message || 'Error desconocido.';
+                    }
+                    
+                    showError(message);
+                    
+                    // Limpiar contraseña por seguridad
+                    passwordInput.value = '';
+                    passwordInput.focus();
                 }
-                
-                showError(message);
-                
-                // Limpiar contraseña por seguridad
-                passwordInput.value = '';
-                passwordInput.focus();
                 
             } finally {
                 setLoading(false);
