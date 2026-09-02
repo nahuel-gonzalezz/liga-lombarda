@@ -192,6 +192,29 @@
       transform: scale(1.02);
     }
 
+    .btn-download-dni {
+      background: #1a4a2a;
+      border: none;
+      color: #b8e0b8;
+      padding: 5px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-download-dni:hover {
+      background: #2a6a3a;
+      transform: scale(1.02);
+      color: #fff;
+    }
+
     /* =========================================================
        RESTO DEL CSS
     ========================================================= */
@@ -659,14 +682,18 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO - 150px más abajo ======= */
+    /* ======= LIBRO - CENTRALIZADO Y MEJORADO ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       flex-shrink: 0;
-      margin-top: 150px;
+      margin-top: 30px;
+      padding: 20px 0;
+      background: rgba(0,0,0,0.2);
+      border-radius: 30px;
+      border: 1px solid #3a322b;
     }
     .book-container {
       perspective: 1500px;
@@ -706,23 +733,27 @@
       background: #f1ebd9;
       border: 1px solid #b8a98f;
       padding: 16px 18px;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.08), 0 5px 15px rgba(0,0,0,0.4);
+      box-shadow: 
+        inset 0 0 30px rgba(0,0,0,0.05),
+        0 8px 25px rgba(0,0,0,0.5);
       display: flex;
       flex-direction: column;
       color: #222 !important;
       overflow-y: auto;
+      border-radius: 2px;
     }
     .back { transform: rotateY(180deg); }
     .page.flipped { transform: rotateY(-180deg); }
 
     .cover .front {
-      background: #4a1010;
+      background: linear-gradient(145deg, #3a0a0a, #4a1010, #3a0a0a);
       color: #d4af37 !important;
       border: 3px solid #2a0808;
       display: flex;
       justify-content: center;
       align-items: center;
       text-align: center;
+      border-radius: 4px;
     }
     .cover .front * { color: #d4af37 !important; }
     .cover-border {
@@ -734,38 +765,48 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      border-radius: 2px;
+      background: rgba(0,0,0,0.2);
     }
     .cover-logo {
       width: 60px;
       height: auto;
       margin-bottom: 10px;
       object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
     }
     .cover h1 {
       font-size: 1.6rem;
       letter-spacing: 3px;
       font-family: "Cinzel";
       color: #d4af37 !important;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
     .subtitle {
       font-size: 0.8rem;
       margin-top: 6px;
       color: #e6cb75 !important;
       letter-spacing: 2px;
+      opacity: 0.8;
     }
     .seal-gold {
       margin-top: 25px;
-      border: 1px solid #d4af37;
-      padding: 6px 14px;
+      border: 2px solid #d4af37;
+      padding: 8px 18px;
       font-size: 0.7rem;
       font-weight: bold;
       color: #d4af37 !important;
+      letter-spacing: 3px;
+      border-radius: 4px;
+      background: rgba(212, 175, 55, 0.05);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
     }
     .click-hint {
       margin-top: 25px;
       font-size: 0.6rem;
-      opacity: 0.6;
+      opacity: 0.5;
       color: #d4af37 !important;
+      letter-spacing: 2px;
     }
     .inner-cover {
       display: flex;
@@ -775,9 +816,14 @@
       height: 100%;
       text-align: center;
       color: #666 !important;
+      background: #f5efe0;
     }
     .inner-cover * { color: #666 !important; }
-    .inner-cover h3 { font-size: 1.2rem; }
+    .inner-cover h3 { 
+      font-size: 1.2rem;
+      font-family: "Cinzel";
+      color: #3a0a0a !important;
+    }
     .inner-cover p { font-size: 0.8rem; }
 
     .page-inner {
@@ -811,6 +857,7 @@
       align-items: center;
       overflow: hidden;
       background: #e8dbc2;
+      border-radius: 4px;
     }
     .logo-box img { width: 24px; height: auto; object-fit: contain; }
     .header-title {
@@ -840,6 +887,8 @@
       padding: 3px 8px;
       font-size: 0.55rem;
       text-align: center;
+      border-radius: 4px;
+      background: #faf8f2;
     }
     .expediente-box label {
       display: block;
@@ -880,10 +929,11 @@
     .photo-frame {
       width: 50%;
       height: 140px;
-      border: 1px solid #666;
+      border: 2px solid #666;
       padding: 4px;
       background: #fff;
       overflow: hidden;
+      border-radius: 8px;
     }
     .photo-frame canvas {
       width: 100% !important;
@@ -974,6 +1024,8 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      border-radius: 4px;
+      background: #faf8f2;
     }
     .emblem-container>span {
       font-family: "Cinzel";
@@ -1000,6 +1052,7 @@
       min-height: 35px;
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
     }
     .description-box label {
       font-weight: bold;
@@ -1061,6 +1114,7 @@
       display: inline-block;
       background: #fff;
       font-style: normal;
+      border-radius: 1px;
     }
     .boxes-container i.fill {
       background: #7a1515;
@@ -1078,6 +1132,7 @@
       letter-spacing: 1px;
       margin-bottom: 4px;
       flex-shrink: 0;
+      border-radius: 4px;
     }
     .audit-info {
       font-size: 0.55rem;
@@ -1102,6 +1157,7 @@
       min-height: 45px;
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
     }
     .obs-section label {
       font-weight: bold;
@@ -1137,6 +1193,7 @@
       border: 1px solid #bbb;
       padding: 10px;
       background: #faf8f2;
+      border-radius: 4px;
     }
     .cert-date {
       font-size: 0.7rem;
@@ -1202,27 +1259,32 @@
     .book-controls {
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin: 8px 0 2px 0;
+      gap: 15px;
+      margin-top: 12px;
     }
     .book-controls button {
-      background: #333;
+      background: linear-gradient(145deg, #2a2520, #1a1613);
       color: #d4af37;
       border: 1px solid #d4af37;
-      padding: 6px 14px;
+      padding: 8px 20px;
       cursor: pointer;
       font-family: "Cinzel";
       font-size: 0.6rem;
-      transition: 0.2s;
-      border-radius: 4px;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
-    .book-controls button:hover {
-      background: #d4af37;
+    .book-controls button:hover:not(:disabled) {
+      background: linear-gradient(145deg, #d4af37, #b8962a);
       color: #111;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(212, 175, 55, 0.2);
     }
     .book-controls button:disabled {
       opacity: 0.3;
       cursor: not-allowed;
+      transform: none;
     }
 
     .error-state {
@@ -1267,7 +1329,7 @@
       .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
       .dni-issue-date { font-size: 0.65rem; }
-      .book-wrapper { margin-top: 80px; }
+      .book-wrapper { margin-top: 15px; padding: 15px 0; }
       .book-container { max-width: 340px; }
       .book.open { transform: translateX(35%) !important; }
       .photo-frame { height: 100px; }
@@ -1283,6 +1345,7 @@
       .stat-table td { font-size: 0.45rem; }
       .stat-title { font-size: 0.55rem; }
       .dni-title { font-size: 1.1rem; }
+      .book-controls button { padding: 6px 14px; font-size: 0.5rem; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1290,7 +1353,7 @@
       .brand-crest img { width: 24px; }
       .visor-skin { width: 180px; height: 180px; }
       .nombre-bajo { font-size: 20px; }
-      .book-wrapper { margin-top: 60px; }
+      .book-wrapper { margin-top: 10px; padding: 10px 0; }
       .book-container { max-width: 300px; }
       .dni-card { padding: 8px 10px 0 10px; min-height: 180px; }
       .dni-title { font-size: 0.85rem; }
@@ -1422,9 +1485,15 @@
             <div class="dni-bottom-bar">POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE</div>
           </div>
         </div>
+        <!-- Botón descargar DNI -->
+        <div style="display:flex;justify-content:center;margin-top:10px;">
+          <button class="btn-download-dni" id="downloadDniBtn">
+            <i class="fas fa-download"></i> DESCARGAR DNI
+          </button>
+        </div>
       </div>
 
-      <!-- LIBRO - ahora con margin-top: 150px -->
+      <!-- LIBRO - CENTRALIZADO Y MEJORADO -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -1725,9 +1794,9 @@
 
   viewer.camera.position.set(0, 10, 32);
   viewer.controls.target.set(0, 8, 0);
-  viewer.controls.enableRotate = false;   // ← DESACTIVAR ROTACIÓN
-  viewer.controls.enableZoom = false;     // ← DESACTIVAR ZOOM
-  viewer.controls.enablePan = false;      // ← DESACTIVAR PAN
+  viewer.controls.enableRotate = false;
+  viewer.controls.enableZoom = false;
+  viewer.controls.enablePan = false;
   viewer.globalLight.intensity = 2.5;
   viewer.cameraLight.intensity = 1.2;
 
@@ -2243,6 +2312,77 @@
   }, 300);
 
   // =========================================================
+  // DESCARGAR DNI COMO PNG
+  // =========================================================
+  document.getElementById('downloadDniBtn').addEventListener('click', async function() {
+    try {
+      const dniCard = document.getElementById('dniCard');
+      
+      // Crear un clon para evitar interferencias
+      const clone = dniCard.cloneNode(true);
+      clone.style.position = 'fixed';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      clone.style.transform = 'scale(1)';
+      clone.style.width = '750px';
+      clone.style.aspectRatio = '750/380';
+      clone.style.borderRadius = '20px';
+      clone.style.overflow = 'hidden';
+      clone.style.boxShadow = 'none';
+      document.body.appendChild(clone);
+
+      // Asegurar que el canvas del DNI se renderice correctamente
+      const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
+      if (dniCanvasClone) {
+        // Copiar el contenido del canvas original al clon
+        const originalCanvas = document.getElementById('dniSkinCanvas');
+        const ctx = dniCanvasClone.getContext('2d');
+        ctx.drawImage(originalCanvas, 0, 0, dniCanvasClone.width, dniCanvasClone.height);
+      }
+
+      const canvas = await html2canvas(clone, {
+        scale: 3,
+        backgroundColor: '#f7f5ef',
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width: 750,
+        height: 380,
+      });
+
+      document.body.removeChild(clone);
+
+      const link = document.createElement('a');
+      link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+
+      showToast('✅ DNI descargado correctamente', 'success', 3000);
+    } catch (error) {
+      console.error('Error al descargar DNI:', error);
+      showToast('❌ Error al descargar el DNI', 'error', 3000);
+    }
+  });
+
+  // Cargar html2canvas dinámicamente
+  function loadHtml2Canvas() {
+    return new Promise((resolve, reject) => {
+      if (typeof html2canvas !== 'undefined') {
+        resolve();
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  // Cargar html2canvas al iniciar
+  loadHtml2Canvas().catch(() => console.warn('html2canvas no cargado'));
+
+  // =========================================================
   // OBSERVER DE AUTENTICACIÓN
   // =========================================================
   onAuthStateChanged(auth, async (user) => {
@@ -2270,7 +2410,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con 3 viewers, libro 150px abajo y skin sin interacción');
+  console.log('📄 Página de expediente con DNI descargable y libro centralizado');
 </script>
 
 </body>
