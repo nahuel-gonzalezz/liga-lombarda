@@ -623,10 +623,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .dni-value.active {
-      color: #2d7032;
-      font-weight: 800;
-    }
     .dni-footer {
       display: flex;
       align-items: center;
@@ -682,7 +678,7 @@
       flex-shrink: 0;
     }
 
-    /* ======= LIBRO - MEJORADO VISUALMENTE ======= */
+    /* ======= LIBRO - OPTIMIZADO Y FLUIDO ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
@@ -719,7 +715,8 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: transform;
     }
     .book.open {
       transform: translateX(45%) !important;
@@ -732,9 +729,11 @@
       left: 0;
       transform-origin: left center;
       transform-style: preserve-3d;
-      transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
       cursor: pointer;
       border-radius: 4px;
+      will-change: transform;
+      backface-visibility: hidden;
     }
     .page:last-child { cursor: default; }
     .front, .back {
@@ -1693,7 +1692,7 @@
         </div>
       </div>
 
-      <!-- LIBRO - MEJORADO VISUALMENTE -->
+      <!-- LIBRO - OPTIMIZADO Y FLUIDO -->
       <div class="book-wrapper">
         <div class="book-container">
           <div class="book" id="book">
@@ -2460,7 +2459,7 @@
   }
 
   // =========================================================
-  // NAVEGACIÓN DEL LIBRO
+  // NAVEGACIÓN DEL LIBRO - OPTIMIZADA
   // =========================================================
   let currentStep = 1;
   const pages = document.querySelectorAll('.page');
@@ -2468,18 +2467,31 @@
   const totalPages = pages.length;
 
   function updateBookState() {
-    pages.forEach((page, index) => {
-      if (index < currentStep) page.classList.add('flipped');
-      else page.classList.remove('flipped');
-      page.style.zIndex = (index < currentStep) ? index + 1 : totalPages - index;
+    // Usar requestAnimationFrame para evitar bloqueos del render
+    requestAnimationFrame(() => {
+      pages.forEach((page, index) => {
+        if (index < currentStep) {
+          page.classList.add('flipped');
+        } else {
+          page.classList.remove('flipped');
+        }
+        page.style.zIndex = (index < currentStep) ? index + 1 : totalPages - index;
+      });
+      
+      if (currentStep > 0 && currentStep < totalPages) {
+        book.classList.add('open');
+      } else {
+        book.classList.remove('open');
+      }
+      
+      const prevBtn = document.getElementById('prevBookBtn');
+      const nextBtn = document.getElementById('nextBookBtn');
+      if (prevBtn) prevBtn.disabled = (currentStep <= 0);
+      if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
     });
-    book.classList.toggle('open', currentStep > 0 && currentStep < totalPages);
-    const prevBtn = document.getElementById('prevBookBtn');
-    const nextBtn = document.getElementById('nextBookBtn');
-    if (prevBtn) prevBtn.disabled = (currentStep <= 0);
-    if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
   }
 
+  // Función para ir a la página siguiente
   window.nextPage = function() { 
     if (currentStep < totalPages - 1) { 
       currentStep++; 
@@ -2487,6 +2499,7 @@
     } 
   };
 
+  // Función para ir a la página anterior
   window.prevPage = function() { 
     if (currentStep > 0) { 
       currentStep--; 
@@ -2494,16 +2507,38 @@
     } 
   };
 
+  // Configurar eventos de clic en las páginas
   setTimeout(() => {
-    pages.forEach((p, i) => {
-      p.addEventListener('click', () => {
-        if (i === totalPages - 1) return;
-        if (i === currentStep) window.nextPage();
-        else if (i === currentStep - 1) window.prevPage();
-      });
+    pages.forEach((page, index) => {
+      // Solo las páginas que no son la última pueden recibir clic para avanzar
+      if (index < totalPages - 1) {
+        page.addEventListener('click', (e) => {
+          // Evitar que el clic en elementos internos dispare múltiples veces
+          if (e.target.closest('.book-controls')) return;
+          
+          // Determinar si se hizo clic en la mitad derecha (para avanzar) o izquierda (para retroceder)
+          const rect = page.getBoundingClientRect();
+          const clickX = e.clientX - rect.left;
+          const mitad = rect.width / 2;
+          
+          if (clickX > mitad) {
+            // Clic en la mitad derecha → siguiente página
+            if (currentStep === index) {
+              window.nextPage();
+            }
+          } else {
+            // Clic en la mitad izquierda → página anterior
+            if (currentStep === index + 1) {
+              window.prevPage();
+            }
+          }
+        });
+      }
     });
+    
+    // Inicializar el estado del libro
     updateBookState();
-  }, 300);
+  }, 100);
 
   // =========================================================
   // DESCARGAR DNI COMO PNG
@@ -2604,7 +2639,7 @@
   // =========================================================
   requestAnimationFrame(animate);
 
-  console.log('📄 Página de expediente con DNI descargable y libro centralizado');
+  console.log('📄 Página de expediente con DNI descargable y libro optimizado');
 </script>
 
 </body>
