@@ -14,6 +14,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         /* =========================================================
            VARIABLES Y RESET
@@ -1269,6 +1271,311 @@
         .panel-anim:nth-child(4) { animation-delay: 0.26s; }
         .panel-anim:nth-child(5) { animation-delay: 0.33s; }
 
+        /* =========================================================
+           ESTILOS DE LA TARJETA DNI (para el render oculto)
+           Copiados del archivo DNI
+        ========================================================= */
+        #dniRenderContainer .dni-card {
+            width: 750px;
+            height: 380px;
+            position: relative;
+            background-color: #f7f5ef;
+            border-radius: 20px;
+            padding: 20px 28px 0 28px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            overflow: hidden;
+            border: 2px solid #3a322b;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: "Libre Baskerville", Georgia, serif;
+        }
+
+        #dniRenderContainer .dni-watermark {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 1;
+            object-fit: cover;
+        }
+
+        #dniRenderContainer .dni-inner-border {
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 30px;
+            border: 1px solid #a89885;
+            border-radius: 14px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #dniRenderContainer .dni-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        #dniRenderContainer .dni-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 4px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        #dniRenderContainer .dni-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        #dniRenderContainer .dni-shield {
+            width: 48px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #dniRenderContainer .dni-title {
+            font-family: "Cinzel";
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 1px;
+        }
+
+        #dniRenderContainer .dni-subtitle {
+            font-family: "Cinzel";
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #500a0e;
+            letter-spacing: 2px;
+        }
+
+        #dniRenderContainer .dni-expediente {
+            background-color: #500a0e;
+            color: #fff;
+            border-radius: 8px;
+            padding: 4px 14px;
+            text-align: center;
+            border: 2px solid #8d2328;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+        }
+
+        #dniRenderContainer .dni-exp-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        #dniRenderContainer .dni-exp-num {
+            font-size: 0.85rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+
+        #dniRenderContainer .dni-exp-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+            margin: 2px 0;
+            position: relative;
+        }
+
+        #dniRenderContainer .dni-exp-divider::after {
+            content: '┼';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #500a0e;
+            padding: 0 3px;
+            font-size: 0.3rem;
+        }
+
+        #dniRenderContainer .dni-class-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.45rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        #dniRenderContainer .dni-class-val {
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        #dniRenderContainer .dni-separator {
+            width: 100%;
+            height: 1px;
+            background-color: #500a0e;
+            position: relative;
+            margin: 2px 0 8px 0;
+        }
+
+        #dniRenderContainer .dni-separator::after {
+            content: '❖';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: #500a0e;
+            background-color: #f7f5ef;
+            padding: 0 5px;
+            font-size: 0.4rem;
+        }
+
+        #dniRenderContainer .dni-body {
+            display: flex;
+            gap: 16px;
+            flex: 1;
+            min-height: 110px;
+        }
+
+        #dniRenderContainer .dni-photo-frame {
+            width: 150px;
+            height: 170px;
+            border: 2px solid #a89885;
+            border-radius: 12px;
+            padding: 4px;
+            background-color: rgba(255,255,255,0.4);
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        #dniRenderContainer .dni-photo-inner {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #a89885;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #e8e4da;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #dniRenderContainer .dni-photo-inner img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        #dniRenderContainer .dni-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 14px;
+            flex: 1;
+            padding-top: 2px;
+        }
+
+        #dniRenderContainer .dni-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid rgba(140,120,99,0.2);
+            padding-bottom: 2px;
+        }
+
+        #dniRenderContainer .dni-icon {
+            font-size: 0.7rem;
+            color: #500a0e;
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #dniRenderContainer .dni-text {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        #dniRenderContainer .dni-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.4rem;
+            font-weight: 800;
+            color: #665c54;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        #dniRenderContainer .dni-value {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #dniRenderContainer .dni-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 18px;
+            padding: 4px 10px 2px 6px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+
+        #dniRenderContainer .dni-issue {
+            text-align: right;
+            position: relative;
+            z-index: 6;
+            padding-right: 0;
+        }
+
+        #dniRenderContainer .dni-issue-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.4rem;
+            font-weight: 800;
+            color: #665c54;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+        }
+
+        #dniRenderContainer .dni-issue-date {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #500a0e;
+            letter-spacing: 1px;
+        }
+
+        #dniRenderContainer .dni-seal {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            z-index: 5;
+            flex-shrink: 0;
+        }
+
+        #dniRenderContainer .dni-bottom-bar {
+            background-color: #500a0e;
+            color: #fff;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.45rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 3px 0;
+            margin: 0 -28px;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+            position: relative;
+            z-index: 4;
+            flex-shrink: 0;
+        }
+
         @media (max-width: 768px) {
             :root { --header-height: auto; }
             header { position: relative; height: auto; padding: 15px 5%; flex-direction: column; gap: 12px; }
@@ -1995,6 +2302,110 @@
         </div>
     </div>
 
+    <!-- =========================================================
+         CONTENEDOR OCULTO PARA RENDERIZAR LA TARJETA DNI
+    ========================================================= -->
+    <div id="dniRenderContainer" style="position: fixed; left: -9999px; top: 0; width: 750px; height: 380px; z-index: -1; pointer-events: none;">
+        <div class="dni-card">
+            <div class="dni-inner-border"></div>
+            <svg class="dni-watermark" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M42,0 L58,0 L58,42 L100,42 L100,58 L58,58 L58,100 L42,100 L42,58 L0,58 L0,42 L42,42 Z" fill="#500a0e" />
+            </svg>
+            <div class="dni-content">
+                <div class="dni-header">
+                    <div class="dni-header-left">
+                        <img src="./logo.png" alt="Escudo" class="dni-shield" crossorigin="anonymous" />
+                        <div>
+                            <h1 class="dni-title" id="dniTitleRender">LIGA LOMBARDA</h1>
+                            <h2 class="dni-subtitle" id="dniSubtitleRender">DOCUMENTO DE IDENTIDAD</h2>
+                        </div>
+                    </div>
+                    <div class="dni-expediente">
+                        <div class="dni-exp-label">Nº EXPEDIENTE</div>
+                        <div class="dni-exp-num" id="dniFileNumberRender">LL-2026-0000</div>
+                        <div class="dni-exp-divider"></div>
+                        <div class="dni-class-label">CLASIFICACIÓN</div>
+                        <div class="dni-class-val" id="dniClassRender">CIUDADANO</div>
+                    </div>
+                </div>
+                <div class="dni-separator"></div>
+                <div class="dni-body">
+                    <div class="dni-photo-frame">
+                        <div class="dni-photo-inner">
+                            <img id="dniPhotoRender" src="" alt="Skin" crossorigin="anonymous" />
+                        </div>
+                    </div>
+                    <div class="dni-grid">
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-user"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">NOMBRE</span>
+                                <span class="dni-value" id="dniNameRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-calendar-days"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">FECHA NAC.</span>
+                                <span class="dni-value" id="dniBirthdayRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-helmet-safety"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">ALIAS</span>
+                                <span class="dni-value" id="dniAliasRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-paw"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">ESPECIE</span>
+                                <span class="dni-value" id="dniSpeciesRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-shield-halved"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label" id="dniRankLabelRender">RANGO</span>
+                                <span class="dni-value" id="dniRankRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-mars"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">GÉNERO</span>
+                                <span class="dni-value" id="dniGenderRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-flag"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">NACIONALIDAD</span>
+                                <span class="dni-value" id="dniNationalityRender">—</span>
+                            </div>
+                        </div>
+                        <div class="dni-item">
+                            <div class="dni-icon"><i class="fas fa-briefcase"></i></div>
+                            <div class="dni-text">
+                                <span class="dni-label">PROFESIÓN</span>
+                                <span class="dni-value" id="dniOccupationRender">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dni-footer">
+                    <div class="dni-issue">
+                        <div class="dni-issue-label">EMISIÓN</div>
+                        <div class="dni-issue-date" id="dniDateRender">—</div>
+                    </div>
+                    <img class="dni-seal" src="./img/Sello.png" alt="Sello" crossorigin="anonymous" />
+                </div>
+                <div class="dni-bottom-bar" id="dniMottoRender">POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE</div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js"></script>
 
     <script type="module">
@@ -2006,18 +2417,26 @@
             onAuthStateChanged,
             signOut,
             database,
+            storage,
             ref,
             get,
             push,
-            set
+            set,
+            storageRef,
+            uploadString,
+            getDownloadURL
         } from "./firebase-init.js";
 
         window.firebaseDB = database;
+        window.firebaseStorage = storage;
         window.firebaseRef = ref;
         window.firebasePush = push;
         window.firebaseSet = set;
         window.firebaseGet = get;
         window.firebaseAuth = auth;
+        window.storageRef = storageRef;
+        window.uploadString = uploadString;
+        window.getDownloadURL = getDownloadURL;
 
         // =========================================================
         // REFERENCIAS DOM
@@ -2209,6 +2628,12 @@
 
                     document.getElementById('fieldRankPreview').style.display = 'none';
                     document.getElementById('fieldClanPreview').style.display = 'flex';
+
+                    // Actualizar también los textos del DNI render
+                    document.getElementById('dniTitleRender').textContent = 'REGISTRO DE INMIGRANTES';
+                    document.getElementById('dniSubtitleRender').textContent = 'DOCUMENTO DE INMIGRANTE';
+                    document.getElementById('dniMottoRender').innerHTML = 'POR LA LIBERTAD &nbsp;•&nbsp; POR UN NUEVO HOGAR &nbsp;•&nbsp; POR SIEMPRE';
+                    document.getElementById('dniRankLabelRender').textContent = 'CLAN';
                 } else {
                     body.classList.remove('theme-purple');
                     btnLiga.classList.add('active');
@@ -2229,6 +2654,12 @@
 
                     document.getElementById('fieldRankPreview').style.display = 'flex';
                     document.getElementById('fieldClanPreview').style.display = 'none';
+
+                    // Actualizar también los textos del DNI render
+                    document.getElementById('dniTitleRender').textContent = 'LIGA LOMBARDA';
+                    document.getElementById('dniSubtitleRender').textContent = 'DOCUMENTO DE IDENTIDAD';
+                    document.getElementById('dniMottoRender').innerHTML = 'POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE';
+                    document.getElementById('dniRankLabelRender').textContent = 'RANGO';
                 }
 
                 generateFileNumber();
@@ -2651,6 +3082,71 @@
         }
 
         // =========================================================
+        // GENERAR IMAGEN DE LA TARJETA DNI
+        // =========================================================
+        async function generarImagenDNI(data) {
+            const isInmigrante = data.type === 'inmigrante';
+
+            // 1. Rellenar todos los campos del contenedor oculto
+            document.getElementById('dniFileNumberRender').textContent = data.fileNumber;
+            document.getElementById('dniNameRender').textContent = data.name;
+            document.getElementById('dniBirthdayRender').textContent = data.birthDate;
+            document.getElementById('dniAliasRender').textContent = data.alias;
+            document.getElementById('dniSpeciesRender').textContent = data.species;
+            document.getElementById('dniGenderRender').textContent = data.gender;
+            document.getElementById('dniNationalityRender').textContent = data.nationality;
+            document.getElementById('dniOccupationRender').textContent = data.occupation;
+            document.getElementById('dniClassRender').textContent = isInmigrante ? 'INMIGRANTE' : 'CIUDADANO';
+
+            // Rango o Clan según el tipo
+            document.getElementById('dniRankRender').textContent = isInmigrante ? (data.clan || '—') : (data.rank || '—');
+
+            // Fecha de emisión
+            const hoy = new Date();
+            const fecha = `${String(hoy.getDate()).padStart(2,'0')}/${String(hoy.getMonth()+1).padStart(2,'0')}/${hoy.getFullYear()}`;
+            document.getElementById('dniDateRender').textContent = fecha;
+
+            // 2. Poner la skin renderizada en el marco de foto (CON LA POSE ACTUAL)
+            const skinCanvas = document.getElementById('skinCanvas');
+            if (skinCanvas) {
+                try {
+                    const dataURL = skinCanvas.toDataURL('image/png');
+                    const imgEl = document.getElementById('dniPhotoRender');
+                    imgEl.src = dataURL;
+                    // Esperar a que cargue
+                    await new Promise((resolve) => {
+                        if (imgEl.complete && imgEl.naturalWidth > 0) {
+                            resolve();
+                        } else {
+                            imgEl.onload = resolve;
+                            imgEl.onerror = resolve;
+                            setTimeout(resolve, 800);
+                        }
+                    });
+                } catch (e) {
+                    console.warn('Error copiando skin al DNI:', e);
+                }
+            }
+
+            // 3. Esperar a que las imágenes externas (logo, sello) carguen
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // 4. Renderizar con html2canvas
+            const cardElement = document.querySelector('#dniRenderContainer .dni-card');
+            const canvas = await html2canvas(cardElement, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#f7f5ef',
+                logging: false,
+                width: 750,
+                height: 380
+            });
+
+            return canvas.toDataURL('image/png');
+        }
+
+        // =========================================================
         // MODAL
         // =========================================================
         function mostrarModal(data) {
@@ -2705,7 +3201,7 @@
         }
 
         // =========================================================
-        // FIREBASE
+        // FIREBASE - GUARDAR
         // =========================================================
         async function saveToFirebase(data) {
             if (typeof window.firebaseDB === 'undefined' || !window.firebaseDB) {
@@ -2872,18 +3368,60 @@
                 if (e.target === this) confirmModal.classList.remove('visible');
             });
 
+            // CONFIRMAR: generar imagen, subir a Storage, guardar en DB
             document.getElementById('modalConfirm').addEventListener('click', async function() {
                 const btn = this;
                 btn.disabled = true;
-                btn.innerHTML = '<i class="fas fa-spinner spinner"></i> GUARDANDO...';
+                btn.innerHTML = '<i class="fas fa-spinner spinner"></i> GENERANDO IMAGEN...';
 
                 try {
                     const data = getFormData();
+
+                    // 1. Generar imagen de la tarjeta DNI
+                    let imagenDataURL;
+                    try {
+                        imagenDataURL = await generarImagenDNI(data);
+                        console.log('✅ Imagen DNI generada correctamente');
+                    } catch (err) {
+                        console.error('Error generando imagen DNI:', err);
+                        window.showToast('⚠️ No se pudo generar la imagen, se guardarán solo los datos', 'error', 4000);
+                        imagenDataURL = null;
+                    }
+
+                    // 2. Subir imagen a Firebase Storage
+                    btn.innerHTML = '<i class="fas fa-spinner spinner"></i> SUBIENDO IMAGEN...';
+                    let imagenURL = null;
+
+                    if (imagenDataURL) {
+                        try {
+                            const storage = window.firebaseStorage;
+                            const sRef = window.storageRef;
+                            const uploadStringFn = window.uploadString;
+                            const getDownloadURLFn = window.getDownloadURL;
+
+                            const storagePath = `tarjetas/${data.fileNumber}.png`;
+                            const storageReference = sRef(storage, storagePath);
+
+                            await uploadStringFn(storageReference, imagenDataURL, 'data_url');
+                            imagenURL = await getDownloadURLFn(storageReference);
+                            console.log('✅ Imagen subida a Storage:', imagenURL);
+                        } catch (err) {
+                            console.error('Error subiendo a Storage:', err);
+                            // Fallback: guardar base64 en la DB
+                            imagenURL = imagenDataURL;
+                            console.warn('⚠️ Fallback: guardando base64 en la DB');
+                        }
+                    }
+
+                    data.dniImageURL = imagenURL;
+
+                    // 3. Guardar en Realtime Database
+                    btn.innerHTML = '<i class="fas fa-spinner spinner"></i> GUARDANDO DATOS...';
                     const result = await saveToFirebase(data);
 
                     if (result.success) {
                         const source = result.source === 'firebase' ? 'Firebase' : 'Almacenamiento local';
-                        window.showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
+                        window.showToast(`✅ Expediente ${data.fileNumber} guardado con tarjeta DNI`, 'success', 5000);
                         confirmModal.classList.remove('visible');
                     } else {
                         window.showToast('⚠️ Error al guardar: ' + (result.error || 'Intenta de nuevo'), 'error', 5000);
@@ -2969,6 +3507,7 @@
         window.saveToFirebase = saveToFirebase;
         window.updateAllData = updateAllData;
         window.getFormData = getFormData;
+        window.generarImagenDNI = generarImagenDNI;
     </script>
 
 </body>
