@@ -1,635 +1,682 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liga Lombarda — Registro Oficial</title>
 
-<title>Liga Lombarda — Registro Oficial</title>
+    <link rel="icon" type="image/png" href="./logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<link rel="icon" type="image/png" href="./logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Libre+Baskerville&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #121212;
+            --section-light: #e5e5e5;
+            --section-red: #8b1e2b;
+            --section-orange: #ff551d;
+            --section-green: #71d04f;
+            --text-dark: #1f1f1f;
+            --text-light: #ffffff;
+        }
 
-<style>
-:root {
-    --bg-main: #1d1b19;
-    --panel: #25211d;
-    --paper: #eee4ce;
-    --gold: #a4864a;
-    --gold-light: #d4b76c;
-    --red: #76251c;
-    --border: #4a3d2e;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
 
-body {
-    font-family: "Libre Baskerville", serif;
-    background: radial-gradient(circle at top, #3a342e 0%, var(--bg-main) 50%, #111 100%);
-    color: white;
-    min-height: 100vh;
-}
+        /* HEADER */
+        header {
+            width: 100%;
+            height: 70px;
+            background: #0d0d0d;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #222;
+        }
+        .brand { display: flex; align-items: center; }
+        .brand img { width: 36px; height: auto; }
+        nav { display: flex; gap: 15px; align-items: center; }
 
-/* =========================================================
-   OVERLAY DE CARGA (se muestra mientras verifica sesión)
-========================================================= */
-.auth-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    flex-direction: column;
-    gap: 20px;
-    backdrop-filter: blur(8px);
-}
+        nav a {
+            position: relative;
+            color: #888888;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 10px 12px;
+            transition: color 0.3s ease;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateX(-50%);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+        }
+        nav a:hover { color: #ffffff; }
+        nav a:hover::after { width: 60%; }
+        nav a.active { color: #ffffff; }
+        nav a.active::after { width: 100%; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
 
-.auth-overlay.hidden {
-    display: none;
-}
+        /* SECCIONES */
+        .section-block {
+            width: 100%;
+            padding: 140px 10%;
+            min-height: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+            position: relative;
+        }
 
-.auth-overlay .spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #4a3d2e;
-    border-top: 4px solid #a4864a;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
+        .block-light {
+            background-color: var(--section-light);
+            color: var(--text-dark);
+            height: calc(100vh - 100px);
+            min-height: 620px;
+            padding-top: 0;
+            padding-bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden;
+        }
 
-.auth-overlay p {
-    color: #b7a98f;
-    font-family: "Cinzel", serif;
-    font-size: 14px;
-    letter-spacing: 2px;
-}
+        .folder-wrapper { position: relative; width: 100%; background-color: #000000; }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .folder-tab-trigger {
+            position: absolute;
+            top: -45px;
+            left: 10%;
+            width: 240px;
+            height: 45px;
+            background-color: var(--section-red);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            cursor: pointer;
+            z-index: 10;
+        }
 
-/* =========================================================
-   CONTENIDO PRINCIPAL (oculto hasta verificar sesión)
-========================================================= */
-#mainContent {
-    display: none;
-}
+        .block-red { background-color: var(--section-red); color: var(--text-light); }
 
-#mainContent.visible {
-    display: block;
-}
+        .block-orange {
+            background-color: var(--section-orange);
+            color: var(--text-light);
+            flex-direction: row-reverse;
+            height: 700px;
+            padding-top: 0;
+            padding-bottom: 0;
+            z-index: 1;
+        }
 
-/* HEADER */
-header {
-    width: 100%;
-    height: 75px;
-    background: rgba(18, 17, 15, 0.95);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-}
+        .block-green {
+            background-color: var(--section-green);
+            color: var(--text-dark);
+            position: relative;
+            z-index: 2;
+            overflow: hidden;
+            height: 480px;
+            min-height: 380px;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
 
-.header-inner {
-    width: min(1100px, 90%);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
+        /* CONTENIDO */
+        .block-content { flex: 1; max-width: 550px; }
+        .block-content h2 { font-size: 48px; font-weight: 800; margin-bottom: 18px; line-height: 1.1; }
+        .block-content p { font-size: 16px; line-height: 1.6; font-weight: 500; margin-bottom: 28px; opacity: 0.95; }
+        .block-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
 
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 26px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-dark { background-color: #1a1a1a; color: #ffffff; }
+        .btn-light { background-color: #ffffff; color: #1a1a1a; }
 
-.brand img {
-    width: 35px;
-}
+        .block-media {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
 
-.brand h1 {
-    font-family: "Cinzel", serif;
-    font-size: 18px;
-    letter-spacing: 2px;
-    color: var(--paper);
-}
+        /* PRIMERA SECCIÓN */
+        .block-light .block-content h2 { font-size: clamp(48px, 6vw, 96px); margin-bottom: 24px; line-height: 1.05; }
+        .block-light .block-content p { font-size: clamp(16px, 1.5vw, 24px); line-height: 1.6; margin-bottom: 36px; max-width: 700px; }
+        .block-light .btn { padding: clamp(16px, 1.5vw, 22px) clamp(28px, 3vw, 48px); font-size: clamp(12px, 1.1vw, 18px); }
 
-nav {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
+        /* ESCENARIO DE PERSONAJES */
+        .hero-stage {
+            flex: 0 0 auto;
+            position: relative;
+            align-self: stretch;
+            min-width: clamp(320px, 34vw, 620px);
+            display: block;
+        }
 
-nav a {
-    color: #c7b99d;
-    text-decoration: none;
-    font-family: "Montserrat", sans-serif;
-    font-size: 11px;
-    letter-spacing: 1px;
-    padding: 8px 12px;
-    transition: 0.2s;
-}
+        .character-clip {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
 
-nav a:hover {
-    color: var(--gold-light);
-}
+        .character-actor {
+            position: absolute;
+            left: 50%;
+            bottom: -22%;
+            transform: translateX(-50%) translateY(30px);
+            opacity: 0;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+        .character-actor.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
 
-/* USER INFO EN EL HEADER */
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+        .character-actor.leaving {
+            opacity: 0;
+            transform: translateX(-50%) translateY(120px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
 
-.user-info .email {
-    color: #b7a98f;
-    font-size: 10px;
-    font-family: "Montserrat", sans-serif;
-}
+        @keyframes jellyTalk {
+            0%   { transform: scale(1, 1) translateY(0); }
+            30%  { transform: scale(0.92, 1.08) translateY(-8px); }
+            50%  { transform: scale(1.05, 0.95) translateY(4px); }
+            70%  { transform: scale(0.97, 1.03) translateY(-3px); }
+            100% { transform: scale(1, 1) translateY(0); }
+        }
 
-.user-info .email i {
-    color: var(--gold-light);
-    margin-right: 4px;
-}
+        .character-actor img {
+            display: block;
+            width: clamp(340px, 40vw, 720px);
+            height: auto;
+            transform-origin: bottom center;
+            filter: none;
+        }
 
-.logout-btn {
-    background: transparent;
-    border: 1px solid #4a3d2e;
-    color: #b7a98f;
-    padding: 5px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: "Montserrat", sans-serif;
-    font-size: 9px;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-}
+        .character-actor.visible img.jelly {
+            animation: jellyTalk 1.2s 3 ease-in-out;
+        }
 
-.logout-btn:hover {
-    background: var(--red);
-    border-color: var(--red);
-    color: white;
-}
+        .character-actor.leaving img.jelly {
+            animation: jellyTalk 0.9s 2 ease-in-out;
+        }
 
-/* TOAST */
-.toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 14px 28px;
-    border-radius: 8px;
-    font-family: "Cinzel", serif;
-    font-size: 12px;
-    letter-spacing: 1px;
-    z-index: 1000;
-    opacity: 0;
-    transition: all 0.4s ease;
-    pointer-events: none;
-    max-width: 90%;
-    text-align: center;
-}
+        /* GLOBO DE MENSAJE */
+        .character-bubble {
+            position: absolute;
+            left: 62%;
+            top: 32%;
+            transform: translateX(-50%) rotate(-2deg);
+            background: #ffffff;
+            color: #000000;
+            padding: 22px 28px;
+            width: max-content;
+            max-width: 340px;
+            border-radius: 12px;
+            font-size: clamp(13px, 1.1vw, 18px);
+            font-weight: 700;
+            line-height: 1.45;
+            text-align: center;
+            letter-spacing: -0.3px;
 
-.toast.show {
-    opacity: 1;
-    pointer-events: auto;
-}
+            box-shadow:
+                4px 4px 0px #cccccc,
+                8px 8px 0px #999999,
+                12px 12px 0px #666666,
+                16px 16px 0px #333333,
+                20px 20px 0px #000000;
 
-.toast.success {
-    background: #1a4a2a;
-    color: #b8e0b8;
-    border: 1px solid #2a6a3a;
-}
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+            z-index: 20;
+            white-space: normal;
+        }
 
-.toast.error {
-    background: #4a1a1a;
-    color: #e0b8b8;
-    border: 1px solid #6a2a2a;
-}
+        .character-bubble::after {
+            content: "";
+            position: absolute;
+            bottom: -35px;
+            left: 45px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 35px 25px 0 0;
+            border-color: #ffffff transparent transparent transparent;
+            filter: drop-shadow(4px 4px 0px #666666) drop-shadow(8px 8px 0px #000000);
+        }
 
-.toast.info {
-    background: #1a2a4a;
-    color: #b8c8e0;
-    border: 1px solid #2a3a6a;
-}
+        .character-bubble.visible {
+            opacity: 1;
+            transform: translateX(-50%) rotate(-2deg) translateY(0);
+        }
 
-/* HERO */
-.hero {
-    width: min(1100px, 90%);
-    margin: 80px auto 60px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-}
+        /* Nombre del personaje abajo a la derecha en gris */
+        .bubble-name {
+            display: block;
+            text-align: right;
+            font-size: 0.7em;
+            font-weight: 600;
+            color: #999999;
+            margin-top: 6px;
+            letter-spacing: 0.3px;
+        }
 
-.official {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid var(--border);
-    color: var(--gold-light);
-    padding: 6px 14px;
-    font-family: "Montserrat", sans-serif;
-    font-size: 10px;
-    letter-spacing: 2px;
-}
+        @keyframes bubblePop {
+            0%   { opacity: 0; transform: translateX(-50%) rotate(-2deg) translateY(15px) scale(0.85); }
+            60%  { opacity: 1; transform: translateX(-50%) rotate(-2deg) translateY(-6px) scale(1.03); }
+            100% { opacity: 1; transform: translateX(-50%) rotate(-2deg) translateY(0) scale(1); }
+        }
+        .character-bubble.pop { animation: bubblePop 0.5s ease-out; }
 
-.hero-title {
-    font-family: "Cinzel", serif;
-    font-size: clamp(32px, 5vw, 56px);
-    color: var(--paper);
-    letter-spacing: 2px;
-}
+        /* TARJETA 3D */
+        .card-3d {
+            width: 500px;
+            height: 260px;
+            background: linear-gradient(135deg, #d8d8d8 0%, #b0b0b0 100%);
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform: rotateY(-18deg) rotateX(12deg) rotateZ(2deg);
+            transform-style: preserve-3d;
+            box-shadow: 20px 25px 35px rgba(0, 0, 0, 0.4), 5px 10px 15px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+            cursor: pointer;
+        }
+        .card-3d img { width: 100%; height: 100%; object-fit: cover; transform: translateZ(10px); }
 
-.hero-title span {
-    color: var(--gold-light);
-}
+        .card-3d:hover {
+            transform: rotateY(-10deg) rotateX(6deg) rotateZ(0deg) scale(1.04);
+            box-shadow: 25px 30px 45px rgba(0, 0, 0, 0.5), 8px 12px 20px rgba(0, 0, 0, 0.3);
+        }
 
-.hero-description {
-    max-width: 600px;
-    color: #cfc4b0;
-    font-size: 14px;
-    line-height: 1.7;
-}
+        /* TARJETA FORMULARIO */
+        .card-2d-tall {
+            position: absolute;
+            top: 140px;
+            width: 520px;
+            height: 650px;
+            background-color: #d1d1d1;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.25);
+            z-index: 5;
+            overflow: hidden;
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+            cursor: pointer;
+        }
+        .card-2d-tall img { width: 100%; height: 100%; object-fit: cover; }
 
-.hero-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 10px;
-}
+        .card-2d-tall:hover {
+            transform: translateY(-22px);
+            box-shadow: 0 -16px 35px rgba(0, 0, 0, 0.35);
+        }
 
-.btn {
-    text-decoration: none;
-    padding: 12px 24px;
-    font-family: "Cinzel", serif;
-    font-size: 11px;
-    letter-spacing: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: 0.25s;
-}
+        /* PERSONAJE SECCIÓN VERDE */
+        .block-green .block-media {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 0;
+        }
+        .green-character {
+            width: clamp(200px, 22vw, 380px);
+            height: auto;
+            max-height: 100%;
+            object-fit: contain;
+            pointer-events: auto;
+            user-select: none;
+            filter: none;
+            transform-origin: bottom center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
 
-.btn-primary {
-    background: linear-gradient(135deg, #8a3428, var(--red));
-    color: white;
-    border: 1px solid #a94a3d;
-}
+        .green-character:hover {
+            animation: jellyTalk 1.2s infinite ease-in-out;
+        }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(118, 37, 28, 0.4);
-}
+        /* FOOTER */
+        footer {
+            background: #000000;
+            color: #888888;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid #222;
+        }
+        footer h3 { color: #ffffff; font-size: 14px; margin-bottom: 6px; letter-spacing: 1px; }
+        footer p { font-size: 10px; letter-spacing: 1px; }
 
-.btn-secondary {
-    border: 1px solid var(--border);
-    color: #dbcba9;
-    background: rgba(255, 255, 255, 0.03);
-}
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .section-block { padding: 80px 6%; min-height: auto; }
 
-.btn-secondary:hover {
-    background: #3a332c;
-}
+            .block-light {
+                height: auto;
+                min-height: calc(100vh - 120px);
+                flex-direction: column;
+                text-align: center;
+                gap: 30px;
+                padding-bottom: 0;
+                overflow: hidden;
+            }
 
-/* CARDS */
-.actions {
-    width: min(1100px, 90%);
-    margin: 40px auto 60px;
-}
+            .section-block, .block-orange { flex-direction: column; text-align: center; height: auto; }
 
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
+            .block-green {
+                height: auto;
+                min-height: 380px;
+                padding-top: 60px;
+                padding-bottom: 60px;
+            }
 
-.card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: 0.25s;
-}
+            .hero-stage {
+                width: 100%;
+                min-width: 100%;
+                height: 400px;
+                align-self: auto;
+                position: relative;
+            }
 
-.card:hover {
-    transform: translateY(-4px);
-    border-color: var(--gold);
-}
+            .character-actor { bottom: -18%; }
+            .character-actor img { width: 320px; }
 
-.card i {
-    font-size: 24px;
-    color: var(--gold-light);
-}
+            .character-bubble {
+                top: 26%;
+                left: 58%;
+                max-width: 220px;
+                padding: 14px 16px;
+                font-size: 12px;
+                transform: translateX(-50%) rotate(-2deg);
+            }
+            .character-bubble.visible {
+                transform: translateX(-50%) rotate(-2deg) translateY(0);
+            }
+            .character-bubble::after {
+                bottom: -28px;
+                left: 30px;
+                border-width: 28px 20px 0 0;
+            }
 
-.card h3 {
-    font-family: "Cinzel", serif;
-    font-size: 16px;
-    color: var(--paper);
-}
-
-.card p {
-    color: #b7aa94;
-    font-size: 12px;
-    line-height: 1.6;
-    flex: 1;
-}
-
-.card a {
-    color: var(--gold-light);
-    text-decoration: none;
-    font-family: "Cinzel", serif;
-    font-size: 10px;
-    letter-spacing: 1px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-}
-
-/* FOOTER */
-footer {
-    background: #131211;
-    border-top: 1px solid var(--border);
-    padding: 25px 20px;
-    text-align: center;
-}
-
-footer img {
-    width: 28px;
-    opacity: 0.8;
-}
-
-footer h3 {
-    font-family: "Cinzel", serif;
-    color: #cdbb95;
-    font-size: 13px;
-    margin-top: 6px;
-}
-
-footer p {
-    color: #786d5c;
-    font-family: "Montserrat", sans-serif;
-    font-size: 8px;
-    margin-top: 4px;
-}
-
-/* RESPONSIVE */
-@media(max-width: 600px) {
-    header { height: auto; padding: 15px 0; }
-    .header-inner { flex-direction: column; gap: 12px; }
-    .hero-buttons { flex-direction: column; width: 100%; }
-    .btn { justify-content: center; }
-    nav { flex-wrap: wrap; justify-content: center; gap: 8px; }
-    .user-info .email { display: none; }
-}
-</style>
+            .card-3d { width: 100%; max-width: 320px; height: 200px; transform: rotateY(0deg) rotateX(10deg); }
+            .card-2d-tall { position: static; width: 100%; max-width: 320px; height: 420px; }
+            .folder-tab-trigger { left: 5%; width: 180px; }
+            .block-content h2 { font-size: 34px; }
+            .block-buttons { justify-content: center; }
+            nav { flex-wrap: wrap; justify-content: center; }
+            .green-character { width: 220px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- =========================================================
-     OVERLAY DE CARGA (verificando sesión)
-========================================================= -->
-<div class="auth-overlay" id="authOverlay">
-    <div class="spinner"></div>
-    <p>VERIFICANDO ACCESO...</p>
-</div>
-
-<!-- =========================================================
-     CONTENIDO PRINCIPAL (oculto hasta verificar)
-========================================================= -->
-<div id="mainContent">
-
-    <!-- HEADER -->
     <header>
-        <div class="header-inner">
-            <div class="brand">
-                <img src="./logo.png" alt="Logo">
-                <h1>LIGA LOMBARDA</h1>
-            </div>
-            <nav>
-                <a href="./index.html">INICIO</a>
-                <a href="./documentos.html">DOCUMENTOS</a>
-                <a href="./formulario.html">FORMULARIO</a>
-
-                <!-- ESTADO DE USUARIO (se renderiza con JS) -->
-                <div id="userNav" style="display: none;">
-                    <!-- Lo llena JavaScript -->
-                </div>
-            </nav>
+        <div class="brand">
+            <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
         </div>
+        <nav>
+            <a href="./index.html" class="active">INICIO</a>
+            <a href="./documentos.html">DOCUMENTOS</a>
+            <a href="./formulario.html">FORMULARIO</a>
+        </nav>
     </header>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="official">
-            <i class="fa-solid fa-shield-halved"></i> REGISTRO CENTRAL LOMBARDO
-        </div>
-
-        <h2 class="hero-title">DOCUMENTOS <span>LOMBARDOS</span></h2>
-
-        <p class="hero-description">
-            Bienvenido al sistema oficial de identificación de la Liga Lombarda.
-            Consulta los documentos del archivo o registra tus datos en el sistema central.
-        </p>
-
-        <div class="hero-buttons">
-            <a class="btn btn-primary" href="./documentos.html">
-                <i class="fa-solid fa-address-book"></i> VER DOCUMENTOS
-            </a>
-            <a class="btn btn-secondary" href="./formulario.html">
-                <i class="fa-solid fa-pen-to-square"></i> IR AL FORMULARIO
-            </a>
-        </div>
-    </section>
-
-    <!-- CARDS -->
-    <section class="actions">
-        <div class="cards">
-            <div class="card">
-                <i class="fa-solid fa-address-book"></i>
-                <h3>Consultar Documentos</h3>
-                <p>Accede al registro público de ciudadanos lombardos y consulta los documentos oficiales.</p>
-                <a href="./documentos.html">ABRIR REGISTRO <i class="fa-solid fa-arrow-right"></i></a>
+    <main>
+        <!-- BLOQUE 1 -->
+        <section class="section-block block-light">
+            <div class="block-content">
+                <h2>LOMBARDA</h2>
+                <p>Bienvenido al sistema oficial de identificación de la Liga Lombarda. Consulta los documentos del archivo o registra tus datos en el sistema central.</p>
+                <div class="block-buttons">
+                    <a href="./documentos.html" class="btn btn-dark"><i class="fa-solid fa-address-book"></i> VER DOCUMENTOS</a>
+                </div>
             </div>
 
-            <div class="card">
-                <i class="fa-solid fa-id-card"></i>
-                <h3>Completar Formulario</h3>
-                <p>Registra oficialmente tu documento de identidad dentro del archivo central de la Liga.</p>
-                <a href="./formulario.html">IR AL FORMULARIO <i class="fa-solid fa-arrow-right"></i></a>
-            </div>
-        </div>
-    </section>
+            <div class="hero-stage" id="heroStage">
+                <div class="character-clip">
+                    <div class="character-actor" id="actorC">
+                        <img src="img/personaje-c.png" alt="Personaje C" class="jelly" onerror="this.style.display='none'">
+                    </div>
+                    <div class="character-actor" id="actorE">
+                        <img src="img/personaje-e.png" alt="Personaje E" class="jelly" onerror="this.style.display='none'">
+                    </div>
+                    <div class="character-actor" id="actorT">
+                        <img src="img/personaje-t.png" alt="Personaje T" class="jelly" onerror="this.style.display='none'">
+                    </div>
+                    <div class="character-actor" id="actorA">
+                        <img src="img/personaje-a.png" alt="Personaje A" class="jelly" onerror="this.style.display='none'">
+                    </div>
+                </div>
 
-    <!-- FOOTER -->
+                <div class="character-bubble" id="bubbleC">
+                    six seven
+                    <span class="bubble-name">-Chiiniino</span>
+                </div>
+                <div class="character-bubble" id="bubbleE">
+                    Un leftsito?
+                    <span class="bubble-name">-Endersgame62</span>
+                </div>
+                <div class="character-bubble" id="bubbleT">
+                    ¡Es un honor recibirte en nombre de la Liga!
+                    <span class="bubble-name">-TommyLinzard</span>
+                </div>
+                <div class="character-bubble" id="bubbleA">
+                    Bienvenido a la Liga
+                    <span class="bubble-name">-Aliotti</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN ROJA (REGISTRO) -->
+        <div class="folder-wrapper">
+            <div class="folder-tab-trigger" id="tabRedTrigger"></div>
+            <section class="section-block block-red" id="sectionRed">
+                <div class="block-content">
+                    <h2>REGISTRO</h2>
+                    <p>Accede al archivo central y gestiona toda la información oficial registrada en nuestra plataforma.</p>
+                    <div class="block-buttons">
+                        <a href="./documentos.html" class="btn btn-light"><i class="fa-solid fa-folder-open"></i> ABRIR REGISTRO</a>
+                    </div>
+                </div>
+                <div class="block-media">
+                    <div class="card-3d">
+                        <img src="img/dni.png" alt="DNI Central" onerror="this.style.display='none'">
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN NARANJA (FORMULARIO) -->
+        <section class="section-block block-orange">
+            <div class="block-content">
+                <h2>FORMULARIO</h2>
+                <p>Registra oficialmente tu documento de identidad dentro del archivo central de la Liga Lombarda.</p>
+                <div class="block-buttons">
+                    <a href="./formulario.html" class="btn btn-dark"><i class="fa-solid fa-pen-to-square"></i> IR AL FORMULARIO</a>
+                </div>
+            </div>
+            <div class="block-media">
+                <div class="card-2d-tall">
+                    <img src="img/documento.png" alt="Documento Oficial" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN VERDE (OFICIAL) -->
+        <section class="section-block block-green">
+            <div class="block-content">
+                <h2>Hecho por manos slimes</h2>
+                <p>"Chino no me paga lo suficiente, de hecho no me paga"</p>
+            </div>
+            <div class="block-media">
+                <img src="img/personaje-n.png" alt="Personaje Oficial" class="green-character" onerror="this.style.display='none'">
+            </div>
+        </section>
+    </main>
+
     <footer>
-        <img src="./logo.png" alt="Logo">
         <h3>LIGA LOMBARDA</h3>
         <p>SISTEMA OFICIAL DE DOCUMENTACIÓN · ARCHIVO CENTRAL</p>
     </footer>
 
-</div>
+    <script>
+        document.getElementById('tabRedTrigger').addEventListener('click', function() {
+            document.getElementById('sectionRed').scrollIntoView({ behavior: 'smooth' });
+        });
 
-<!-- TOAST -->
-<div id="toast" class="toast"></div>
+        (function() {
+            const personajes = [
+                { actor: document.getElementById('actorC'), bubble: document.getElementById('bubbleC') },
+                { actor: document.getElementById('actorE'), bubble: document.getElementById('bubbleE') },
+                { actor: document.getElementById('actorT'), bubble: document.getElementById('bubbleT') },
+                { actor: document.getElementById('actorA'), bubble: document.getElementById('bubbleA') }
+            ];
 
-<!-- =========================================================
-     SCRIPT PRINCIPAL
-========================================================= -->
-<script type="module">
-    // =========================================================
-    // IMPORTS
-    // =========================================================
-    import { 
-        auth, 
-        onAuthStateChanged, 
-        signOut,
-        database,
-        ref,
-        get
-    } from "./firebase-init.js";
+            const DURACION_APARICION = 10000; // 10s visible
+            const PAUSA_ENTRE = 2000;         // 2s de pausa
 
-    // =========================================================
-    // REFERENCIAS DOM
-    // =========================================================
-    const authOverlay = document.getElementById('authOverlay');
-    const mainContent = document.getElementById('mainContent');
-    const userNav = document.getElementById('userNav');
-    const toast = document.getElementById('toast');
+            let timersActivos = [];
+            let cicloTimeoutId = null;
+            let cicloEnCurso = false;
 
-    // =========================================================
-    // TOAST
-    // =========================================================
-    function showToast(message, type = 'info', duration = 4000) {
-        toast.textContent = message;
-        toast.className = 'toast ' + type + ' show';
-        clearTimeout(toast._timeout);
-        toast._timeout = setTimeout(() => {
-            toast.classList.remove('show');
-        }, duration);
-    }
+            function shuffle(array) {
+                const copia = [...array];
+                for (let i = copia.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [copia[i], copia[j]] = [copia[j], copia[i]];
+                }
+                return copia;
+            }
 
-    // =========================================================
-    // RENDERIZAR NAV SEGÚN AUTENTICACIÓN
-    // =========================================================
-    function renderNav(user, isAdmin = false) {
-        if (user) {
-            userNav.style.display = 'flex';
-            userNav.innerHTML = `
-                <span class="user-info">
-                    <span class="email">
-                        <i class="fas fa-user-circle"></i> ${user.email}
-                        ${isAdmin ? '<span style="color:var(--gold-light);margin-left:4px;">👑</span>' : ''}
-                    </span>
-                    <button class="logout-btn" id="logoutBtnNav">
-                        <i class="fas fa-sign-out-alt"></i> SALIR
-                    </button>
-                </span>
-            `;
+            function limpiarTimers() {
+                timersActivos.forEach(id => clearTimeout(id));
+                timersActivos = [];
+                if (cicloTimeoutId) {
+                    clearTimeout(cicloTimeoutId);
+                    cicloTimeoutId = null;
+                }
+            }
 
-            // Evento logout desde nav
-            document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
+            function resetearTodos() {
+                personajes.forEach(({ actor, bubble }) => {
+                    actor.classList.remove('visible', 'leaving');
+                    bubble.classList.remove('visible', 'pop');
+                });
+            }
 
-        } else {
-            // Esto no debería verse porque redirigimos antes, pero por si acaso
-            userNav.style.display = 'flex';
-            userNav.innerHTML = `
-                <a href="./login.html" class="login-btn-nav" style="background:var(--red);border:none;color:white;padding:6px 16px;border-radius:4px;text-decoration:none;font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:1px;">
-                    <i class="fas fa-sign-in-alt"></i> INICIAR SESIÓN
-                </a>
-            `;
-        }
-    }
+            function showActor(actor, bubble) {
+                actor.classList.remove('leaving');
+                actor.classList.add('visible');
+                bubble.classList.remove('visible', 'pop');
+                void bubble.offsetWidth;
+                const id = setTimeout(() => {
+                    bubble.classList.add('visible', 'pop');
+                }, 700);
+                timersActivos.push(id);
+            }
 
-    // =========================================================
-    // VERIFICAR SI ES ADMIN
-    // =========================================================
-    async function checkIsAdmin(user) {
-        if (!user) return false;
-        try {
-            const adminRef = ref(database, `usuarios/${user.uid}/admin`);
-            const snapshot = await get(adminRef);
-            return snapshot.val() === true;
-        } catch (error) {
-            console.warn('No se pudo verificar rol de admin:', error);
-            return false;
-        }
-    }
+            function hideActor(actor, bubble) {
+                bubble.classList.remove('visible', 'pop');
+                actor.classList.add('leaving');
+                const id = setTimeout(() => {
+                    actor.classList.remove('visible', 'leaving');
+                }, 900);
+                timersActivos.push(id);
+            }
 
-    // =========================================================
-    // LOGOUT
-    // =========================================================
-    async function handleLogout() {
-        try {
-            await signOut(auth);
-            showToast('👋 Sesión cerrada correctamente', 'info', 2000);
-            // Redirigir a login después de cerrar sesión
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 500);
-        } catch (error) {
-            console.error('Error al cerrar sesión:', error);
-            showToast('❌ Error al cerrar sesión', 'error', 3000);
-        }
-    }
+            function programarCiclo() {
+                limpiarTimers();
+                resetearTodos();
+                cicloEnCurso = true;
 
-    // =========================================================
-    // OBSERVER DE AUTENTICACIÓN
-    // =========================================================
-    onAuthStateChanged(auth, async (user) => {
-        // Ocultar overlay
-        authOverlay.classList.add('hidden');
+                const ordenActual = shuffle(personajes);
+                let tiempo = 400;
 
-        if (!user) {
-            // ❌ NO LOGUEADO → Redirigir a login
-            showToast('🔐 Debes iniciar sesión para acceder', 'error', 2000);
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 500);
-            return;
-        }
+                ordenActual.forEach((personaje) => {
+                    const tShow = setTimeout(() => {
+                        showActor(personaje.actor, personaje.bubble);
+                    }, tiempo);
+                    timersActivos.push(tShow);
 
-        // ✅ USUARIO LOGUEADO → Mostrar contenido
-        const isAdmin = await checkIsAdmin(user);
-        
-        // Mostrar contenido
-        mainContent.classList.add('visible');
-        
-        // Renderizar nav
-        renderNav(user, isAdmin);
+                    const tHide = setTimeout(() => {
+                        hideActor(personaje.actor, personaje.bubble);
+                    }, tiempo + DURACION_APARICION);
+                    timersActivos.push(tHide);
 
-        // Mensaje de bienvenida
-        if (isAdmin) {
-            showToast('👑 Bienvenido Administrador', 'success', 2000);
-        } else {
-            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
-        }
+                    const tForceHide = setTimeout(() => {
+                        personaje.actor.classList.remove('visible', 'leaving');
+                        personaje.bubble.classList.remove('visible', 'pop');
+                    }, tiempo + DURACION_APARICION + 1200);
+                    timersActivos.push(tForceHide);
 
-        console.log(`🔐 Usuario logueado: ${user.email}`);
-        console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
-    });
+                    tiempo += DURACION_APARICION + PAUSA_ENTRE;
+                });
 
-    console.log('🏠 Página de inicio con autenticación obligatoria');
-</script>
+                cicloTimeoutId = setTimeout(() => {
+                    programarCiclo();
+                }, tiempo + 500);
+            }
 
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    limpiarTimers();
+                    resetearTodos();
+                    cicloEnCurso = false;
+                } else {
+                    if (!cicloEnCurso) {
+                        programarCiclo();
+                    }
+                }
+            });
+
+            programarCiclo();
+        })();
+    </script>
 </body>
 </html>
