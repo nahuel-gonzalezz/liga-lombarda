@@ -29,7 +29,18 @@
             --gold: #a4864a;
             --border: #332c24;
             --gray: #81796c;
-            
+
+            --bg-body: #f4f4f5;
+            --bg-dark: #0d0d0d;
+            --bg-card: #ffffff;
+            --text-dark: #1f1f1f;
+            --text-light: #ffffff;
+            --gold-bright: #ffd700;
+            --gold-soft: #e6c15a;
+            --red-slide: #990024;
+            --purple: #7b1fa2;
+            --purple-dark: #5c1578;
+
             /* Colores por rango */
             --color-elite: #FFD700;
             --color-caballero: #CC0000;
@@ -39,6 +50,10 @@
             --color-milicia: #BC4E00;
             --color-ballestero: #10A1C3;
             --color-ciudadano: #888888;
+
+            --header-height: 64px;
+            --botones-height: 52px;
+            --slide-top-padding: calc(var(--botones-height) + 30px);
         }
 
         * {
@@ -47,11 +62,16 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background: radial-gradient(circle at top, #3a342e, #171717 70%);
-            color: white;
             font-family: "Libre Baskerville", Georgia, serif;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* =========================================================
@@ -63,7 +83,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0, 0, 0, 0.92);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -110,26 +130,22 @@
         }
 
         /* =========================================================
-           HEADER
+           HEADER FIJO
         ========================================================= */
         header {
-            width: 100%;
-            height: 75px;
-            background: rgba(18, 17, 15, 0.95);
-            border-bottom: 1px solid #4a3d2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 50;
-        }
-
-        .header-inner {
-            width: min(1100px, 90%);
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: #0d0d0d;
+            padding: 0 5%;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            z-index: 1000;
+            border-bottom: 2px solid #222;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         .brand {
@@ -139,40 +155,65 @@
         }
 
         .brand img {
-            width: 35px;
+            width: 34px;
+            height: auto;
         }
 
         .brand h1 {
             font-family: "Cinzel", serif;
-            font-size: 18px;
+            font-size: 16px;
             letter-spacing: 2px;
             color: var(--paper);
         }
 
         nav {
             display: flex;
-            gap: 20px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         nav a {
-            color: #c7b99d;
+            position: relative;
+            color: #888888;
             text-decoration: none;
             font-family: "Montserrat", sans-serif;
             font-size: 11px;
+            font-weight: 700;
             letter-spacing: 1px;
             padding: 8px 12px;
-            transition: 0.2s;
+            transition: color 0.3s ease;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: translateX(-50%);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
         }
 
         nav a:hover {
-            color: var(--gold);
+            color: #ffffff;
+        }
+
+        nav a:hover::after {
+            width: 60%;
         }
 
         nav a.active {
-            color: var(--gold);
-            border-bottom: 2px solid var(--gold);
+            color: #ffffff;
+        }
+
+        nav a.active::after {
+            width: 100%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
 
         /* =========================================================
@@ -191,7 +232,7 @@
         }
 
         .user-info .email i {
-            color: var(--gold);
+            color: var(--gold-bright);
             margin-right: 4px;
         }
 
@@ -209,8 +250,8 @@
         }
 
         .logout-btn:hover {
-            background: var(--red);
-            border-color: var(--red);
+            background: var(--red-slide);
+            border-color: var(--red-slide);
             color: white;
         }
 
@@ -221,130 +262,420 @@
             position: fixed;
             bottom: 30px;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(20px);
             padding: 14px 28px;
             border-radius: 8px;
-            font-family: "Cinzel";
+            font-family: "Cinzel", serif;
             font-size: 12px;
             letter-spacing: 1px;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             pointer-events: none;
             max-width: 90%;
             text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
         }
 
         .toast.show {
             opacity: 1;
             pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
         }
 
         .toast.success {
-            background: #1a4a2a;
+            background: rgba(26, 74, 42, 0.95);
             color: #b8e0b8;
             border: 1px solid #2a6a3a;
         }
 
         .toast.error {
-            background: #4a1a1a;
+            background: rgba(74, 26, 26, 0.95);
             color: #e0b8b8;
             border: 1px solid #6a2a2a;
         }
 
         .toast.info {
-            background: #1a2a4a;
+            background: rgba(26, 42, 74, 0.95);
             color: #b8c8e0;
             border: 1px solid #2a3a6a;
         }
 
         /* =========================================================
-           CONTENEDOR PRINCIPAL DE DOCUMENTOS
+           BOTONES FLOTANTES
         ========================================================= */
-        .main-container {
-            width: min(1300px, 94%);
-            margin: 30px auto 50px;
+        .botones-container {
+            position: fixed;
+            top: calc(var(--header-height) + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1100;
+            height: var(--botones-height);
+            align-items: center;
         }
 
+        .btn {
+            padding: 10px 22px;
+            font-size: clamp(11px, 3vw, 13px);
+            font-weight: 700;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        #btn-izquierda {
+            background-color: var(--red-slide);
+        }
+
+        #btn-derecha {
+            background-color: var(--purple);
+        }
+
+        #btn-izquierda.active,
+        #btn-derecha.active {
+            box-shadow: 0 0 0 2px #ffffff, 0 0 16px rgba(255, 255, 255, 0.5);
+        }
+
+        /* =========================================================
+           VIEWPORT — CRECE CON EL CONTENIDO
+        ========================================================= */
+        .viewport {
+            position: relative;
+            width: 100%;
+            margin-top: var(--header-height);
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: calc(100vh - var(--header-height));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: var(--slide-top-padding) 5% 80px;
+            background-color: var(--bg-body);
+            transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            will-change: transform;
+        }
+
+        #slide-1 {
+            transform: translateX(0%);
+            z-index: 2;
+        }
+
+        #slide-2 {
+            transform: translateX(100%);
+            z-index: 1;
+        }
+
+        .viewport.slide2-active #slide-1 {
+            transform: translateX(-100%);
+            z-index: 1;
+        }
+
+        .viewport.slide2-active #slide-2 {
+            transform: translateX(0%);
+            z-index: 2;
+        }
+
+        /* =========================================================
+           CÍRCULOS FLOTANTES
+        ========================================================= */
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .color-vino {
+            background-color: #b3002a;
+        }
+
+        .color-morado {
+            background-color: #9c27b0;
+        }
+
+        .c-large {
+            width: clamp(80px, 14vw, 150px);
+            aspect-ratio: 1;
+        }
+
+        .c-medium {
+            width: clamp(55px, 9vw, 100px);
+            aspect-ratio: 1;
+        }
+
+        .c-small {
+            width: clamp(35px, 6vw, 65px);
+            aspect-ratio: 1;
+        }
+
+        .s1-c1 { top: 3%; left: 8%; animation-delay: 0s; }
+        .s1-c2 { top: 12%; left: 3%; animation-delay: 1.2s; }
+        .s1-c3 { top: 6%; left: 28%; animation-delay: 2.4s; }
+        .s1-c4 { top: 18%; right: 10%; animation-delay: 0.8s; }
+        .s1-c5 { top: 30%; left: 12%; animation-delay: 1.8s; }
+
+        .s2-c1 { top: 3%; right: 8%; animation-delay: 0s; }
+        .s2-c2 { top: 12%; right: 3%; animation-delay: 1.2s; }
+        .s2-c3 { top: 6%; right: 28%; animation-delay: 2.4s; }
+        .s2-c4 { top: 18%; left: 10%; animation-delay: 0.8s; }
+        .s2-c5 { top: 30%; right: 12%; animation-delay: 1.8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.02); }
+        }
+
+        /* =========================================================
+           FONDO CURVADO — SE ESTIRA HASTA ABAJO DEL SLIDE
+        ========================================================= */
+        .card-content-bg {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            top: 38vh;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .card-content-1 {
+            background-color: var(--red-slide);
+            border-top-left-radius: clamp(400px, 40vw, 600px);
+            box-shadow: -5px -5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-content-2 {
+            background-color: var(--purple);
+            border-top-right-radius: clamp(400px, 40vw, 600px);
+            box-shadow: 5px -5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        /* =========================================================
+           CONTENIDO PRINCIPAL
+        ========================================================= */
+        .main-container {
+            width: min(1300px, 100%);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* =========================================================
+           ANIMACIONES DE ENTRADA
+        ========================================================= */
+        .anim-item {
+            opacity: 0;
+            transform: translateY(24px);
+            animation: fadeInUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        .anim-item:nth-child(1) { animation-delay: 0.05s; }
+        .anim-item:nth-child(2) { animation-delay: 0.15s; }
+        .anim-item:nth-child(3) { animation-delay: 0.25s; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================================
+           TÍTULO DE PÁGINA
+        ========================================================= */
         .page-title {
-            font-family: "Cinzel", serif;
-            font-size: 28px;
-            color: var(--paper);
-            border-bottom: 2px solid var(--gold);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+            position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding: 22px 26px;
+            background: rgba(0, 0, 0, 0.78);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 8px 30px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            backdrop-filter: blur(6px);
         }
 
-        .page-title small {
-            font-size: 12px;
-            color: #8e8373;
-            font-weight: 400;
+        .page-title::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold-soft), transparent);
+            opacity: 0.6;
         }
 
-        .page-title .count {
-            font-size: 14px;
-            color: var(--gold);
-            font-weight: 400;
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .page-title .title-main {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .page-title .title-main i {
+            color: var(--gold-bright);
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+            font-size: 22px;
+        }
+
+        .page-title .title-sub {
+            display: block;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .page-title.purple {
+            border-color: rgba(156, 39, 176, 0.45);
+        }
+
+        .page-title.purple .title-main i {
+            color: #ce93d8;
+            filter: drop-shadow(0 0 8px rgba(206, 147, 216, 0.5));
         }
 
         /* =========================================================
            FILTRO DE BÚSQUEDA
         ========================================================= */
         .search-bar {
+            position: relative;
             display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 16px;
+            margin-bottom: 36px;
             flex-wrap: wrap;
-            background: rgba(30, 28, 25, 0.8);
-            border: 1px solid #4a3d2e;
-            border-radius: 8px;
-            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.72);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 16px 20px;
             align-items: center;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                0 6px 24px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(6px);
+        }
+
+        .search-bar.purple {
+            border-color: rgba(156, 39, 176, 0.3);
+        }
+
+        .search-bar .search-icon {
+            position: absolute;
+            left: 34px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            pointer-events: none;
+            transition: color 0.3s;
         }
 
         .search-bar input {
             flex: 1;
-            background: #2a2722;
-            border: 1px solid #4a3d2e;
-            color: var(--paper);
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-family: "Libre Baskerville", serif;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            padding: 12px 18px 12px 42px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
             font-size: 13px;
             outline: none;
             min-width: 200px;
+            transition: all 0.3s ease;
         }
 
         .search-bar input:focus {
-            border-color: var(--gold);
+            border-color: var(--gold-soft);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15);
+        }
+
+        .search-bar.purple input:focus {
+            border-color: #ce93d8;
+            box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
+        }
+
+        .search-bar:focus-within .search-icon {
+            color: var(--gold-bright);
+        }
+
+        .search-bar.purple:focus-within .search-icon {
+            color: #ce93d8;
         }
 
         .search-bar input::placeholder {
-            color: #5f5446;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
         }
 
         .search-bar .filter-count {
-            color: #8e8373;
+            color: rgba(255, 255, 255, 0.7);
             font-size: 11px;
             font-family: "Montserrat", sans-serif;
             white-space: nowrap;
         }
 
         .search-bar .filter-count span {
-            color: var(--gold);
+            color: var(--gold-bright);
             font-weight: 700;
         }
 
         /* =========================================================
-           CONTENEDOR POR RANGO (separación)
+           CONTENEDOR POR RANGO
         ========================================================= */
         .rank-section {
-            margin-bottom: 40px;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.5s ease both;
         }
 
         .rank-section:last-child {
@@ -354,10 +685,22 @@
         .rank-section-header {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #4a3d2e;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding: 0 4px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+        }
+
+        .rank-section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--rank-color, #fff), transparent);
+            border-radius: 2px;
         }
 
         .rank-section-header .rank-dot {
@@ -366,70 +709,134 @@
             border-radius: 50%;
             display: inline-block;
             flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .rank-section-header .rank-dot::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid currentColor;
+            opacity: 0.35;
         }
 
         .rank-section-header .rank-label {
-            font-family: "Cinzel", serif;
-            font-size: 16px;
-            letter-spacing: 1px;
-            color: var(--paper);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--text-light);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
         }
 
         .rank-section-header .rank-count {
-            font-size: 11px;
-            color: #8e8373;
-            font-family: "Montserrat", sans-serif;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
             margin-left: auto;
+            padding: 5px 14px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            text-transform: uppercase;
         }
 
         /* =========================================================
-           GRID DE TARJETAS (dentro de cada rango)
+           GRID DE TARJETAS
         ========================================================= */
         .rank-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: 20px;
         }
 
         /* =========================================================
            TARJETA INDIVIDUAL
         ========================================================= */
         .document-card {
-            background: #1f1c19;
-            border: 2px solid #4a3d2e;
-            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid #d0d0d0;
+            border-radius: 12px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        box-shadow 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+                        border-color 0.35s ease;
             cursor: pointer;
             position: relative;
+            box-shadow:
+                0 4px 14px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+            z-index: 1;
+            animation: cardIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .document-card::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 2;
+            transition: border-color 0.3s;
         }
 
         .document-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border-color: rgba(255, 215, 0, 0.6);
+            box-shadow:
+                0 18px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 215, 0, 0.4),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            z-index: 10;
         }
 
-        /* Borde de rango (color) */
-        .document-card[data-rank="Elite Urbana"] { border-color: var(--color-elite); }
-        .document-card[data-rank="Caballero Lombardo"] { border-color: var(--color-caballero); }
-        .document-card[data-rank="Infante Lombardo"] { border-color: var(--color-infante); }
-        .document-card[data-rank="Paladín Lombardo"] { border-color: var(--color-paladin); }
-        .document-card[data-rank="Pavesero Lombardo"] { border-color: var(--color-pavesero); }
-        .document-card[data-rank="Milicia Urbana"] { border-color: var(--color-milicia); }
-        .document-card[data-rank="Ballestero Genovés Condecorado"] { border-color: var(--color-ballestero); }
-        .document-card[data-rank="Ciudadano"] { border-color: var(--color-ciudadano); }
+        .document-card:hover::before {
+            border-color: rgba(255, 215, 0, 0.4);
+        }
 
-        /* Insignia de rango (color de fondo) */
+        .document-card .corner {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-color: rgba(0, 0, 0, 0.25);
+            z-index: 3;
+            pointer-events: none;
+            transition: border-color 0.3s;
+        }
+
+        .document-card .corner.tl { top: 8px; left: 8px; border-top: 2px solid; border-left: 2px solid; }
+        .document-card .corner.tr { top: 8px; right: 8px; border-top: 2px solid; border-right: 2px solid; }
+        .document-card .corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid; border-left: 2px solid; }
+        .document-card .corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; }
+
+        .document-card:hover .corner {
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+
         .document-card .rank-badge {
             display: inline-block;
             font-size: 7px;
-            font-family: "Cinzel", serif;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
             letter-spacing: 0.5px;
-            padding: 3px 10px;
-            border-radius: 3px;
+            padding: 4px 12px;
+            border-radius: 4px;
             text-transform: uppercase;
             color: #1a1a1a;
-            font-weight: 700;
+            box-shadow:
+                0 2px 6px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
         }
 
         .document-card[data-rank="Elite Urbana"] .rank-badge { background: var(--color-elite); color: #1a1a1a; }
@@ -441,16 +848,35 @@
         .document-card[data-rank="Ballestero Genovés Condecorado"] .rank-badge { background: var(--color-ballestero); color: white; }
         .document-card[data-rank="Ciudadano"] .rank-badge { background: var(--color-ciudadano); color: white; }
 
-        /* Contenedor de la foto (skin) */
         .card-skin {
             width: 100%;
             aspect-ratio: 1 / 0.9;
-            background: #1a1715;
+            background: radial-gradient(ellipse at 50% 30%, #fdfdfd 0%, #e8e8e8 70%, #d5d5d5 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .card-skin::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(to top,
+                #fdfdfd 0%,
+                rgba(253, 253, 253, 0.95) 15%,
+                rgba(253, 253, 253, 0.75) 35%,
+                rgba(253, 253, 253, 0.35) 60%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 2;
+            border-radius: 0 0 12px 12px;
         }
 
         .card-skin canvas {
@@ -458,66 +884,107 @@
             height: 100% !important;
             display: block !important;
             object-fit: contain;
+            position: relative;
+            z-index: 1;
+            transform-origin: center center;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .document-card:hover .card-skin canvas {
+            transform: scale(1.05);
+            z-index: 1;
+            border-radius: 12px 12px 0 0;
         }
 
         .card-skin .no-skin {
-            color: #5f5446;
-            font-size: 30px;
-            opacity: 0.3;
+            color: #bbbbbb;
+            font-size: 34px;
+            opacity: 0.6;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Información de la tarjeta */
         .card-info {
-            padding: 12px 14px 14px;
+            padding: 14px 14px 16px;
             text-align: center;
-            background: #1f1c19;
-            border-top: 1px solid #4a3d2e;
+            background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+            border-top: 1px solid #e5e5e5;
+            position: relative;
+            border-radius: 0 0 12px 12px;
+            z-index: 3;
         }
 
         .card-info .card-name {
-            font-family: "Cinzel", serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 14px;
-            color: var(--paper);
+            color: var(--text-dark);
             letter-spacing: 0.5px;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
         .card-info .card-alias {
             font-size: 10px;
-            color: #8e8373;
+            color: #777;
             font-style: italic;
-            margin-top: 2px;
+            margin-top: 3px;
         }
 
         .card-info .card-rank {
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .card-info .card-actions {
-            margin-top: 10px;
+            margin-top: 12px;
             display: flex;
             justify-content: center;
         }
 
         .card-info .btn-view {
             background: transparent;
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 5px 18px;
+            border: 1px solid #0d0d0d;
+            color: #0d0d0d;
+            padding: 6px 20px;
             border-radius: 4px;
-            font-family: "Cinzel", serif;
+            font-family: 'Montserrat', sans-serif;
             font-size: 8px;
-            letter-spacing: 1px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
             cursor: pointer;
             transition: all 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .card-info .btn-view::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #0d0d0d;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+            z-index: -1;
         }
 
         .card-info .btn-view:hover {
-            background: var(--gold);
-            color: #1a1a1a;
+            color: var(--text-light);
+            border-color: #0d0d0d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-info .btn-view:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-info .btn-view i {
+            font-size: 9px;
         }
 
         /* =========================================================
@@ -526,86 +993,140 @@
         .empty-state {
             grid-column: 1 / -1;
             text-align: center;
-            padding: 60px 20px;
-            color: #5f5446;
+            padding: 70px 30px;
+            color: rgba(255, 255, 255, 0.85);
+            background: rgba(0, 0, 0, 0.25);
+            border: 2px dashed rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            backdrop-filter: blur(4px);
         }
 
         .empty-state i {
-            font-size: 50px;
-            color: #4a3d2e;
-            margin-bottom: 15px;
+            font-size: 54px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-bottom: 18px;
+            display: block;
         }
 
         .empty-state h3 {
-            font-family: "Cinzel", serif;
-            color: #8e8373;
-            font-size: 18px;
+            font-family: 'Montserrat', sans-serif;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1px;
         }
 
         .empty-state p {
             font-size: 13px;
-            margin-top: 8px;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.65);
         }
 
         /* =========================================================
            FOOTER
         ========================================================= */
         footer {
+            background: #000000;
+            color: #888888;
+            padding: 40px 20px;
             text-align: center;
-            color: #746b5e;
-            font-size: 9px;
-            padding: 30px;
+            border-top: 1px solid #222;
+            position: relative;
+            z-index: 20;
+        }
+
+        footer h3 {
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        footer p {
+            font-size: 10px;
+            letter-spacing: 1px;
         }
 
         /* =========================================================
            RESPONSIVE
         ========================================================= */
         @media (max-width: 768px) {
+            :root {
+                --header-height: 56px;
+                --botones-height: 46px;
+            }
+
             header {
-                height: auto;
-                padding: 15px 0;
+                padding: 0 3%;
             }
-            .header-inner {
-                flex-direction: column;
-                gap: 12px;
+
+            .brand img {
+                width: 28px;
             }
+
             .brand h1 {
-                font-size: 16px;
+                font-size: 12px;
             }
+
             nav a {
                 font-size: 9px;
-                padding: 6px 8px;
+                padding: 5px 6px;
             }
-            nav {
-                gap: 8px;
-                justify-content: center;
+
+            .botones-container {
+                gap: 10px;
             }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 10px;
+            }
+
+            .slide {
+                padding: calc(var(--botones-height) + 25px) 5% 60px;
+            }
+
             .page-title {
-                font-size: 22px;
+                padding: 16px 18px;
+                flex-direction: column;
+                align-items: flex-start;
             }
+
+            .page-title .title-main {
+                font-size: 18px;
+            }
+
             .search-bar {
                 flex-direction: column;
-                padding: 12px 15px;
+                padding: 14px 16px;
             }
+
             .search-bar input {
                 width: 100%;
             }
+
+            .search-bar .search-icon {
+                left: 28px;
+                top: 36px;
+            }
+
             .rank-grid {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 12px;
+                gap: 14px;
             }
-            .card-info .card-name {
-                font-size: 12px;
-            }
-            .card-info .card-alias {
-                font-size: 9px;
-            }
+
             .rank-section-header .rank-label {
                 font-size: 14px;
             }
+
+            .card-content-bg {
+                top: 42vh;
+            }
+
             .user-info .email {
                 font-size: 8px;
             }
+
             .logout-btn {
                 font-size: 8px;
                 padding: 4px 10px;
@@ -613,41 +1134,74 @@
         }
 
         @media (max-width: 480px) {
+            :root {
+                --botones-height: 42px;
+            }
+
+            .slide {
+                padding: calc(var(--botones-height) + 22px) 4% 40px;
+            }
+
+            .page-title .title-main {
+                font-size: 15px;
+                gap: 8px;
+            }
+
+            .page-title .title-main i {
+                font-size: 16px;
+            }
+
+            .page-title .title-sub {
+                font-size: 7px;
+                letter-spacing: 2px;
+            }
+
             .rank-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
+
             .card-info {
-                padding: 8px 8px 10px;
+                padding: 10px 8px 12px;
             }
+
             .card-info .card-name {
-                font-size: 10px;
+                font-size: 11px;
             }
+
             .card-info .card-alias {
                 font-size: 8px;
             }
+
             .card-info .btn-view {
                 font-size: 7px;
-                padding: 4px 10px;
+                padding: 5px 12px;
             }
+
             .card-skin {
                 aspect-ratio: 1 / 0.85;
             }
-            .page-title {
-                font-size: 18px;
-            }
-            .page-title small {
-                font-size: 10px;
-            }
+
             .rank-section-header .rank-label {
                 font-size: 12px;
             }
+
             .rank-section-header .rank-dot {
                 width: 10px;
                 height: 10px;
             }
+
+            .rank-section-header .rank-count {
+                font-size: 8px;
+                padding: 4px 10px;
+            }
+
             .rank-section {
-                margin-bottom: 25px;
+                margin-bottom: 26px;
+            }
+
+            .card-content-bg {
+                top: 46vh;
             }
         }
     </style>
@@ -669,49 +1223,95 @@
     <div id="mainContent">
 
         <header>
-            <div class="header-inner">
-                <div class="brand">
-                    <img src="./logo.png" alt="Logo">
-                    <h1>LIGA LOMBARDA</h1>
-                </div>
-                <nav>
-                    <a href="./index.html">INICIO</a>
-                    <a href="./documentos.html" class="active">DOCUMENTOS</a>
-                    <a href="./formulario.html">FORMULARIO</a>
-
-                    <!-- USER INFO (se renderiza con JS) -->
-                    <div id="userNav" style="display: none;">
-                        <!-- Lo llena JavaScript -->
-                    </div>
-                </nav>
+            <div class="brand">
+                <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
+                <h1>LIGA LOMBARDA</h1>
             </div>
+            <nav>
+                <a href="./index.html">INICIO</a>
+                <a href="./documentos.html" class="active">DOCUMENTOS</a>
+                <a href="./formulario.html">FORMULARIO</a>
+
+                <!-- USER INFO (se renderiza con JS) -->
+                <div id="userNav" style="display: none;">
+                    <!-- Lo llena JavaScript -->
+                </div>
+            </nav>
         </header>
 
-        <div class="main-container">
+        <div class="botones-container">
+            <button class="btn active" id="btn-izquierda" onclick="moverIzquierda()">Liga Lombarda</button>
+            <button class="btn" id="btn-derecha" onclick="moverDerecha()">Inmigrantes ilegales</button>
+        </div>
 
-            <div class="page-title">
-                <span><i class="fas fa-address-book" style="color:var(--gold);"></i> REGISTRO DE CIUDADANOS</span>
-                <div>
-                    <span class="count" id="totalCount">0</span>
-                    <small>expedientes</small>
+        <div class="viewport" id="viewport">
+
+            <!-- ================= SLIDE 1: LIGA LOMBARDA ================= -->
+            <div class="slide" id="slide-1">
+                <div class="circle color-vino c-large s1-c1"></div>
+                <div class="circle color-vino c-medium s1-c2"></div>
+                <div class="circle color-vino c-small s1-c3"></div>
+                <div class="circle color-vino c-medium s1-c4"></div>
+                <div class="circle color-vino c-small s1-c5"></div>
+                <div class="card-content-bg card-content-1"></div>
+
+                <div class="main-container">
+                    <div class="page-title anim-item">
+                        <div class="title-main">
+                            <i class="fas fa-address-book"></i>
+                            <div>
+                                REGISTRO DE CIUDADANOS
+                                <span class="title-sub">Archivo Central · Liga Lombarda</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-bar anim-item">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre, alias, nick, rango o número..." />
+                        <span class="filter-count" id="filterCount">Mostrando <span id="visibleCount">0</span> de <span id="totalVisible">0</span></span>
+                    </div>
+
+                    <div id="documentsContainer" class="anim-item"></div>
                 </div>
             </div>
 
-            <!-- Barra de búsqueda -->
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, alias, nick, rango o número..." />
-                <span class="filter-count" id="filterCount">Mostrando <span id="visibleCount">0</span> de <span id="totalVisible">0</span></span>
-            </div>
+            <!-- ================= SLIDE 2: INMIGRANTES ILEGALES ================= -->
+            <div class="slide" id="slide-2">
+                <div class="circle color-morado c-large s2-c1"></div>
+                <div class="circle color-morado c-medium s2-c2"></div>
+                <div class="circle color-morado c-small s2-c3"></div>
+                <div class="circle color-morado c-medium s2-c4"></div>
+                <div class="circle color-morado c-small s2-c5"></div>
+                <div class="card-content-bg card-content-2"></div>
 
-            <!-- Grid de documentos (se renderiza por rangos) -->
-            <div id="documentsContainer">
-                <!-- Los rangos se renderizan con JavaScript -->
+                <div class="main-container">
+                    <div class="page-title purple anim-item">
+                        <div class="title-main">
+                            <i class="fas fa-passport"></i>
+                            <div>
+                                INMIGRANTES ILEGALES
+                                <span class="title-sub">Registro de indocumentados · Próximamente más datos</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-bar purple anim-item">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput2" placeholder="Buscar inmigrante..." />
+                    </div>
+
+                    <div id="inmigrantesContainer" class="anim-item">
+                        <!-- Se renderiza con JavaScript -->
+                    </div>
+                </div>
             </div>
 
         </div>
 
         <footer>
-            Liga Lombarda · Archivo Central · Registro de Ciudadanos
+            <h3>LIGA LOMBARDA</h3>
+            <p>SISTEMA OFICIAL DE DOCUMENTACIÓN · ARCHIVO CENTRAL</p>
         </footer>
 
     </div>
@@ -721,8 +1321,7 @@
     <!-- =========================================================
          SKINVIEW3D
     ========================================================= -->
-    <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js">
-    </script>
+    <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js"></script>
 
     <!-- =========================================================
          SCRIPTS (módulo ES)
@@ -731,9 +1330,9 @@
         // =========================================================
         // IMPORTS DE FIREBASE
         // =========================================================
-        import { 
-            auth, 
-            onAuthStateChanged, 
+        import {
+            auth,
+            onAuthStateChanged,
             signOut,
             database,
             ref,
@@ -741,7 +1340,7 @@
             onValue
         } from "./firebase-init.js";
 
-        // Exponer Firebase para compatibilidad con el código existente
+        // Exponer Firebase para compatibilidad
         window.firebaseDB = database;
         window.firebaseRef = ref;
         window.firebaseGet = get;
@@ -755,8 +1354,14 @@
         const userNav = document.getElementById('userNav');
         const toast = document.getElementById('toast');
         const documentsContainer = document.getElementById('documentsContainer');
+        const inmigrantesContainer = document.getElementById('inmigrantesContainer');
         const searchInput = document.getElementById('searchInput');
-        const totalCount = document.getElementById('totalCount');
+        const searchInput2 = document.getElementById('searchInput2');
+        const viewport = document.getElementById('viewport');
+        const btnIzq = document.getElementById('btn-izquierda');
+        const btnDer = document.getElementById('btn-derecha');
+        const slide1 = document.getElementById('slide-1');
+        const slide2 = document.getElementById('slide-2');
         const visibleCount = document.getElementById('visibleCount');
         const totalVisible = document.getElementById('totalVisible');
 
@@ -771,9 +1376,46 @@
                 toast.classList.remove('show');
             }, duration);
         }
-
-        // Exponer showToast globalmente para el código existente
         window.showToast = showToast;
+
+        // =========================================================
+        // AJUSTAR ALTURA DEL VIEWPORT
+        // =========================================================
+        function ajustarAlturaViewport() {
+            const slideActivo = viewport.classList.contains('slide2-active') ? slide2 : slide1;
+            const alturaContenido = slideActivo.scrollHeight;
+            const alturaMinima = window.innerHeight - parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 0;
+            viewport.style.height = Math.max(alturaContenido, alturaMinima) + 'px';
+        }
+
+        const resizeObserver = new ResizeObserver(() => {
+            ajustarAlturaViewport();
+        });
+        resizeObserver.observe(slide1);
+        resizeObserver.observe(slide2);
+        window.addEventListener('resize', ajustarAlturaViewport);
+
+        // =========================================================
+        // NAVEGACIÓN ENTRE SLIDES
+        // =========================================================
+        function moverIzquierda() {
+            viewport.classList.remove('slide2-active');
+            btnIzq.classList.add('active');
+            btnDer.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(ajustarAlturaViewport, 50);
+        }
+
+        function moverDerecha() {
+            viewport.classList.add('slide2-active');
+            btnDer.classList.add('active');
+            btnIzq.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(ajustarAlturaViewport, 50);
+        }
+
+        window.moverIzquierda = moverIzquierda;
+        window.moverDerecha = moverDerecha;
 
         // =========================================================
         // RENDERIZAR NAV
@@ -785,14 +1427,13 @@
                     <span class="user-info">
                         <span class="email">
                             <i class="fas fa-user-circle"></i> ${user.email}
-                            ${isAdmin ? '<span style="color:var(--gold);margin-left:4px;">👑</span>' : ''}
+                            ${isAdmin ? '<span style="color:var(--gold-bright);margin-left:4px;">👑</span>' : ''}
                         </span>
                         <button class="logout-btn" id="logoutBtnNav">
                             <i class="fas fa-sign-out-alt"></i> SALIR
                         </button>
                     </span>
                 `;
-
                 document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
             }
         }
@@ -829,40 +1470,6 @@
         }
 
         // =========================================================
-        // OBSERVER DE AUTENTICACIÓN
-        // =========================================================
-        onAuthStateChanged(auth, async (user) => {
-            // Ocultar overlay
-            authOverlay.classList.add('hidden');
-
-            if (!user) {
-                // ❌ NO LOGUEADO → Redirigir a login
-                showToast('🔐 Debes iniciar sesión para ver los documentos', 'error', 2000);
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 500);
-                return;
-            }
-
-            // ✅ USUARIO LOGUEADO → Mostrar contenido
-            const isAdmin = await checkIsAdmin(user);
-            
-            // Mostrar contenido
-            mainContent.classList.add('visible');
-            
-            // Renderizar nav
-            renderNav(user, isAdmin);
-
-            // Cargar documentos
-            cargarDocumentos();
-
-            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
-
-            console.log(`📄 Documentos - Usuario: ${user.email}`);
-            console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
-        });
-
-        // =========================================================
         // ORDEN DE RANGOS
         // =========================================================
         const RANK_ORDER = [
@@ -887,12 +1494,24 @@
             'Ciudadano': '#888888'
         };
 
+        const POSES = [
+            { rotY: 0.4, rotX: 0.1, zoom: 0.95, offsetX: 0, offsetY: 0 },
+            { rotY: -0.6, rotX: 0.15, zoom: 0.9, offsetX: 0.05, offsetY: 0 },
+            { rotY: 0.8, rotX: -0.1, zoom: 1.0, offsetX: -0.05, offsetY: 0 },
+            { rotY: 0.1, rotX: 0.25, zoom: 0.85, offsetX: 0, offsetY: 0.05 },
+            { rotY: -0.3, rotX: -0.15, zoom: 1.05, offsetX: 0.03, offsetY: -0.03 },
+            { rotY: 0.5, rotX: 0.2, zoom: 0.88, offsetX: -0.04, offsetY: 0.04 },
+            { rotY: -0.8, rotX: 0.0, zoom: 1.0, offsetX: 0.06, offsetY: 0 },
+            { rotY: 0.9, rotX: 0.1, zoom: 0.92, offsetX: -0.06, offsetY: 0 },
+            { rotY: 0.0, rotX: 0.35, zoom: 0.82, offsetX: 0, offsetY: 0.08 }
+        ];
+
         // =========================================================
-        // CARGAR SKIN EN CANVAS (con skinview3d)
+        // CARGAR SKIN EN CANVAS
         // =========================================================
-        function cargarSkinEnCanvas(canvas, skinURL, poseData = null) {
+        function cargarSkinEnCanvas(canvas, skinURL, poseIndex = 0) {
             if (typeof skinview3d === 'undefined') {
-                setTimeout(() => cargarSkinEnCanvas(canvas, skinURL, poseData), 300);
+                setTimeout(() => cargarSkinEnCanvas(canvas, skinURL, poseIndex), 300);
                 return;
             }
 
@@ -904,7 +1523,6 @@
                 });
 
                 viewer.fov = 30;
-                viewer.zoom = 1.0;
                 viewer.autoRotate = false;
                 viewer.controls.enableRotate = false;
                 viewer.controls.enableZoom = false;
@@ -912,19 +1530,17 @@
                 viewer.globalLight.intensity = 2.5;
                 viewer.cameraLight.intensity = 1.2;
 
-                viewer.loadSkin(skinURL).then(() => {
-                    if (poseData && viewer.playerObject && viewer.playerObject.skin) {
-                        const skin = viewer.playerObject.skin;
-                        Object.keys(poseData).forEach(key => {
-                            const [part, axis] = key.split('.');
-                            if (skin[part]) {
-                                skin[part].rotation[axis] = poseData[key];
-                            }
-                        });
-                        viewer.render();
-                    }
-                }).catch(() => {
-                    // Skin no encontrada, mostrar placeholder
+                const pose = POSES[poseIndex % POSES.length];
+
+                viewer.zoom = pose.zoom;
+                viewer.camera.rotation.y = pose.rotY;
+                viewer.camera.rotation.x = pose.rotX;
+                viewer.camera.position.x = pose.offsetX * 10;
+                viewer.camera.position.y = pose.offsetY * 10;
+
+                viewer.controls.target.set(0, 0, 0);
+
+                viewer.loadSkin(skinURL).catch(() => {
                     console.warn('Error cargando skin para:', skinURL);
                 });
 
@@ -937,22 +1553,23 @@
         // VER EXPEDIENTE
         // =========================================================
         function verExpediente(id) {
-            // Redirige a la vista detalle con el ID
             window.location.href = `expediente.html?id=${id}`;
         }
         window.verExpediente = verExpediente;
 
         // =========================================================
-        // RENDERIZAR POR RANGOS
+        // RENDERIZAR CIUDADANOS (LIGA LOMBARDA)
         // =========================================================
-        function renderizarPorRangos(expedientes, searchTerm = '') {
+        function renderizarCiudadanos(expedientes, searchTerm = '') {
             const searchLower = searchTerm.toLowerCase().trim();
 
-            // Convertir a array
             let items = Object.keys(expedientes).map(key => ({
                 id: key,
                 ...expedientes[key]
             }));
+
+            // Filtrar solo los que NO son inmigrantes (categoria distinta a 'inmigrante')
+            items = items.filter(item => item.categoria !== 'inmigrante');
 
             // Filtrar por búsqueda
             if (searchLower) {
@@ -978,11 +1595,9 @@
                 grupos[rank].push(item);
             });
 
-            // Ordenar los rangos según RANK_ORDER
             const rangosOrdenados = RANK_ORDER.filter(r => grupos[r] && grupos[r].length > 0);
 
             // Actualizar contadores
-            totalCount.textContent = Object.keys(expedientes).length;
             visibleCount.textContent = items.length;
             totalVisible.textContent = items.length;
 
@@ -994,19 +1609,22 @@
                         <p>${searchLower ? 'Intenta con otro término de búsqueda' : 'Completa el formulario para crear el primer expediente'}</p>
                     </div>
                 `;
+                setTimeout(ajustarAlturaViewport, 100);
                 return;
             }
 
-            // Generar HTML por rangos
             let html = '';
+            let poseCounter = 0;
+            let cardIndex = 0;
+
             rangosOrdenados.forEach(rank => {
                 const itemsDelRango = grupos[rank];
                 const color = RANK_COLORS[rank] || '#888888';
 
                 html += `
-                    <div class="rank-section">
+                    <div class="rank-section" style="--rank-color:${color};">
                         <div class="rank-section-header">
-                            <span class="rank-dot" style="background:${color};"></span>
+                            <span class="rank-dot" style="background:${color};color:${color};"></span>
                             <span class="rank-label">${rank}</span>
                             <span class="rank-count">${itemsDelRango.length} ciudadano${itemsDelRango.length > 1 ? 's' : ''}</span>
                         </div>
@@ -1017,20 +1635,23 @@
                     const name = item.name || 'Sin nombre';
                     const alias = item.alias || 'Sin alias';
                     const nick = item.minecraftNick || '';
-                    const poseValues = item.pose?.values || null;
-
-                    let poseDataAttr = '';
-                    if (poseValues) {
-                        poseDataAttr = `data-pose='${JSON.stringify(poseValues)}'`;
-                    }
 
                     const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
+                    const currentPose = poseCounter % POSES.length;
+                    poseCounter++;
+
+                    const delay = (cardIndex * 0.04).toFixed(2);
+                    cardIndex++;
 
                     html += `
-                        <div class="document-card" data-rank="${rank}" data-id="${item.id}" ${poseDataAttr}>
+                        <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
+                            <span class="corner tl"></span>
+                            <span class="corner tr"></span>
+                            <span class="corner bl"></span>
+                            <span class="corner br"></span>
                             <div class="card-skin">
-                                ${skinURL ? 
-                                    `<canvas id="skinCanvas_${item.id}" data-skin="${skinURL}"></canvas>` :
+                                ${skinURL ?
+                                    `<canvas id="skinCanvas_${item.id}" data-skin="${skinURL}" data-pose="${currentPose}"></canvas>` :
                                     `<div class="no-skin"><i class="fas fa-user"></i></div>`
                                 }
                             </div>
@@ -1058,36 +1679,130 @@
 
             documentsContainer.innerHTML = html;
 
-            // Cargar skins
             setTimeout(() => {
                 document.querySelectorAll('.card-skin canvas').forEach(canvas => {
                     const skinURL = canvas.dataset.skin;
+                    const poseIndex = parseInt(canvas.dataset.pose || '0', 10);
                     if (skinURL) {
-                        const card = canvas.closest('.document-card');
-                        let poseData = null;
-                        if (card) {
-                            try {
-                                const poseAttr = card.dataset.pose;
-                                if (poseAttr) {
-                                    poseData = JSON.parse(poseAttr);
-                                }
-                            } catch (e) {}
-                        }
-                        cargarSkinEnCanvas(canvas, skinURL, poseData);
+                        cargarSkinEnCanvas(canvas, skinURL, poseIndex);
                     }
                 });
+                ajustarAlturaViewport();
+            }, 200);
+        }
+
+        // =========================================================
+        // RENDERIZAR INMIGRANTES (SLIDE 2)
+        // =========================================================
+        function renderizarInmigrantes(expedientes, searchTerm = '') {
+            const searchLower = searchTerm.toLowerCase().trim();
+
+            let items = Object.keys(expedientes).map(key => ({
+                id: key,
+                ...expedientes[key]
+            }));
+
+            // Filtrar solo los que SÍ son inmigrantes (categoria === 'inmigrante')
+            items = items.filter(item => item.categoria === 'inmigrante');
+
+            if (searchLower) {
+                items = items.filter(item => {
+                    const name = (item.name || '').toLowerCase();
+                    const alias = (item.alias || '').toLowerCase();
+                    const nick = (item.minecraftNick || '').toLowerCase();
+                    const rank = (item.rank || '').toLowerCase();
+                    const fileNumber = (item.fileNumber || '').toLowerCase();
+                    return name.includes(searchLower) ||
+                        alias.includes(searchLower) ||
+                        nick.includes(searchLower) ||
+                        rank.includes(searchLower) ||
+                        fileNumber.includes(searchLower);
+                });
+            }
+
+            if (items.length === 0) {
+                inmigrantesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-passport"></i>
+                        <h3>${searchLower ? 'No se encontraron resultados' : 'No hay inmigrantes registrados'}</h3>
+                        <p>${searchLower ? 'Intenta con otro término de búsqueda' : 'Los registros de inmigrantes aparecerán aquí'}</p>
+                    </div>
+                `;
+                setTimeout(ajustarAlturaViewport, 100);
+                return;
+            }
+
+            // Renderizar en un solo grid (sin agrupar por rango, o puedes agrupar si quieres)
+            let html = `<div class="rank-grid">`;
+            let cardIndex = 0;
+
+            items.forEach(item => {
+                const name = item.name || 'Sin nombre';
+                const alias = item.alias || 'Sin alias';
+                const nick = item.minecraftNick || '';
+                const rank = item.rank || 'Inmigrante';
+
+                const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
+                const delay = (cardIndex * 0.04).toFixed(2);
+                cardIndex++;
+
+                html += `
+                    <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
+                        <span class="corner tl"></span>
+                        <span class="corner tr"></span>
+                        <span class="corner bl"></span>
+                        <span class="corner br"></span>
+                        <div class="card-skin">
+                            ${skinURL ?
+                                `<canvas data-skin="${skinURL}"></canvas>` :
+                                `<div class="no-skin"><i class="fas fa-user"></i></div>`
+                            }
+                        </div>
+                        <div class="card-info">
+                            <div class="card-name">${name}</div>
+                            <div class="card-alias">"${alias}"</div>
+                            <div class="card-rank">
+                                <span class="rank-badge" style="background:#7b1fa2;color:white;">${rank}</span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-view" onclick="verExpediente('${item.id}')">
+                                    <i class="fas fa-eye"></i> VER
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            inmigrantesContainer.innerHTML = html;
+
+            setTimeout(() => {
+                inmigrantesContainer.querySelectorAll('.card-skin canvas').forEach(canvas => {
+                    const skinURL = canvas.dataset.skin;
+                    if (skinURL) {
+                        cargarSkinEnCanvas(canvas, skinURL, 0);
+                    }
+                });
+                ajustarAlturaViewport();
             }, 200);
         }
 
         // =========================================================
         // CARGAR DOCUMENTOS DESDE FIREBASE
         // =========================================================
+        let expedientesGlobales = {};
+
         function cargarDocumentos() {
             const expedientesRef = ref(database, 'expedientes');
 
             onValue(expedientesRef, (snapshot) => {
-                const firebaseData = snapshot.val() || {};
-                renderizarPorRangos(firebaseData, searchInput.value);
+                expedientesGlobales = snapshot.val() || {};
+
+                // Renderizar ambas pestañas
+                renderizarCiudadanos(expedientesGlobales, searchInput.value);
+                renderizarInmigrantes(expedientesGlobales, searchInput2.value);
+
             }, (error) => {
                 console.error('Error al cargar documentos:', error);
                 showToast('❌ Error al cargar los documentos', 'error', 3000);
@@ -1101,12 +1816,43 @@
         searchInput.addEventListener('input', () => {
             clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                const expedientesRef = ref(database, 'expedientes');
-                get(expedientesRef).then((snapshot) => {
-                    const firebaseData = snapshot.val() || {};
-                    renderizarPorRangos(firebaseData, searchInput.value);
-                });
+                renderizarCiudadanos(expedientesGlobales, searchInput.value);
+                ajustarAlturaViewport();
             }, 300);
+        });
+
+        let searchTimeout2 = null;
+        searchInput2.addEventListener('input', () => {
+            clearTimeout(searchTimeout2);
+            searchTimeout2 = setTimeout(() => {
+                renderizarInmigrantes(expedientesGlobales, searchInput2.value);
+                ajustarAlturaViewport();
+            }, 300);
+        });
+
+        // =========================================================
+        // OBSERVER DE AUTENTICACIÓN
+        // =========================================================
+        onAuthStateChanged(auth, async (user) => {
+            // Ocultar overlay
+            authOverlay.classList.add('hidden');
+
+            if (!user) {
+                showToast('🔐 Debes iniciar sesión para ver los documentos', 'error', 2000);
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 500);
+                return;
+            }
+
+            const isAdmin = await checkIsAdmin(user);
+            mainContent.classList.add('visible');
+            renderNav(user, isAdmin);
+            cargarDocumentos();
+            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+
+            console.log(`📄 Documentos - Usuario: ${user.email}`);
+            console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
         });
 
         console.log('📄 Página de documentos con autenticación obligatoria');
