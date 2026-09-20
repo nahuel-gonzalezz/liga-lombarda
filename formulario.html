@@ -2573,7 +2573,7 @@
         }
 
         // =========================================================
-        // OBTENER DATOS DEL FORMULARIO
+        // OBTENER DATOS DEL FORMULARIO  // ✅ FIX: campos normalizados
         // =========================================================
         function getFormData() {
             const isInmigrante = document.body.classList.contains('theme-purple');
@@ -2590,6 +2590,7 @@
             const description = document.getElementById('description').value.trim() || 'Sin descripción registrada.';
             const minecraftNick = document.getElementById('minecraftNick').value.trim() || '';
 
+            // ✅ FIX: Siempre strings (nunca undefined)
             let rank = '';
             let clan = '';
 
@@ -2598,10 +2599,12 @@
                 if (clanSelect.value === 'Otro') {
                     clan = document.getElementById('clanCustom').value.trim() || 'Otro';
                 } else {
-                    clan = clanSelect.value;
+                    clan = clanSelect.value || '';
                 }
+                rank = ''; // explícito
             } else {
                 rank = document.getElementById('rank').value || 'Ciudadano';
+                clan = ''; // explícito
             }
 
             let birthStr = '—';
@@ -2644,7 +2647,7 @@
                 pose: { name: activePose, values: poseData },
                 background: {
                     type: currentBgType,
-                    customImage: currentBgType === 'custom' ? customBackgroundURL : null
+                    customImage: currentBgType === 'custom' ? (customBackgroundURL || null) : null
                 },
                 createdAt: new Date().toISOString()
             };
@@ -2672,8 +2675,8 @@
 
             const tipo = data.type === 'inmigrante' ? 'Inmigrante' : 'Ciudadano';
             const rankOrClan = data.type === 'inmigrante'
-                ? `<div class="data-row"><span class="label">👥 Clan</span><span class="value highlight">${data.clan}</span></div>`
-                : `<div class="data-row"><span class="label">👑 Rango</span><span class="value highlight">${data.rank}</span></div>`;
+                ? `<div class="data-row"><span class="label">👥 Clan</span><span class="value highlight">${data.clan || '—'}</span></div>`
+                : `<div class="data-row"><span class="label">👑 Rango</span><span class="value highlight">${data.rank || '—'}</span></div>`;
 
             modalBody.innerHTML = `
                 <div class="data-row"><span class="label">📄 Expediente</span><span class="value highlight">${data.fileNumber}</span></div>
@@ -2705,10 +2708,11 @@
         }
 
         // =========================================================
-        // FIREBASE
+        // FIREBASE  // ✅ FIX: errores reales visibles
         // =========================================================
         async function saveToFirebase(data) {
             if (typeof window.firebaseDB === 'undefined' || !window.firebaseDB) {
+                console.warn('⚠️ Firebase no disponible, usando localStorage');
                 return saveToLocalStorage(data);
             }
 
@@ -2722,10 +2726,12 @@
                 const newExpedienteRef = push(expedientesRef);
 
                 await set(newExpedienteRef, data);
+                console.log('✅ Guardado en Firebase:', newExpedienteRef.key);
                 return { success: true, id: newExpedienteRef.key, source: 'firebase' };
             } catch (error) {
-                console.error('Error guardando en Firebase:', error);
-                return saveToLocalStorage(data);
+                console.error('❌ Error Firebase al guardar:', error);
+                console.error('📦 Datos enviados:', JSON.stringify(data, null, 2));
+                return { success: false, error: error.message, source: 'firebase' };
             }
         }
 
@@ -2746,7 +2752,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initSkinViewer, 300);
 
-            // Clan custom
             const clanSelect = document.getElementById('clan');
             const clanCustom = document.getElementById('clanCustom');
             if (clanSelect) {
@@ -2886,7 +2891,7 @@
                         window.showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
                         confirmModal.classList.remove('visible');
                     } else {
-                        window.showToast('⚠️ Error al guardar: ' + (result.error || 'Intenta de nuevo'), 'error', 5000);
+                        window.showToast('⚠️ Error al guardar: ' + (result.error || 'Intenta de nuevo'), 'error', 6000);
                     }
                 } catch (error) {
                     console.error('Error al generar expediente:', error);
