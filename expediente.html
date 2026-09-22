@@ -44,14 +44,154 @@
 
   <style>
     /* =========================================================
-       OVERLAY DE AUTENTICACIÓN
+       VARIABLES
     ========================================================= */
-    .auth-overlay {
+    :root {
+      --header-height: 64px;
+      --gold: #a4864a;
+      --gold-bright: #ffd700;
+      --paper: #eee4ce;
+      --red-slide: #990024;
+      --purple: #7b1fa2;
+    }
+
+    /* =========================================================
+       RESET Y BODY (FONDO BLANCO)
+    ========================================================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #f4f4f5;
+      color: #1f1f1f;
+      font-family: "Libre Baskerville", Georgia, serif;
+      min-height: 100vh;
+      padding: calc(var(--header-height) + 25px) 20px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* =========================================================
+       HEADER (igual al de documentos.html)
+    ========================================================= */
+    header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
+      height: var(--header-height);
+      background: #0d0d0d;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1000;
+      border-bottom: 2px solid #222;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-header img { width: 34px; height: auto; }
+    .brand-header h1 {
+      font-family: "Cinzel", serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      color: var(--paper);
+    }
+
+    nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      position: relative;
+      color: #888888;
+      text-decoration: none;
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 8px 12px;
+      transition: color 0.3s ease;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 3px;
+      background-color: #ffffff;
+      border-radius: 2px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transform: translateX(-50%);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+    }
+    nav a:hover { color: #ffffff; }
+    nav a:hover::after { width: 60%; }
+    nav a.active { color: #ffffff; }
+    nav a.active::after { width: 100%; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
+
+    /* =========================================================
+       USER INFO EN EL HEADER
+    ========================================================= */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-info .email {
+      color: #b7a98f;
+      font-size: 10px;
+      font-family: "Montserrat", sans-serif;
+    }
+    .user-info .email i { color: var(--gold-bright); margin-right: 4px; }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #4a3d2e;
+      color: #b7a98f;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+    }
+    .logout-btn:hover { background: var(--red-slide); border-color: var(--red-slide); color: white; }
+
+    .btn-share {
+      background: #a4864a;
+      border: none;
+      color: #1a1a1a;
+      padding: 5px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-share:hover { background: #d4b76c; transform: scale(1.02); }
+
+    /* =========================================================
+       OVERLAY DE AUTENTICACIÓN
+    ========================================================= */
+    .auth-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.9);
       display: flex;
       align-items: center;
@@ -63,8 +203,7 @@
     }
     .auth-overlay.hidden { display: none; }
     .auth-overlay .spinner {
-      width: 50px;
-      height: 50px;
+      width: 50px; height: 50px;
       border: 4px solid #4a3d2e;
       border-top: 4px solid #a4864a;
       border-radius: 50%;
@@ -94,12 +233,13 @@
       font-family: "Cinzel";
       font-size: 12px;
       letter-spacing: 1px;
-      z-index: 1000;
+      z-index: 9999;
       opacity: 0;
       transition: all 0.4s ease;
       pointer-events: none;
       max-width: 90%;
       text-align: center;
+      color: #fff;
     }
     .toast.show { opacity: 1; pointer-events: auto; }
     .toast.success { background: #1a4a2a; color: #b8e0b8; border: 1px solid #2a6a3a; }
@@ -107,91 +247,19 @@
     .toast.info { background: #1a2a4a; color: #b8c8e0; border: 1px solid #2a3a6a; }
 
     /* =========================================================
-       USER INFO EN CABECERA
+       ESCENARIO
     ========================================================= */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .user-info .email {
-      color: #b7a98f;
-      font-size: 10px;
-      font-family: "Montserrat", sans-serif;
-    }
-    .user-info .email i { color: #a4864a; margin-right: 4px; }
-    .logout-btn {
-      background: transparent;
-      border: 1px solid #4a3d2e;
-      color: #b7a98f;
-      padding: 5px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: "Montserrat", sans-serif;
-      font-size: 9px;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-    }
-    .logout-btn:hover { background: #76251c; border-color: #76251c; color: white; }
-    .btn-share {
-      background: #a4864a;
-      border: none;
-      color: #1a1a1a;
-      padding: 5px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: "Montserrat", sans-serif;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-share:hover { background: #d4b76c; transform: scale(1.02); }
-    .btn-download-dni {
-      background: #1a4a2a;
-      border: none;
-      color: #b8e0b8;
-      padding: 5px 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-family: "Montserrat", sans-serif;
-      font-size: 9px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-download-dni:hover { background: #2a6a3a; transform: scale(1.02); color: #fff; }
-
-    /* =========================================================
-       RESET Y BODY
-    ========================================================= */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: radial-gradient(circle at top, #3a342e, #171717 70%);
-      color: white;
-      font-family: "Libre Baskerville", Georgia, serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
     .escenario {
       max-width: 1200px;
       width: 100%;
       background: #2a2622;
       border-radius: 40px;
       padding: 25px 30px 30px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
       border: 1px solid #6b5f4e;
       display: flex;
       flex-direction: column;
+      color: #fff;
     }
     .cabecera {
       display: flex;
@@ -206,8 +274,7 @@
     }
     .brand { display: flex; align-items: center; gap: 14px; }
     .brand-crest {
-      width: 44px;
-      height: 48px;
+      width: 44px; height: 48px;
       border: 2px solid #a4864a;
       display: flex;
       align-items: center;
@@ -259,8 +326,7 @@
       min-height: 200px;
     }
     .visor-skin {
-      width: 280px;
-      height: 280px;
+      width: 280px; height: 280px;
       flex-shrink: 0;
       background: #0d0b0a;
       border-radius: 18px;
@@ -469,8 +535,7 @@
       min-height: 110px;
     }
     .dni-photo-frame {
-      width: 150px;
-      height: 170px;
+      width: 150px; height: 170px;
       border: 2px solid #a89885;
       border-radius: 12px;
       padding: 4px;
@@ -479,8 +544,7 @@
       overflow: hidden;
     }
     .dni-photo-inner {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       border: 1px solid #a89885;
       border-radius: 8px;
       overflow: hidden;
@@ -581,6 +645,25 @@
       flex-shrink: 0;
     }
 
+    /* Botón descargar DNI */
+    .btn-download-dni {
+      background: #1a4a2a;
+      border: none;
+      color: #b8e0b8;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      transition: all 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-download-dni:hover { background: #2a6a3a; transform: scale(1.02); color: #fff; }
+
     /* ======= LIBRO ======= */
     .book-wrapper {
       width: 100%;
@@ -612,8 +695,7 @@
       margin: 0 auto;
     }
     .book {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       position: relative;
       transform-style: preserve-3d;
       transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
@@ -621,8 +703,7 @@
     }
     .book.open { transform: translateX(45%) !important; }
     .page {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       position: absolute;
       top: 0; left: 0;
       transform-origin: left center;
@@ -636,8 +717,7 @@
     .page:last-child { cursor: default; }
     .front, .back {
       position: absolute;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       backface-visibility: hidden;
       background: linear-gradient(170deg, #f5efe0 0%, #e8dec9 100%);
       border: 2px solid #b8a98f;
@@ -678,8 +758,7 @@
     .cover-border {
       border: 2px solid #d4af37;
       padding: 30px 20px;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -709,8 +788,7 @@
       letter-spacing: 8px;
     }
     .cover-logo {
-      width: 70px;
-      height: auto;
+      width: 70px; height: auto;
       margin-bottom: 12px;
       object-fit: contain;
       filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25));
@@ -754,7 +832,6 @@
     }
     .click-hint i { margin-right: 6px; }
 
-    /* Contraportada interna */
     .inner-cover {
       display: flex;
       flex-direction: column;
@@ -790,7 +867,6 @@
     }
     .inner-cover .inner-seal i { font-size: 24px; color: #8c2323; }
 
-    /* Páginas internas */
     .page-inner {
       display: flex;
       flex-direction: column;
@@ -979,8 +1055,7 @@
       letter-spacing: 1px;
     }
     .emblem-img {
-      width: 55px;
-      height: auto;
+      width: 55px; height: auto;
       max-height: 55px;
       object-fit: contain;
       opacity: 0.8;
@@ -1133,7 +1208,6 @@
       padding: 0 2px;
     }
 
-    /* Certificación */
     .cert-content {
       text-align: center;
       height: 100%;
@@ -1208,7 +1282,6 @@
       letter-spacing: 1px;
     }
 
-    /* Última página */
     .page:last-child .back {
       background: linear-gradient(145deg, #1a0505, #2a0808) !important;
       border: 3px solid #3d0e0e;
@@ -1272,7 +1345,8 @@
 
     /* responsive */
     @media (max-width: 768px) {
-      .escenario { padding: 16px; }
+      body { padding: calc(var(--header-height) + 15px) 10px 15px; }
+      .escenario { padding: 16px; border-radius: 24px; }
       .panel-persona { flex-direction: column; text-align: center; gap: 12px; }
       .visor-skin { width: 220px; height: 220px; }
       .nombre-bajo { font-size: 24px; }
@@ -1307,6 +1381,9 @@
       .book-controls button { padding: 6px 16px; font-size: 0.5rem; }
       .page:last-child .back h3 { font-size: 1.6rem; }
       .cover-border::before, .cover-border::after { font-size: 10px; }
+      nav a { font-size: 9px; padding: 5px 6px; }
+      .brand-header h1 { font-size: 12px; }
+      .brand-header img { width: 28px; }
     }
     @media (max-width: 480px) {
       .brand h1 { font-size: 14px; }
@@ -1357,6 +1434,22 @@
 <body>
 
   <!-- =========================================================
+       HEADER FIJO (igual al de documentos.html)
+  ========================================================= -->
+  <header>
+    <div class="brand-header">
+      <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
+      <h1>LIGA LOMBARDA</h1>
+    </div>
+    <nav>
+      <a href="./index.html">INICIO</a>
+      <a href="./documentos.html">DOCUMENTOS</a>
+      <a href="./formulario.html">FORMULARIO</a>
+      <div id="userNav" style="display: none;"></div>
+    </nav>
+  </header>
+
+  <!-- =========================================================
        OVERLAY DE AUTENTICACIÓN
   ========================================================= -->
   <div class="auth-overlay" id="authOverlay">
@@ -1369,7 +1462,7 @@
   ========================================================= -->
   <div class="escenario" id="mainContent" style="display:none;">
 
-    <!-- cabecera -->
+    <!-- cabecera interna -->
     <div class="cabecera">
       <div class="brand">
         <div class="brand-crest">
@@ -1384,7 +1477,6 @@
         <div class="badge-archivo">
           <i class="fas fa-archive" style="margin-right:6px;"></i>ARCHIVO CENTRAL
         </div>
-        <div id="userNav" style="display: none;"></div>
       </div>
     </div>
 
@@ -1656,9 +1748,6 @@
        SCRIPT PRINCIPAL
   ========================================================= -->
   <script type="module">
-    // =========================================================
-    // IMPORTS DE FIREBASE
-    // =========================================================
     import {
       auth,
       onAuthStateChanged,
@@ -1668,17 +1757,11 @@
       get
     } from "./firebase-init.js";
 
-    // =========================================================
-    // REFERENCIAS DOM
-    // =========================================================
     const authOverlay = document.getElementById('authOverlay');
     const mainContent = document.getElementById('mainContent');
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
 
-    // =========================================================
-    // TOAST
-    // =========================================================
     function showToast(message, type = 'info', duration = 4000) {
       toast.textContent = message;
       toast.className = 'toast ' + type + ' show';
@@ -1689,9 +1772,6 @@
     }
     window.showToast = showToast;
 
-    // =========================================================
-    // RENDERIZAR NAV
-    // =========================================================
     function renderNav(user) {
       if (user) {
         userNav.style.display = 'flex';
@@ -1713,9 +1793,6 @@
       }
     }
 
-    // =========================================================
-    // LOGOUT
-    // =========================================================
     async function handleLogout() {
       try {
         await signOut(auth);
@@ -1729,17 +1806,11 @@
       }
     }
 
-    // =========================================================
-    // OBTENER ID DE LA URL
-    // =========================================================
     function getExpedienteId() {
       const params = new URLSearchParams(window.location.search);
       return params.get('id');
     }
 
-    // =========================================================
-    // COMPARTIR URL
-    // =========================================================
     function compartirURL() {
       const urlCompleta = window.location.href;
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1768,9 +1839,7 @@
       document.body.removeChild(input);
     }
 
-    // =========================================================
-    // SKIN VIEWER PRINCIPAL (ANIMADO - SIN INTERACCIÓN)
-    // =========================================================
+    // ===== SKIN VIEWER PRINCIPAL =====
     const canvas = document.getElementById('skin-container');
     const viewer = new skinview3d.SkinViewer({
       canvas: canvas,
@@ -1799,9 +1868,7 @@
     let skinLoaded = false;
     let currentNick = '';
 
-    // =========================================================
-    // SKIN VIEWER PARA DNI (ESTÁTICO)
-    // =========================================================
+    // ===== SKIN VIEWER DNI =====
     const dniCanvas = document.getElementById('dniSkinCanvas');
     const dniViewer = new skinview3d.SkinViewer({
       canvas: dniCanvas,
@@ -1816,9 +1883,7 @@
     dniViewer.globalLight.intensity = 2.5;
     dniViewer.cameraLight.intensity = 1.2;
 
-    // =========================================================
-    // SKIN VIEWER PARA LIBRO (ESTÁTICO)
-    // =========================================================
+    // ===== SKIN VIEWER LIBRO =====
     const bookCanvas = document.getElementById('bookSkinCanvas');
     const bookViewer = new skinview3d.SkinViewer({
       canvas: bookCanvas,
@@ -1833,9 +1898,6 @@
     bookViewer.globalLight.intensity = 2.5;
     bookViewer.cameraLight.intensity = 1.2;
 
-    // =========================================================
-    // FUNCIONES DE CARGA DE SKIN
-    // =========================================================
     function programarProximoGesto() {
       const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
       nextGestureTime = performance.now() + delay;
@@ -1984,7 +2046,6 @@
       });
     }
 
-    // ====== ANIMACIÓN PRINCIPAL ======
     function animate(time) {
       requestAnimationFrame(animate);
       const player = viewer.playerObject;
@@ -2082,9 +2143,6 @@
       viewer.render();
     }
 
-    // =========================================================
-    // ACTUALIZAR UI
-    // =========================================================
     function actualizarUI(data) {
       const name = data.name || 'SIN REGISTRO';
       const alias = data.alias || '—';
@@ -2170,9 +2228,6 @@
       }
     }
 
-    // =========================================================
-    // CARGAR DATOS DESDE FIREBASE
-    // =========================================================
     async function cargarExpediente(id) {
       if (!id) {
         mainContent.innerHTML = `
@@ -2217,9 +2272,7 @@
       }
     }
 
-    // =========================================================
-    // NAVEGACIÓN DEL LIBRO
-    // =========================================================
+    // ===== NAVEGACIÓN DEL LIBRO =====
     let currentStep = 1;
     const pages = document.querySelectorAll('.page');
     const book = document.getElementById('book');
@@ -2283,9 +2336,7 @@
       updateBookState();
     }, 100);
 
-    // =========================================================
-    // DESCARGAR DNI COMO PNG
-    // =========================================================
+    // ===== DESCARGAR DNI =====
     document.getElementById('downloadDniBtn').addEventListener('click', async function() {
       try {
         const dniCard = document.getElementById('dniCard');
@@ -2345,9 +2396,6 @@
     }
     loadHtml2Canvas().catch(() => console.warn('html2canvas no cargado'));
 
-    // =========================================================
-    // OBSERVER DE AUTENTICACIÓN
-    // =========================================================
     onAuthStateChanged(auth, async (user) => {
       authOverlay.classList.add('hidden');
       if (!user) {
@@ -2364,9 +2412,6 @@
       console.log(`📄 Expediente - Usuario: ${user.email}`);
     });
 
-    // =========================================================
-    // INICIAR ANIMACIÓN DEL SKIN
-    // =========================================================
     requestAnimationFrame(animate);
     console.log('📄 Página de expediente lista');
   </script>
