@@ -15,9 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
     <style>
-        /* =========================================================
-           VARIABLES Y RESET
-        ========================================================= */
         :root {
             --black: #151515;
             --dark: #24201c;
@@ -41,7 +38,6 @@
             --purple: #7b1fa2;
             --purple-dark: #5c1578;
 
-            /* Colores por rango */
             --color-elite: #FFD700;
             --color-caballero: #CC0000;
             --color-infante: #933581;
@@ -119,7 +115,7 @@
         }
 
         /* =========================================================
-           CONTENIDO PRINCIPAL (oculto hasta autenticar)
+           CONTENIDO PRINCIPAL
         ========================================================= */
         #mainContent {
             display: none;
@@ -199,18 +195,9 @@
             box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
         }
 
-        nav a:hover {
-            color: #ffffff;
-        }
-
-        nav a:hover::after {
-            width: 60%;
-        }
-
-        nav a.active {
-            color: #ffffff;
-        }
-
+        nav a:hover { color: #ffffff; }
+        nav a:hover::after { width: 60%; }
+        nav a.active { color: #ffffff; }
         nav a.active::after {
             width: 100%;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
@@ -336,25 +323,20 @@
             background: transparent;
         }
 
-        .btn i {
-            font-size: 14px;
-        }
+        .btn i { font-size: 14px; }
 
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .btn:active {
-            transform: scale(0.96);
-        }
+        .btn:active { transform: scale(0.96); }
 
         /* Botón izquierda — Liga Lombarda (sin relleno por defecto) */
         #btn-izquierda {
             color: #ff4444;
             border-color: #ff4444;
         }
-
         #btn-izquierda:hover {
             background-color: rgba(153, 0, 36, 0.15);
         }
@@ -364,7 +346,6 @@
             color: #ce93d8;
             border-color: #ce93d8;
         }
-
         #btn-derecha:hover {
             background-color: rgba(123, 31, 162, 0.15);
         }
@@ -386,7 +367,6 @@
             transform: scale(1.05);
         }
 
-        /* Indicador de flecha en botón activo */
         .btn.active::after {
             content: '';
             position: absolute;
@@ -400,16 +380,11 @@
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
-        #btn-izquierda.active::after {
-            border-top: 8px solid var(--red-slide);
-        }
-
-        #btn-derecha.active::after {
-            border-top: 8px solid var(--purple);
-        }
+        #btn-izquierda.active::after { border-top: 8px solid var(--red-slide); }
+        #btn-derecha.active::after { border-top: 8px solid var(--purple); }
 
         /* =========================================================
-           VIEWPORT — CRECE CON EL CONTENIDO
+           VIEWPORT
         ========================================================= */
         .viewport {
             position: relative;
@@ -435,25 +410,11 @@
             will-change: transform;
         }
 
-        #slide-1 {
-            transform: translateX(0%);
-            z-index: 2;
-        }
+        #slide-1 { transform: translateX(0%); z-index: 2; }
+        #slide-2 { transform: translateX(100%); z-index: 1; }
 
-        #slide-2 {
-            transform: translateX(100%);
-            z-index: 1;
-        }
-
-        .viewport.slide2-active #slide-1 {
-            transform: translateX(-100%);
-            z-index: 1;
-        }
-
-        .viewport.slide2-active #slide-2 {
-            transform: translateX(0%);
-            z-index: 2;
-        }
+        .viewport.slide2-active #slide-1 { transform: translateX(-100%); z-index: 1; }
+        .viewport.slide2-active #slide-2 { transform: translateX(0%); z-index: 2; }
 
         /* =========================================================
            CÍRCULOS FLOTANTES
@@ -466,28 +427,12 @@
             z-index: 0;
         }
 
-        .color-vino {
-            background-color: #b3002a;
-        }
+        .color-vino { background-color: #b3002a; }
+        .color-morado { background-color: #9c27b0; }
 
-        .color-morado {
-            background-color: #9c27b0;
-        }
-
-        .c-large {
-            width: clamp(80px, 14vw, 150px);
-            aspect-ratio: 1;
-        }
-
-        .c-medium {
-            width: clamp(55px, 9vw, 100px);
-            aspect-ratio: 1;
-        }
-
-        .c-small {
-            width: clamp(35px, 6vw, 65px);
-            aspect-ratio: 1;
-        }
+        .c-large { width: clamp(80px, 14vw, 150px); aspect-ratio: 1; }
+        .c-medium { width: clamp(55px, 9vw, 100px); aspect-ratio: 1; }
+        .c-small { width: clamp(35px, 6vw, 65px); aspect-ratio: 1; }
 
         .s1-c1 { top: 3%; left: 8%; animation-delay: 0s; }
         .s1-c2 { top: 12%; left: 3%; animation-delay: 1.2s; }
@@ -507,7 +452,7 @@
         }
 
         /* =========================================================
-           FONDO CURVADO — SE ESTIRA HASTA ABAJO DEL SLIDE
+           FONDO CURVADO
         ========================================================= */
         .card-content-bg {
             position: absolute;
@@ -531,9 +476,6 @@
             box-shadow: 5px -5px 20px rgba(0, 0, 0, 0.08);
         }
 
-        /* =========================================================
-           CONTENIDO PRINCIPAL
-        ========================================================= */
         .main-container {
             width: min(1300px, 100%);
             position: relative;
@@ -541,7 +483,7 @@
         }
 
         /* =========================================================
-           ANIMACIONES DE ENTRADA
+           ANIMACIONES
         ========================================================= */
         .anim-item {
             opacity: 0;
@@ -573,9 +515,7 @@
             background: rgba(0, 0, 0, 0.78);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 12px;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                0 8px 30px rgba(0, 0, 0, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 8px 30px rgba(0, 0, 0, 0.25);
             overflow: hidden;
             backdrop-filter: blur(6px);
         }
@@ -630,10 +570,7 @@
             text-transform: uppercase;
         }
 
-        .page-title.purple {
-            border-color: rgba(156, 39, 176, 0.45);
-        }
-
+        .page-title.purple { border-color: rgba(156, 39, 176, 0.45); }
         .page-title.purple .title-main i {
             color: #ce93d8;
             filter: drop-shadow(0 0 8px rgba(206, 147, 216, 0.5));
@@ -653,15 +590,11 @@
             border-radius: 12px;
             padding: 16px 20px;
             align-items: center;
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.06),
-                0 6px 24px rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 6px 24px rgba(0, 0, 0, 0.2);
             backdrop-filter: blur(6px);
         }
 
-        .search-bar.purple {
-            border-color: rgba(156, 39, 176, 0.3);
-        }
+        .search-bar.purple { border-color: rgba(156, 39, 176, 0.3); }
 
         .search-bar .search-icon {
             position: absolute;
@@ -699,13 +632,8 @@
             box-shadow: 0 0 0 3px rgba(156, 39, 176, 0.2);
         }
 
-        .search-bar:focus-within .search-icon {
-            color: var(--gold-bright);
-        }
-
-        .search-bar.purple:focus-within .search-icon {
-            color: #ce93d8;
-        }
+        .search-bar:focus-within .search-icon { color: var(--gold-bright); }
+        .search-bar.purple:focus-within .search-icon { color: #ce93d8; }
 
         .search-bar input::placeholder {
             color: rgba(255, 255, 255, 0.6);
@@ -732,9 +660,7 @@
             animation: fadeInUp 0.5s ease both;
         }
 
-        .rank-section:last-child {
-            margin-bottom: 0;
-        }
+        .rank-section:last-child { margin-bottom: 0; }
 
         .rank-section-header {
             display: flex;
@@ -821,9 +747,7 @@
                         border-color 0.35s ease;
             cursor: pointer;
             position: relative;
-            box-shadow:
-                0 4px 14px rgba(0, 0, 0, 0.2),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
             z-index: 1;
             animation: cardIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) both;
         }
@@ -847,16 +771,11 @@
         .document-card:hover {
             transform: translateY(-4px);
             border-color: rgba(255, 215, 0, 0.6);
-            box-shadow:
-                0 18px 40px rgba(0, 0, 0, 0.3),
-                0 0 0 1px rgba(255, 215, 0, 0.4),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
             z-index: 10;
         }
 
-        .document-card:hover::before {
-            border-color: rgba(255, 215, 0, 0.4);
-        }
+        .document-card:hover::before { border-color: rgba(255, 215, 0, 0.4); }
 
         .document-card .corner {
             position: absolute;
@@ -873,9 +792,7 @@
         .document-card .corner.bl { bottom: 8px; left: 8px; border-bottom: 2px solid; border-left: 2px solid; }
         .document-card .corner.br { bottom: 8px; right: 8px; border-bottom: 2px solid; border-right: 2px solid; }
 
-        .document-card:hover .corner {
-            border-color: rgba(255, 215, 0, 0.6);
-        }
+        .document-card:hover .corner { border-color: rgba(255, 215, 0, 0.6); }
 
         .document-card .rank-badge {
             display: inline-block;
@@ -887,9 +804,7 @@
             border-radius: 4px;
             text-transform: uppercase;
             color: #1a1a1a;
-            box-shadow:
-                0 2px 6px rgba(0, 0, 0, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
             position: relative;
         }
 
@@ -947,7 +862,6 @@
 
         .document-card:hover .card-skin canvas {
             transform: scale(1.05);
-            z-index: 1;
             border-radius: 12px 12px 0 0;
         }
 
@@ -985,21 +899,21 @@
             margin-top: 3px;
         }
 
-        .card-info .card-rank {
-            margin-top: 8px;
-        }
+        .card-info .card-rank { margin-top: 8px; }
 
         .card-info .card-actions {
             margin-top: 12px;
             display: flex;
             justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .card-info .btn-view {
             background: transparent;
             border: 1px solid #0d0d0d;
             color: #0d0d0d;
-            padding: 6px 20px;
+            padding: 6px 16px;
             border-radius: 4px;
             font-family: 'Montserrat', sans-serif;
             font-size: 8px;
@@ -1029,16 +943,46 @@
 
         .card-info .btn-view:hover {
             color: var(--text-light);
-            border-color: #0d0d0d;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .card-info .btn-view:hover::before {
-            transform: scaleX(1);
+        .card-info .btn-view:hover::before { transform: scaleX(1); }
+
+        .card-info .btn-view i { font-size: 9px; }
+
+        /* Botón de admin para mover categoría */
+        .card-info .btn-admin-move {
+            background: transparent;
+            border: 1px solid #7b1fa2;
+            color: #7b1fa2;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 7px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .card-info .btn-view i {
-            font-size: 9px;
+        .card-info .btn-admin-move:hover {
+            background: #7b1fa2;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.4);
+        }
+
+        .card-info .btn-admin-move.to-lombardo {
+            border-color: #990024;
+            color: #990024;
+        }
+
+        .card-info .btn-admin-move.to-lombardo:hover {
+            background: #990024;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(153, 0, 36, 0.4);
         }
 
         /* =========================================================
@@ -1110,168 +1054,46 @@
                 --botones-height: 46px;
             }
 
-            header {
-                padding: 0 3%;
-            }
-
-            .brand img {
-                width: 28px;
-            }
-
-            .brand h1 {
-                font-size: 12px;
-            }
-
-            nav a {
-                font-size: 9px;
-                padding: 5px 6px;
-            }
-
-            .botones-container {
-                gap: 10px;
-            }
-
-            .btn {
-                padding: 8px 16px;
-                font-size: 10px;
-            }
-
-            .btn i {
-                font-size: 12px;
-            }
-
-            .slide {
-                padding: calc(var(--botones-height) + 25px) 5% 60px;
-            }
-
-            .page-title {
-                padding: 16px 18px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .page-title .title-main {
-                font-size: 18px;
-            }
-
-            .search-bar {
-                flex-direction: column;
-                padding: 14px 16px;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-
-            .search-bar .search-icon {
-                left: 28px;
-                top: 36px;
-            }
-
-            .rank-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 14px;
-            }
-
-            .rank-section-header .rank-label {
-                font-size: 14px;
-            }
-
-            .card-content-bg {
-                top: 42vh;
-            }
-
-            .user-info .email {
-                font-size: 8px;
-            }
-
-            .logout-btn {
-                font-size: 8px;
-                padding: 4px 10px;
-            }
+            header { padding: 0 3%; }
+            .brand img { width: 28px; }
+            .brand h1 { font-size: 12px; }
+            nav a { font-size: 9px; padding: 5px 6px; }
+            .botones-container { gap: 10px; }
+            .btn { padding: 8px 16px; font-size: 10px; }
+            .btn i { font-size: 12px; }
+            .slide { padding: calc(var(--botones-height) + 25px) 5% 60px; }
+            .page-title { padding: 16px 18px; flex-direction: column; align-items: flex-start; }
+            .page-title .title-main { font-size: 18px; }
+            .search-bar { flex-direction: column; padding: 14px 16px; }
+            .search-bar input { width: 100%; }
+            .search-bar .search-icon { left: 28px; top: 36px; }
+            .rank-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+            .rank-section-header .rank-label { font-size: 14px; }
+            .card-content-bg { top: 42vh; }
+            .user-info .email { font-size: 8px; }
+            .logout-btn { font-size: 8px; padding: 4px 10px; }
         }
 
         @media (max-width: 480px) {
-            :root {
-                --botones-height: 42px;
-            }
-
-            .slide {
-                padding: calc(var(--botones-height) + 22px) 4% 40px;
-            }
-
-            .page-title .title-main {
-                font-size: 15px;
-                gap: 8px;
-            }
-
-            .page-title .title-main i {
-                font-size: 16px;
-            }
-
-            .page-title .title-sub {
-                font-size: 7px;
-                letter-spacing: 2px;
-            }
-
-            .rank-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
-            .card-info {
-                padding: 10px 8px 12px;
-            }
-
-            .card-info .card-name {
-                font-size: 11px;
-            }
-
-            .card-info .card-alias {
-                font-size: 8px;
-            }
-
-            .card-info .btn-view {
-                font-size: 7px;
-                padding: 5px 12px;
-            }
-
-            .card-skin {
-                aspect-ratio: 1 / 0.85;
-            }
-
-            .rank-section-header .rank-label {
-                font-size: 12px;
-            }
-
-            .rank-section-header .rank-dot {
-                width: 10px;
-                height: 10px;
-            }
-
-            .rank-section-header .rank-count {
-                font-size: 8px;
-                padding: 4px 10px;
-            }
-
-            .rank-section {
-                margin-bottom: 26px;
-            }
-
-            .card-content-bg {
-                top: 46vh;
-            }
-
-            .btn {
-                padding: 6px 12px;
-                font-size: 9px;
-                gap: 4px;
-            }
-
-            .btn i {
-                font-size: 10px;
-            }
-
+            :root { --botones-height: 42px; }
+            .slide { padding: calc(var(--botones-height) + 22px) 4% 40px; }
+            .page-title .title-main { font-size: 15px; gap: 8px; }
+            .page-title .title-main i { font-size: 16px; }
+            .page-title .title-sub { font-size: 7px; letter-spacing: 2px; }
+            .rank-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .card-info { padding: 10px 8px 12px; }
+            .card-info .card-name { font-size: 11px; }
+            .card-info .card-alias { font-size: 8px; }
+            .card-info .btn-view { font-size: 7px; padding: 5px 10px; }
+            .card-info .btn-admin-move { font-size: 6px; padding: 4px 8px; }
+            .card-skin { aspect-ratio: 1 / 0.85; }
+            .rank-section-header .rank-label { font-size: 12px; }
+            .rank-section-header .rank-dot { width: 10px; height: 10px; }
+            .rank-section-header .rank-count { font-size: 8px; padding: 4px 10px; }
+            .rank-section { margin-bottom: 26px; }
+            .card-content-bg { top: 46vh; }
+            .btn { padding: 6px 12px; font-size: 9px; gap: 4px; }
+            .btn i { font-size: 10px; }
             .btn.active::after {
                 border-left-width: 6px;
                 border-right-width: 6px;
@@ -1284,17 +1106,11 @@
 
 <body>
 
-    <!-- =========================================================
-         OVERLAY DE AUTENTICACIÓN
-    ========================================================= -->
     <div class="auth-overlay" id="authOverlay">
         <div class="spinner"></div>
         <p>VERIFICANDO ACCESO...</p>
     </div>
 
-    <!-- =========================================================
-         CONTENIDO PRINCIPAL (oculto hasta autenticar)
-    ========================================================= -->
     <div id="mainContent">
 
         <header>
@@ -1306,11 +1122,7 @@
                 <a href="./index.html">INICIO</a>
                 <a href="./documentos.html" class="active">DOCUMENTOS</a>
                 <a href="./formulario.html">FORMULARIO</a>
-
-                <!-- USER INFO (se renderiza con JS) -->
-                <div id="userNav" style="display: none;">
-                    <!-- Lo llena JavaScript -->
-                </div>
+                <div id="userNav" style="display: none;"></div>
             </nav>
         </header>
 
@@ -1325,7 +1137,6 @@
 
         <div class="viewport" id="viewport">
 
-            <!-- ================= SLIDE 1: LIGA LOMBARDA ================= -->
             <div class="slide" id="slide-1">
                 <div class="circle color-vino c-large s1-c1"></div>
                 <div class="circle color-vino c-medium s1-c2"></div>
@@ -1355,7 +1166,6 @@
                 </div>
             </div>
 
-            <!-- ================= SLIDE 2: INMIGRANTES ILEGALES ================= -->
             <div class="slide" id="slide-2">
                 <div class="circle color-morado c-large s2-c1"></div>
                 <div class="circle color-morado c-medium s2-c2"></div>
@@ -1380,9 +1190,7 @@
                         <input type="text" id="searchInput2" placeholder="Buscar inmigrante..." />
                     </div>
 
-                    <div id="inmigrantesContainer" class="anim-item">
-                        <!-- Se renderiza con JavaScript -->
-                    </div>
+                    <div id="inmigrantesContainer" class="anim-item"></div>
                 </div>
             </div>
 
@@ -1397,18 +1205,9 @@
 
     <div id="toast" class="toast"></div>
 
-    <!-- =========================================================
-         SKINVIEW3D
-    ========================================================= -->
     <script src="https://unpkg.com/skinview3d@3.4.2/bundles/skinview3d.bundle.js"></script>
 
-    <!-- =========================================================
-         SCRIPTS (módulo ES)
-    ========================================================= -->
     <script type="module">
-        // =========================================================
-        // IMPORTS DE FIREBASE
-        // =========================================================
         import {
             auth,
             onAuthStateChanged,
@@ -1416,18 +1215,15 @@
             database,
             ref,
             get,
+            set,
             onValue
         } from "./firebase-init.js";
 
-        // Exponer Firebase para compatibilidad
         window.firebaseDB = database;
         window.firebaseRef = ref;
         window.firebaseGet = get;
         window.firebaseOnValue = onValue;
 
-        // =========================================================
-        // REFERENCIAS DOM
-        // =========================================================
         const authOverlay = document.getElementById('authOverlay');
         const mainContent = document.getElementById('mainContent');
         const userNav = document.getElementById('userNav');
@@ -1475,7 +1271,7 @@
         window.addEventListener('resize', ajustarAlturaViewport);
 
         // =========================================================
-        // NAVEGACIÓN ENTRE SLIDES
+        // NAVEGACIÓN
         // =========================================================
         function moverIzquierda() {
             viewport.classList.remove('slide2-active');
@@ -1497,8 +1293,11 @@
         window.moverDerecha = moverDerecha;
 
         // =========================================================
-        // RENDERIZAR NAV
+        // RENDER NAV
         // =========================================================
+        let isAdminGlobal = false;
+        let currentUserGlobal = null;
+
         function renderNav(user, isAdmin = false) {
             if (user) {
                 userNav.style.display = 'flex';
@@ -1522,12 +1321,16 @@
         // =========================================================
         async function checkIsAdmin(user) {
             if (!user) return false;
+            // Si el email es admin@liga-lombarda.com lo tratamos como admin por defecto
+            if (user.email && user.email.toLowerCase() === 'admin@liga-lombarda.com') {
+                return true;
+            }
             try {
                 const adminRef = ref(database, `usuarios/${user.uid}/admin`);
                 const snapshot = await get(adminRef);
                 return snapshot.val() === true;
             } catch (error) {
-                console.warn('No se pudo verificar rol de admin:', error);
+                // Silencioso: si no hay permiso de lectura, no es admin
                 return false;
             }
         }
@@ -1549,7 +1352,7 @@
         }
 
         // =========================================================
-        // ORDEN DE RANGOS
+        // ORDEN Y COLORES DE RANGOS
         // =========================================================
         const RANK_ORDER = [
             'Elite Urbana',
@@ -1586,7 +1389,7 @@
         ];
 
         // =========================================================
-        // CARGAR SKIN EN CANVAS
+        // CARGAR SKIN
         // =========================================================
         function cargarSkinEnCanvas(canvas, skinURL, poseIndex = 0) {
             if (typeof skinview3d === 'undefined') {
@@ -1637,10 +1440,34 @@
         window.verExpediente = verExpediente;
 
         // =========================================================
+        // CAMBIAR CATEGORÍA MANUAL (ADMIN)
+        // =========================================================
+        async function cambiarCategoriaManual(id, nuevaCategoria) {
+            if (!isAdminGlobal) {
+                showToast('❌ Solo los administradores pueden mover expedientes', 'error', 3000);
+                return;
+            }
+
+            try {
+                const catRef = ref(database, `expedientes/${id}/categoriaManual`);
+                await set(catRef, nuevaCategoria);
+                showToast(`✅ Movido a ${nuevaCategoria === 'inmigrante' ? 'Inmigrantes' : 'Liga Lombarda'}`, 'success', 2500);
+            } catch (error) {
+                console.error('Error al cambiar categoría:', error);
+                showToast('❌ Error al mover el expediente', 'error', 3000);
+            }
+        }
+        window.cambiarCategoriaManual = cambiarCategoriaManual;
+
+        // =========================================================
         // DETECTAR SI UN EXPEDIENTE ES INMIGRANTE
         // =========================================================
         function esInmigrante(item) {
-            // 1. Campo explícito de categoría
+            // 0. OVERRIDE MANUAL (máxima prioridad)
+            if (item.categoriaManual === 'inmigrante') return true;
+            if (item.categoriaManual === 'lombardo') return false;
+
+            // 1. Campos explícitos
             if (item.categoria) {
                 const cat = String(item.categoria).toLowerCase().trim();
                 if (cat === 'inmigrante' || cat === 'inmigrantes' || cat === 'ilegal') return true;
@@ -1652,25 +1479,24 @@
                 if (t === 'inmigrante' || t === 'ilegal') return true;
             }
 
-            // 2. Rango explícito de inmigrante
+            // 2. Rank explícito de inmigrante
             if (item.rank) {
                 const r = String(item.rank).toLowerCase();
                 if (r.includes('inmigrante') || r.includes('ilegal') || r.includes('indocumentado')) return true;
             }
 
-            // 3. Estado que indique ilegalidad
+            // 3. Status que indique ilegalidad
             if (item.status) {
                 const st = String(item.status).toUpperCase();
                 if (st.includes('ILEGAL') || st.includes('INDOCUMENTADO')) return true;
             }
 
-            // 4. Si tiene un rank lombardo conocido, NO es inmigrante
+            // 4. Si tiene un rank lombardo conocido → LOMBARDO
             if (item.rank && RANK_ORDER.includes(item.rank)) return false;
 
-            // 5. Si tiene rank desconocido y no es lombardo, lo tratamos como inmigrante
-            if (item.rank && !RANK_ORDER.includes(item.rank)) return true;
-
-            return false;
+            // 5. Si NO tiene rank o tiene un rank desconocido → INMIGRANTE
+            //    (esto es lo que faltaba: el expediente "na" sin rank ahora se detecta)
+            return true;
         }
 
         // =========================================================
@@ -1683,7 +1509,7 @@
                 const item = expedientes[key];
                 const esInm = esInmigrante(item);
                 console.log(
-                    `%c${item.name || key}%c → rank: "${item.rank || 'SIN RANK'}" | categoria: "${item.categoria || 'SIN CATEGORIA'}" | tipo: "${item.tipo || '-'}" | status: "${item.status || '-'}" | %c${esInm ? 'INMIGRANTE' : 'LOMBARDO'}`,
+                    `%c${item.name || key}%c → rank: "${item.rank || 'SIN RANK'}" | categoriaManual: "${item.categoriaManual || '-'}" | %c${esInm ? 'INMIGRANTE' : 'LOMBARDO'}`,
                     'font-weight:bold;color:#ffd700;',
                     'color:#aaa;',
                     esInm ? 'font-weight:bold;color:#ce93d8;' : 'font-weight:bold;color:#ff6b6b;'
@@ -1693,7 +1519,7 @@
         }
 
         // =========================================================
-        // RENDERIZAR CIUDADANOS (LIGA LOMBARDA)
+        // RENDERIZAR CIUDADANOS
         // =========================================================
         function renderizarCiudadanos(expedientes, searchTerm = '') {
             const searchLower = searchTerm.toLowerCase().trim();
@@ -1703,10 +1529,8 @@
                 ...expedientes[key]
             }));
 
-            // Filtrar solo los que NO son inmigrantes
             items = items.filter(item => !esInmigrante(item));
 
-            // Filtrar por búsqueda
             if (searchLower) {
                 items = items.filter(item => {
                     const name = (item.name || '').toLowerCase();
@@ -1722,7 +1546,6 @@
                 });
             }
 
-            // Agrupar por rango
             const grupos = {};
             items.forEach(item => {
                 const rank = item.rank || 'Ciudadano';
@@ -1732,7 +1555,6 @@
 
             const rangosOrdenados = RANK_ORDER.filter(r => grupos[r] && grupos[r].length > 0);
 
-            // Actualizar contadores
             visibleCount.textContent = items.length;
             totalVisible.textContent = items.length;
 
@@ -1778,6 +1600,12 @@
                     const delay = (cardIndex * 0.04).toFixed(2);
                     cardIndex++;
 
+                    const adminBtn = isAdminGlobal
+                        ? `<button class="btn-admin-move" onclick="event.stopPropagation(); cambiarCategoriaManual('${item.id}', 'inmigrante')" title="Mover a Inmigrantes">
+                                <i class="fas fa-arrow-right"></i> INMIGRANTE
+                           </button>`
+                        : '';
+
                     html += `
                         <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
                             <span class="corner tl"></span>
@@ -1800,16 +1628,14 @@
                                     <button class="btn-view" onclick="verExpediente('${item.id}')">
                                         <i class="fas fa-eye"></i> VER
                                     </button>
+                                    ${adminBtn}
                                 </div>
                             </div>
                         </div>
                     `;
                 });
 
-                html += `
-                        </div>
-                    </div>
-                `;
+                html += `</div></div>`;
             });
 
             documentsContainer.innerHTML = html;
@@ -1827,7 +1653,7 @@
         }
 
         // =========================================================
-        // RENDERIZAR INMIGRANTES (SLIDE 2)
+        // RENDERIZAR INMIGRANTES
         // =========================================================
         function renderizarInmigrantes(expedientes, searchTerm = '') {
             const searchLower = searchTerm.toLowerCase().trim();
@@ -1837,7 +1663,6 @@
                 ...expedientes[key]
             }));
 
-            // Filtrar solo los que SÍ son inmigrantes
             items = items.filter(item => esInmigrante(item));
 
             if (searchLower) {
@@ -1867,7 +1692,6 @@
                 return;
             }
 
-            // Renderizar en un solo grid
             let html = `<div class="rank-grid">`;
             let cardIndex = 0;
 
@@ -1880,6 +1704,12 @@
                 const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
                 const delay = (cardIndex * 0.04).toFixed(2);
                 cardIndex++;
+
+                const adminBtn = isAdminGlobal
+                    ? `<button class="btn-admin-move to-lombardo" onclick="event.stopPropagation(); cambiarCategoriaManual('${item.id}', 'lombardo')" title="Mover a Liga Lombarda">
+                            <i class="fas fa-arrow-left"></i> LOMBARDO
+                       </button>`
+                    : '';
 
                 html += `
                     <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
@@ -1903,6 +1733,7 @@
                                 <button class="btn-view" onclick="verExpediente('${item.id}')">
                                     <i class="fas fa-eye"></i> VER
                                 </button>
+                                ${adminBtn}
                             </div>
                         </div>
                     </div>
@@ -1924,7 +1755,7 @@
         }
 
         // =========================================================
-        // CARGAR DOCUMENTOS DESDE FIREBASE
+        // CARGAR DOCUMENTOS
         // =========================================================
         let expedientesGlobales = {};
 
@@ -1933,14 +1764,9 @@
 
             onValue(expedientesRef, (snapshot) => {
                 expedientesGlobales = snapshot.val() || {};
-
-                // Log de diagnóstico para que veas en consola cómo se clasifica cada uno
                 logDiagnostico(expedientesGlobales);
-
-                // Renderizar ambas pestañas
                 renderizarCiudadanos(expedientesGlobales, searchInput.value);
                 renderizarInmigrantes(expedientesGlobales, searchInput2.value);
-
             }, (error) => {
                 console.error('Error al cargar documentos:', error);
                 showToast('❌ Error al cargar los documentos', 'error', 3000);
@@ -1972,7 +1798,6 @@
         // OBSERVER DE AUTENTICACIÓN
         // =========================================================
         onAuthStateChanged(auth, async (user) => {
-            // Ocultar overlay
             authOverlay.classList.add('hidden');
 
             if (!user) {
@@ -1983,14 +1808,15 @@
                 return;
             }
 
-            const isAdmin = await checkIsAdmin(user);
+            currentUserGlobal = user;
+            isAdminGlobal = await checkIsAdmin(user);
             mainContent.classList.add('visible');
-            renderNav(user, isAdmin);
+            renderNav(user, isAdminGlobal);
             cargarDocumentos();
-            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
+            showToast(`✅ Bienvenido, ${user.email}${isAdminGlobal ? ' 👑' : ''}`, 'success', 2000);
 
             console.log(`📄 Documentos - Usuario: ${user.email}`);
-            console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
+            console.log(`👑 Admin: ${isAdminGlobal}`);
         });
 
         console.log('📄 Página de documentos con autenticación obligatoria');
