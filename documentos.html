@@ -905,15 +905,13 @@
             margin-top: 12px;
             display: flex;
             justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
         }
 
         .card-info .btn-view {
             background: transparent;
             border: 1px solid #0d0d0d;
             color: #0d0d0d;
-            padding: 6px 16px;
+            padding: 6px 20px;
             border-radius: 4px;
             font-family: 'Montserrat', sans-serif;
             font-size: 8px;
@@ -949,41 +947,6 @@
         .card-info .btn-view:hover::before { transform: scaleX(1); }
 
         .card-info .btn-view i { font-size: 9px; }
-
-        /* Botón de admin para mover categoría */
-        .card-info .btn-admin-move {
-            background: transparent;
-            border: 1px solid #7b1fa2;
-            color: #7b1fa2;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 7px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .card-info .btn-admin-move:hover {
-            background: #7b1fa2;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(123, 31, 162, 0.4);
-        }
-
-        .card-info .btn-admin-move.to-lombardo {
-            border-color: #990024;
-            color: #990024;
-        }
-
-        .card-info .btn-admin-move.to-lombardo:hover {
-            background: #990024;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(153, 0, 36, 0.4);
-        }
 
         /* =========================================================
            ESTADO VACÍO
@@ -1084,8 +1047,7 @@
             .card-info { padding: 10px 8px 12px; }
             .card-info .card-name { font-size: 11px; }
             .card-info .card-alias { font-size: 8px; }
-            .card-info .btn-view { font-size: 7px; padding: 5px 10px; }
-            .card-info .btn-admin-move { font-size: 6px; padding: 4px 8px; }
+            .card-info .btn-view { font-size: 7px; padding: 5px 12px; }
             .card-skin { aspect-ratio: 1 / 0.85; }
             .rank-section-header .rank-label { font-size: 12px; }
             .rank-section-header .rank-dot { width: 10px; height: 10px; }
@@ -1215,7 +1177,6 @@
             database,
             ref,
             get,
-            set,
             onValue
         } from "./firebase-init.js";
 
@@ -1295,9 +1256,6 @@
         // =========================================================
         // RENDER NAV
         // =========================================================
-        let isAdminGlobal = false;
-        let currentUserGlobal = null;
-
         function renderNav(user, isAdmin = false) {
             if (user) {
                 userNav.style.display = 'flex';
@@ -1321,7 +1279,6 @@
         // =========================================================
         async function checkIsAdmin(user) {
             if (!user) return false;
-            // Si el email es admin@liga-lombarda.com lo tratamos como admin por defecto
             if (user.email && user.email.toLowerCase() === 'admin@liga-lombarda.com') {
                 return true;
             }
@@ -1330,7 +1287,6 @@
                 const snapshot = await get(adminRef);
                 return snapshot.val() === true;
             } catch (error) {
-                // Silencioso: si no hay permiso de lectura, no es admin
                 return false;
             }
         }
@@ -1440,30 +1396,10 @@
         window.verExpediente = verExpediente;
 
         // =========================================================
-        // CAMBIAR CATEGORÍA MANUAL (ADMIN)
-        // =========================================================
-        async function cambiarCategoriaManual(id, nuevaCategoria) {
-            if (!isAdminGlobal) {
-                showToast('❌ Solo los administradores pueden mover expedientes', 'error', 3000);
-                return;
-            }
-
-            try {
-                const catRef = ref(database, `expedientes/${id}/categoriaManual`);
-                await set(catRef, nuevaCategoria);
-                showToast(`✅ Movido a ${nuevaCategoria === 'inmigrante' ? 'Inmigrantes' : 'Liga Lombarda'}`, 'success', 2500);
-            } catch (error) {
-                console.error('Error al cambiar categoría:', error);
-                showToast('❌ Error al mover el expediente', 'error', 3000);
-            }
-        }
-        window.cambiarCategoriaManual = cambiarCategoriaManual;
-
-        // =========================================================
         // DETECTAR SI UN EXPEDIENTE ES INMIGRANTE
         // =========================================================
         function esInmigrante(item) {
-            // 0. OVERRIDE MANUAL (máxima prioridad)
+            // 0. OVERRIDE MANUAL
             if (item.categoriaManual === 'inmigrante') return true;
             if (item.categoriaManual === 'lombardo') return false;
 
@@ -1494,8 +1430,7 @@
             // 4. Si tiene un rank lombardo conocido → LOMBARDO
             if (item.rank && RANK_ORDER.includes(item.rank)) return false;
 
-            // 5. Si NO tiene rank o tiene un rank desconocido → INMIGRANTE
-            //    (esto es lo que faltaba: el expediente "na" sin rank ahora se detecta)
+            // 5. Sin rank o rank desconocido → INMIGRANTE
             return true;
         }
 
@@ -1600,12 +1535,6 @@
                     const delay = (cardIndex * 0.04).toFixed(2);
                     cardIndex++;
 
-                    const adminBtn = isAdminGlobal
-                        ? `<button class="btn-admin-move" onclick="event.stopPropagation(); cambiarCategoriaManual('${item.id}', 'inmigrante')" title="Mover a Inmigrantes">
-                                <i class="fas fa-arrow-right"></i> INMIGRANTE
-                           </button>`
-                        : '';
-
                     html += `
                         <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
                             <span class="corner tl"></span>
@@ -1628,7 +1557,6 @@
                                     <button class="btn-view" onclick="verExpediente('${item.id}')">
                                         <i class="fas fa-eye"></i> VER
                                     </button>
-                                    ${adminBtn}
                                 </div>
                             </div>
                         </div>
@@ -1705,12 +1633,6 @@
                 const delay = (cardIndex * 0.04).toFixed(2);
                 cardIndex++;
 
-                const adminBtn = isAdminGlobal
-                    ? `<button class="btn-admin-move to-lombardo" onclick="event.stopPropagation(); cambiarCategoriaManual('${item.id}', 'lombardo')" title="Mover a Liga Lombarda">
-                            <i class="fas fa-arrow-left"></i> LOMBARDO
-                       </button>`
-                    : '';
-
                 html += `
                     <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
                         <span class="corner tl"></span>
@@ -1733,7 +1655,6 @@
                                 <button class="btn-view" onclick="verExpediente('${item.id}')">
                                     <i class="fas fa-eye"></i> VER
                                 </button>
-                                ${adminBtn}
                             </div>
                         </div>
                     </div>
@@ -1808,15 +1729,14 @@
                 return;
             }
 
-            currentUserGlobal = user;
-            isAdminGlobal = await checkIsAdmin(user);
+            const isAdmin = await checkIsAdmin(user);
             mainContent.classList.add('visible');
-            renderNav(user, isAdminGlobal);
+            renderNav(user, isAdmin);
             cargarDocumentos();
-            showToast(`✅ Bienvenido, ${user.email}${isAdminGlobal ? ' 👑' : ''}`, 'success', 2000);
+            showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
 
             console.log(`📄 Documentos - Usuario: ${user.email}`);
-            console.log(`👑 Admin: ${isAdminGlobal}`);
+            console.log(`👑 Admin: ${isAdmin}`);
         });
 
         console.log('📄 Página de documentos con autenticación obligatoria');
