@@ -283,6 +283,20 @@
       border-bottom: 2px solid #a4864a;
       padding-bottom: 4px;
     }
+    .clan-bajo {
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #d4b76c;
+      letter-spacing: 2px;
+      margin-top: 6px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .clan-bajo i {
+      color: #a4864a;
+      margin-right: 6px;
+    }
     .alias-bajo {
       font-size: 16px;
       color: #b8aa8c;
@@ -587,7 +601,7 @@
     }
     .btn-download-dni:hover { background: #2a6a3a; transform: scale(1.02); color: #fff; }
 
-    /* ======= LIBRO ======= */
+    /* ======= LIBRO / PASAPORTE ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
@@ -754,6 +768,84 @@
     }
     .click-hint i { margin-right: 6px; }
 
+    /* ===== VARIANTE PASAPORTE ===== */
+    .passport .front {
+      background: linear-gradient(145deg, #1a0524, #2a0a3d, #1a0524) !important;
+      color: #d0a8e8 !important;
+      border: 3px solid #4a1060;
+    }
+    .passport .front * { color: #d0a8e8 !important; }
+    .passport .cover-border {
+      border-color: #d0a8e8;
+      background: radial-gradient(ellipse at center, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
+    }
+    .passport .cover-border::before,
+    .passport .cover-border::after { color: #d0a8e8; }
+    .passport .cover h1 { color: #d0a8e8 !important; text-shadow: 0 2px 15px rgba(0,0,0,0.7); }
+    .passport .subtitle { color: #b88ad0 !important; }
+    .passport .seal-gold {
+      border-color: #d0a8e8;
+      color: #d0a8e8 !important;
+      background: rgba(156, 39, 176, 0.1);
+      box-shadow: 0 0 30px rgba(156, 39, 176, 0.15);
+    }
+    .passport .click-hint { color: #d0a8e8 !important; }
+    .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(156, 39, 176, 0.4)); }
+
+    /* Hoja pasaporte (interior morado) */
+    .passport .page .front,
+    .passport .page .back {
+      background: linear-gradient(170deg, #f0e6f5 0%, #e0d0eb 100%);
+      border-color: #b89cc8;
+    }
+    .passport .page .front {
+      background: linear-gradient(175deg, #f5ecf9 0%, #ead9f2 100%);
+      border-right-color: #c8a8d8;
+    }
+    .passport .page .back {
+      background: linear-gradient(175deg, #ead9f2 0%, #ddc8e8 100%);
+      border-left-color: #c8a8d8;
+    }
+    .passport .header-doc { border-bottom-color: #7b1fa2; }
+    .passport .header-doc * { color: #222 !important; }
+    .passport .header-title span { color: #7b1fa2 !important; }
+    .passport .red-text { color: #7b1fa2 !important; }
+    .passport .section-title {
+      color: #7b1fa2 !important;
+      border-top-color: #7b1fa2;
+      border-bottom-color: #7b1fa2;
+    }
+    .passport .field-row label i,
+    .passport .info-list p strong i,
+    .passport .description-box label i,
+    .passport .audit-info p strong i,
+    .passport .obs-section label i,
+    .passport .cert-date i,
+    .passport .sig-label i,
+    .passport .stat-title,
+    .passport .stat-table td:first-child i,
+    .passport .dni-icon,
+    .passport .stat-title i { color: #7b1fa2 !important; }
+    .passport .stat-title { border-bottom-color: #7b1fa2; color: #7b1fa2 !important; }
+    .passport .obs-section label { color: #7b1fa2 !important; border-bottom-color: #7b1fa2; }
+    .passport .status-badge {
+      border-color: #7b1fa2;
+      color: #7b1fa2 !important;
+      background: rgba(123, 31, 162, 0.06);
+    }
+    .passport .motto {
+      color: #7b1fa2 !important;
+      border-top-color: #7b1fa2;
+    }
+    .passport .motto i { color: #7b1fa2 !important; }
+    .passport .page:last-child .back {
+      background: linear-gradient(145deg, #150520, #2a0a3d) !important;
+      border: 3px solid #4a1060;
+    }
+    .passport .page:last-child .back h3 { color: #d0a8e8 !important; }
+    .passport .page:last-child .back p { color: #b88ad0 !important; }
+    .passport .page:last-child .back i { color: #d0a8e8 !important; }
+
     .inner-cover {
       display: flex;
       flex-direction: column;
@@ -788,6 +880,12 @@
       background: rgba(140,35,35,0.05);
     }
     .inner-cover .inner-seal i { font-size: 24px; color: #8c2323; }
+    .passport .inner-cover {
+      background: linear-gradient(135deg, #f0e6f5, #e0d0eb);
+    }
+    .passport .inner-cover h3 { color: #2a0a3d !important; }
+    .passport .inner-cover .inner-seal { border-color: #7b1fa2; background: rgba(123,31,162,0.05); }
+    .passport .inner-cover .inner-seal i { color: #7b1fa2; }
 
     .page-inner {
       display: flex;
@@ -1060,6 +1158,10 @@
       border-color: #4a0000;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
     }
+    .passport .boxes-container i.fill {
+      background: #7b1fa2;
+      border-color: #4a1060;
+    }
 
     .status-badge {
       border: 2px solid #2e7d32;
@@ -1254,6 +1356,15 @@
       box-shadow: 0 6px 30px rgba(212, 175, 55, 0.2);
     }
     .book-controls button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+    .passport .book-controls button {
+      color: #d0a8e8;
+      border-color: #d0a8e8;
+    }
+    .passport .book-controls button:hover:not(:disabled) {
+      background: linear-gradient(145deg, #d0a8e8, #9a6cb0);
+      color: #1a0524;
+      box-shadow: 0 6px 30px rgba(156, 39, 176, 0.3);
+    }
 
     .error-state {
       text-align: center;
@@ -1385,6 +1496,7 @@
         </div>
         <div class="datos-persona">
           <div class="nombre-bajo" id="displayName">CARGANDO...</div>
+          <div class="clan-bajo" id="displayClan"><i class="fas fa-users"></i> SIN CLAN</div>
           <div class="alias-bajo" id="displayAlias">★ "Cargando..."</div>
           <div class="detalles-extra">
             <span><i class="fas fa-chess-king"></i> <span id="displayRank">—</span></span>
@@ -1398,7 +1510,7 @@
       <!-- PANEL DOCUMENTOS -->
       <div class="panel-documentos">
 
-        <!-- DNI -->
+        <!-- DNI (solo lombardos) -->
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
             <div class="dni-inner-border"></div>
@@ -1452,14 +1564,14 @@
           </div>
         </div>
 
-        <!-- Botón descargar DNI -->
-        <div style="display:flex;justify-content:center;margin-top:10px;">
+        <!-- Botón descargar DNI (solo lombardos) -->
+        <div id="downloadDniWrapper" style="display:flex;justify-content:center;margin-top:10px;">
           <button class="btn-download-dni" id="downloadDniBtn">
             <i class="fas fa-download"></i> DESCARGAR DNI
           </button>
         </div>
 
-        <!-- LIBRO -->
+        <!-- LIBRO / PASAPORTE -->
         <div class="book-wrapper">
           <div class="book-container">
             <div class="book" id="book">
@@ -1469,18 +1581,18 @@
                 <div class="front">
                   <div class="cover-border">
                     <img src="./logo.png" alt="Liga Lombarda" class="cover-logo" />
-                    <h1>LIGA LOMBARDA</h1>
-                    <p class="subtitle">REGISTRO OFICIAL DE CIUDADANOS</p>
-                    <div class="seal-gold">EXPEDIENTE CONFIDENCIAL</div>
+                    <h1 id="coverTitle">LIGA LOMBARDA</h1>
+                    <p class="subtitle" id="coverSubtitle">REGISTRO OFICIAL DE CIUDADANOS</p>
+                    <div class="seal-gold" id="coverSeal">EXPEDIENTE CONFIDENCIAL</div>
                     <p class="click-hint"><i class="fas fa-hand-pointer"></i> Haz clic o usa los botones</p>
                   </div>
                 </div>
                 <div class="back">
                   <div class="inner-cover">
-                    <h3>REPÚBLICA DE LOMBARDA</h3>
-                    <p>Documento Oficial e Intransferible</p>
+                    <h3 id="innerCoverTitle">REPÚBLICA DE LOMBARDA</h3>
+                    <p id="innerCoverSubtitle">Documento Oficial e Intransferible</p>
                     <div class="inner-seal"><i class="fas fa-shield-halved"></i></div>
-                    <p style="font-size:0.6rem;opacity:0.6;margin-top:8px;">Protegido por la Liga</p>
+                    <p style="font-size:0.6rem;opacity:0.6;margin-top:8px;" id="innerCoverFooter">Protegido por la Liga</p>
                   </div>
                 </div>
               </div>
@@ -1492,9 +1604,9 @@
                     <div class="header-doc">
                       <div class="logo-box"><img src="./logo.png" alt="Liga Lombarda" /></div>
                       <div class="header-title">
-                        <h2>LIGA LOMBARDA</h2>
-                        <span>DOCUMENTO DE IDENTIDAD</span>
-                        <small>REGISTRO OFICIAL</small>
+                        <h2 id="bookHeaderTitle">LIGA LOMBARDA</h2>
+                        <span id="bookHeaderSubtitle">DOCUMENTO DE IDENTIDAD</span>
+                        <small id="bookHeaderSmall">REGISTRO OFICIAL</small>
                       </div>
                       <div class="expediente-box">
                         <label>N°</label>
@@ -1510,6 +1622,7 @@
                         <div class="fields-section">
                           <div class="field-row"><label><i class="fas fa-user"></i> NOMBRE:</label><span class="line-fill" id="bookName">—</span></div>
                           <div class="field-row"><label><i class="fas fa-helmet-safety"></i> ALIAS:</label><span class="line-fill" id="bookAlias">—</span></div>
+                          <div class="field-row"><label><i class="fas fa-users"></i> CLAN:</label><span class="line-fill" id="bookClan">—</span></div>
                           <div class="field-row"><label><i class="fas fa-shield-halved"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
                           <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
                         </div>
@@ -1604,15 +1717,15 @@
                       <div class="seal-container"><img src="./img/Sello.png" alt="Sello" class="seal-img" crossorigin="anonymous" /></div>
                     </div>
                     <div>
-                      <div class="motto"><i class="fas fa-shield-halved"></i> POR LA LIGA · POR LOMBARDOS <i class="fas fa-shield-halved"></i></div>
+                      <div class="motto" id="bookMotto"><i class="fas fa-shield-halved"></i> POR LA LIGA · POR LOMBARDOS <i class="fas fa-shield-halved"></i></div>
                       <div class="page-number">- 5 -</div>
                     </div>
                   </div>
                 </div>
                 <div class="back">
                   <div>
-                    <h3>FIN</h3>
-                    <p><i class="fas fa-crown"></i> DOCUMENTO OFICIAL <i class="fas fa-crown"></i></p>
+                    <h3 id="bookEndTitle">FIN</h3>
+                    <p id="bookEndSubtitle"><i class="fas fa-crown"></i> DOCUMENTO OFICIAL <i class="fas fa-crown"></i></p>
                   </div>
                 </div>
               </div>
@@ -1652,6 +1765,43 @@
     const mainContent = document.getElementById('mainContent');
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
+
+    // Rango de lombardos (para detectar inmigrantes igual que en documentos.html)
+    const RANK_ORDER = [
+      'Elite Urbana',
+      'Caballero Lombardo',
+      'Infante Lombardo',
+      'Paladín Lombardo',
+      'Pavesero Lombardo',
+      'Milicia Urbana',
+      'Ballestero Genovés Condecorado',
+      'Ciudadano'
+    ];
+
+    function esInmigrante(item) {
+      if (item.categoriaManual === 'inmigrante') return true;
+      if (item.categoriaManual === 'lombardo') return false;
+      if (item.categoria) {
+        const cat = String(item.categoria).toLowerCase().trim();
+        if (cat === 'inmigrante' || cat === 'inmigrantes' || cat === 'ilegal') return true;
+        if (cat === 'lombardo' || cat === 'ciudadano' || cat === 'liga lombarda') return false;
+      }
+      if (item.esInmigrante === true) return true;
+      if (item.tipo) {
+        const t = String(item.tipo).toLowerCase().trim();
+        if (t === 'inmigrante' || t === 'ilegal') return true;
+      }
+      if (item.rank) {
+        const r = String(item.rank).toLowerCase();
+        if (r.includes('inmigrante') || r.includes('ilegal') || r.includes('indocumentado')) return true;
+      }
+      if (item.status) {
+        const st = String(item.status).toUpperCase();
+        if (st.includes('ILEGAL') || st.includes('INDOCUMENTADO')) return true;
+      }
+      if (item.rank && RANK_ORDER.includes(item.rank)) return false;
+      return true;
+    }
 
     function showToast(message, type = 'info', duration = 4000) {
       toast.textContent = message;
@@ -1877,6 +2027,7 @@
       intentarCargar();
     }
     function cargarSkinEnDNI(skinUrl) {
+      if (!dniViewer) return;
       dniViewer.loadSkin(skinUrl).then(() => {
         const skin = dniViewer.playerObject?.skin;
         if (skin) {
@@ -1907,6 +2058,7 @@
       });
     }
     function cargarSkinEnLibro(skinUrl) {
+      if (!bookViewer) return;
       bookViewer.loadSkin(skinUrl).then(() => {
         const skin = bookViewer.playerObject?.skin;
         if (skin) {
@@ -2034,6 +2186,46 @@
       viewer.render();
     }
 
+    // ===== APLICAR MODO PASAPORTE =====
+    function aplicarModoPasaporte() {
+      // Ocultar DNI y botón
+      const dniContainer = document.getElementById('dniContainer');
+      const downloadWrapper = document.getElementById('downloadDniWrapper');
+      if (dniContainer) dniContainer.style.display = 'none';
+      if (downloadWrapper) downloadWrapper.style.display = 'none';
+
+      // Añadir clase 'passport' al libro
+      const bookEl = document.getElementById('book');
+      if (bookEl) bookEl.classList.add('passport');
+
+      // Cambiar textos de la carátula
+      document.getElementById('coverTitle').textContent = 'PASAPORTE';
+      document.getElementById('coverSubtitle').textContent = 'LIGA LOMBARDA · REGISTRO DE INDOCUMENTADOS';
+      document.getElementById('coverSeal').textContent = 'DOCUMENTO RESTRINGIDO';
+
+      // Cambiar textos internos
+      document.getElementById('innerCoverTitle').textContent = 'PASAPORTE';
+      document.getElementById('innerCoverSubtitle').textContent = 'Documento Oficial de Indocumentado';
+      document.getElementById('innerCoverFooter').textContent = 'Emitido bajo custodia de la Liga';
+
+      // Encabezados internos
+      document.getElementById('bookHeaderTitle').textContent = 'PASAPORTE';
+      document.getElementById('bookHeaderSubtitle').textContent = 'REGISTRO DE EXTRANJERO';
+      document.getElementById('bookHeaderSmall').textContent = 'INDOCUMENTADO';
+
+      // Section title info
+      const infoTitle = document.querySelector('#page-1 .back .section-title');
+      if (infoTitle) infoTitle.innerHTML = '<i class="fas fa-id-card"></i> INFORMACIÓN DEL INDOCUMENTADO';
+
+      // Motto final
+      const motto = document.getElementById('bookMotto');
+      if (motto) motto.innerHTML = '<i class="fas fa-passport"></i> POR LA LIGA · CONTROL MIGRATORIO <i class="fas fa-passport"></i>';
+
+      // Último texto
+      document.getElementById('bookEndTitle').textContent = 'FIN';
+      document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE OFICIAL <i class="fas fa-passport"></i>';
+    }
+
     function actualizarUI(data) {
       const name = data.name || 'SIN REGISTRO';
       const alias = data.alias || '—';
@@ -2047,30 +2239,47 @@
       const description = data.description || 'Sin descripción registrada.';
       const fileNumber = data.fileNumber || 'LL-2026-0000';
       const minecraftNick = data.minecraftNick || '';
+      const clan = data.clan || '';
       const stats = data.stats || {};
       const competencies = data.competencies || {};
 
+      const inmigrante = esInmigrante(data);
+
+      // Nombre, alias, clan y extras
       document.getElementById('displayName').textContent = name;
       document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
+
+      const clanEl = document.getElementById('displayClan');
+      if (clan && String(clan).trim() !== '') {
+        clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${clan}`;
+      } else {
+        clanEl.innerHTML = `<i class="fas fa-users"></i> SIN CLAN`;
+      }
+
       document.getElementById('displayRank').textContent = rank;
       document.getElementById('displayNationality').textContent = nationality;
       document.getElementById('displayOccupation').textContent = occupation;
       document.getElementById('displayStatus').textContent = status;
 
-      document.getElementById('dniName').textContent = name;
-      document.getElementById('dniAlias').textContent = alias;
-      document.getElementById('dniRank').textContent = rank;
-      document.getElementById('dniNationality').textContent = nationality;
-      document.getElementById('dniOccupation').textContent = occupation;
-      document.getElementById('dniBirthday').textContent = birthday;
-      document.getElementById('dniGender').textContent = gender;
-      document.getElementById('dniSpecies').textContent = species;
-      document.getElementById('dniFileNumber').textContent = fileNumber;
+      // DNI (solo si lombardo)
+      if (!inmigrante) {
+        document.getElementById('dniName').textContent = name;
+        document.getElementById('dniAlias').textContent = alias;
+        document.getElementById('dniRank').textContent = rank;
+        document.getElementById('dniNationality').textContent = nationality;
+        document.getElementById('dniOccupation').textContent = occupation;
+        document.getElementById('dniBirthday').textContent = birthday;
+        document.getElementById('dniGender').textContent = gender;
+        document.getElementById('dniSpecies').textContent = species;
+        document.getElementById('dniFileNumber').textContent = fileNumber;
+      }
 
       const hoy = new Date();
       const f = String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
-      document.getElementById('dniDate').textContent = f;
+      const dniDateEl = document.getElementById('dniDate');
+      if (dniDateEl) dniDateEl.textContent = f;
 
+      // Libro / Pasaporte
       document.getElementById('bookName').textContent = name;
       document.getElementById('bookAlias').textContent = alias;
       document.getElementById('bookRank').textContent = rank;
@@ -2086,6 +2295,18 @@
       document.getElementById('bookCertDate').textContent = f;
       document.getElementById('bookLastVerification').textContent = f;
 
+      // Clan en el libro
+      const bookClanEl = document.getElementById('bookClan');
+      if (bookClanEl) {
+        bookClanEl.textContent = (clan && String(clan).trim() !== '') ? clan : '—';
+      }
+
+      // Si es inmigrante, aplicar modo pasaporte
+      if (inmigrante) {
+        aplicarModoPasaporte();
+      }
+
+      // Stats
       const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
       statKeys.forEach((key) => {
         const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
@@ -2227,64 +2448,66 @@
       updateBookState();
     }, 100);
 
-    // ===== DESCARGAR DNI (con skin arreglada) =====
-    document.getElementById('downloadDniBtn').addEventListener('click', async function() {
-      try {
-        const dniCard = document.getElementById('dniCard');
-        const clone = dniCard.cloneNode(true);
-        clone.style.position = 'fixed';
-        clone.style.left = '-9999px';
-        clone.style.top = '0';
-        clone.style.transform = 'scale(1)';
-        clone.style.width = '750px';
-        clone.style.aspectRatio = '750/380';
-        clone.style.borderRadius = '20px';
-        clone.style.overflow = 'hidden';
-        clone.style.boxShadow = 'none';
-        document.body.appendChild(clone);
+    // ===== DESCARGAR DNI =====
+    const downloadBtn = document.getElementById('downloadDniBtn');
+    if (downloadBtn) {
+      downloadBtn.addEventListener('click', async function() {
+        try {
+          const dniCard = document.getElementById('dniCard');
+          if (!dniCard) return;
+          const clone = dniCard.cloneNode(true);
+          clone.style.position = 'fixed';
+          clone.style.left = '-9999px';
+          clone.style.top = '0';
+          clone.style.transform = 'scale(1)';
+          clone.style.width = '750px';
+          clone.style.aspectRatio = '750/380';
+          clone.style.borderRadius = '20px';
+          clone.style.overflow = 'hidden';
+          clone.style.boxShadow = 'none';
+          document.body.appendChild(clone);
 
-        // 🔑 Convertir el canvas WebGL del DNI en una imagen PNG
-        const originalCanvas = document.getElementById('dniSkinCanvas');
-        const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
-        if (dniCanvasClone && originalCanvas) {
-          try {
-            const dataURL = originalCanvas.toDataURL('image/png');
-            const img = document.createElement('img');
-            img.src = dataURL;
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'contain';
-            img.style.display = 'block';
-            dniCanvasClone.parentNode.replaceChild(img, dniCanvasClone);
-          } catch (e) {
-            console.warn('No se pudo convertir el canvas del DNI:', e);
+          const originalCanvas = document.getElementById('dniSkinCanvas');
+          const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
+          if (dniCanvasClone && originalCanvas) {
+            try {
+              const dataURL = originalCanvas.toDataURL('image/png');
+              const img = document.createElement('img');
+              img.src = dataURL;
+              img.style.width = '100%';
+              img.style.height = '100%';
+              img.style.objectFit = 'contain';
+              img.style.display = 'block';
+              dniCanvasClone.parentNode.replaceChild(img, dniCanvasClone);
+            } catch (e) {
+              console.warn('No se pudo convertir el canvas del DNI:', e);
+            }
           }
+
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
+          const canvas = await html2canvas(clone, {
+            scale: 3,
+            backgroundColor: '#f7f5ef',
+            useCORS: true,
+            allowTaint: true,
+            logging: false,
+            width: 750,
+            height: 380,
+          });
+          document.body.removeChild(clone);
+
+          const link = document.createElement('a');
+          link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast('✅ DNI descargado correctamente', 'success', 3000);
+        } catch (error) {
+          console.error('Error al descargar DNI:', error);
+          showToast('❌ Error al descargar el DNI', 'error', 3000);
         }
-
-        // Esperar a que la imagen esté cargada antes de capturar
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        const canvas = await html2canvas(clone, {
-          scale: 3,
-          backgroundColor: '#f7f5ef',
-          useCORS: true,
-          allowTaint: true,
-          logging: false,
-          width: 750,
-          height: 380,
-        });
-        document.body.removeChild(clone);
-
-        const link = document.createElement('a');
-        link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast('✅ DNI descargado correctamente', 'success', 3000);
-      } catch (error) {
-        console.error('Error al descargar DNI:', error);
-        showToast('❌ Error al descargar el DNI', 'error', 3000);
-      }
-    });
+      });
+    }
 
     function loadHtml2Canvas() {
       return new Promise((resolve, reject) => {
