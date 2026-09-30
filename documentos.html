@@ -303,7 +303,7 @@
         }
 
         /* =========================================================
-           BOTONES FLOTANTES — MEJORADOS
+           BOTONES FLOTANTES — SIN RELLENO CUANDO NO ESTÁN ACTIVOS
         ========================================================= */
         .botones-container {
             position: fixed;
@@ -328,12 +328,12 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
             font-family: 'Montserrat', sans-serif;
-            color: white;
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 8px;
             position: relative;
+            background: transparent;
         }
 
         .btn i {
@@ -349,32 +349,40 @@
             transform: scale(0.96);
         }
 
-        /* Botón izquierda — Liga Lombarda */
+        /* Botón izquierda — Liga Lombarda (sin relleno por defecto) */
         #btn-izquierda {
-            background-color: var(--red-slide);
-            border-color: var(--red-slide);
+            color: #ff4444;
+            border-color: #ff4444;
         }
 
-        /* Botón derecha — Inmigrantes */
+        #btn-izquierda:hover {
+            background-color: rgba(153, 0, 36, 0.15);
+        }
+
+        /* Botón derecha — Inmigrantes (sin relleno por defecto) */
         #btn-derecha {
-            background-color: var(--purple);
-            border-color: var(--purple);
+            color: #ce93d8;
+            border-color: #ce93d8;
         }
 
-        /* Estado ACTIVO — mucho más claro */
+        #btn-derecha:hover {
+            background-color: rgba(123, 31, 162, 0.15);
+        }
+
+        /* Estado ACTIVO — con relleno de color */
         #btn-izquierda.active {
-            background-color: #ffd700;
-            color: #1a1a1a;
+            background-color: var(--red-slide);
+            color: #ffffff;
             border-color: #ffffff;
-            box-shadow: 0 0 0 3px #ffffff, 0 0 25px rgba(255, 215, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 25px rgba(153, 0, 36, 0.7), 0 4px 15px rgba(0, 0, 0, 0.3);
             transform: scale(1.05);
         }
 
         #btn-derecha.active {
-            background-color: #ffd700;
-            color: #1a1a1a;
+            background-color: var(--purple);
+            color: #ffffff;
             border-color: #ffffff;
-            box-shadow: 0 0 0 3px #ffffff, 0 0 25px rgba(255, 215, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 25px rgba(123, 31, 162, 0.7), 0 4px 15px rgba(0, 0, 0, 0.3);
             transform: scale(1.05);
         }
 
@@ -389,8 +397,15 @@
             height: 0;
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
-            border-top: 8px solid #ffd700;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        #btn-izquierda.active::after {
+            border-top: 8px solid var(--red-slide);
+        }
+
+        #btn-derecha.active::after {
+            border-top: 8px solid var(--purple);
         }
 
         /* =========================================================
@@ -1626,32 +1641,55 @@
         // =========================================================
         function esInmigrante(item) {
             // 1. Campo explícito de categoría
-            if (item.categoria === 'inmigrante') return true;
+            if (item.categoria) {
+                const cat = String(item.categoria).toLowerCase().trim();
+                if (cat === 'inmigrante' || cat === 'inmigrantes' || cat === 'ilegal') return true;
+                if (cat === 'lombardo' || cat === 'ciudadano' || cat === 'liga lombarda') return false;
+            }
             if (item.esInmigrante === true) return true;
-            if (item.tipo === 'inmigrante') return true;
+            if (item.tipo) {
+                const t = String(item.tipo).toLowerCase().trim();
+                if (t === 'inmigrante' || t === 'ilegal') return true;
+            }
 
-            // 2. El rango contiene la palabra "inmigrante" (case-insensitive)
-            if (item.rank && item.rank.toLowerCase().includes('inmigrante')) return true;
+            // 2. Rango explícito de inmigrante
+            if (item.rank) {
+                const r = String(item.rank).toLowerCase();
+                if (r.includes('inmigrante') || r.includes('ilegal') || r.includes('indocumentado')) return true;
+            }
 
-            // 3. El estado contiene "ILEGAL" o "INDOCUMENTADO"
+            // 3. Estado que indique ilegalidad
             if (item.status) {
-                const st = item.status.toUpperCase();
+                const st = String(item.status).toUpperCase();
                 if (st.includes('ILEGAL') || st.includes('INDOCUMENTADO')) return true;
             }
 
-            // 4. Si no tiene un rank que pertenezca a los rangos lombardos conocidos,
-            //    y tiene campos típicos de inmigrante, lo tratamos como inmigrante.
-            const rangosLombardos = [
-                'Elite Urbana', 'Caballero Lombardo', 'Infante Lombardo',
-                'Paladín Lombardo', 'Pavesero Lombardo', 'Milicia Urbana',
-                'Ballestero Genovés Condecorado', 'Ciudadano'
-            ];
-            if (item.rank && !rangosLombardos.includes(item.rank)) {
-                // Si el rank no es lombardo, probablemente es inmigrante
-                return true;
-            }
+            // 4. Si tiene un rank lombardo conocido, NO es inmigrante
+            if (item.rank && RANK_ORDER.includes(item.rank)) return false;
+
+            // 5. Si tiene rank desconocido y no es lombardo, lo tratamos como inmigrante
+            if (item.rank && !RANK_ORDER.includes(item.rank)) return true;
 
             return false;
+        }
+
+        // =========================================================
+        // LOG DE DIAGNÓSTICO
+        // =========================================================
+        function logDiagnostico(expedientes) {
+            console.group('🔍 DIAGNÓSTICO DE EXPEDIENTES');
+            console.log('Total expedientes:', Object.keys(expedientes).length);
+            Object.keys(expedientes).forEach(key => {
+                const item = expedientes[key];
+                const esInm = esInmigrante(item);
+                console.log(
+                    `%c${item.name || key}%c → rank: "${item.rank || 'SIN RANK'}" | categoria: "${item.categoria || 'SIN CATEGORIA'}" | tipo: "${item.tipo || '-'}" | status: "${item.status || '-'}" | %c${esInm ? 'INMIGRANTE' : 'LOMBARDO'}`,
+                    'font-weight:bold;color:#ffd700;',
+                    'color:#aaa;',
+                    esInm ? 'font-weight:bold;color:#ce93d8;' : 'font-weight:bold;color:#ff6b6b;'
+                );
+            });
+            console.groupEnd();
         }
 
         // =========================================================
@@ -1895,6 +1933,9 @@
 
             onValue(expedientesRef, (snapshot) => {
                 expedientesGlobales = snapshot.val() || {};
+
+                // Log de diagnóstico para que veas en consola cómo se clasifica cada uno
+                logDiagnostico(expedientesGlobales);
 
                 // Renderizar ambas pestañas
                 renderizarCiudadanos(expedientesGlobales, searchInput.value);
