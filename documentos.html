@@ -303,7 +303,7 @@
         }
 
         /* =========================================================
-           BOTONES FLOTANTES
+           BOTONES FLOTANTES — MEJORADOS
         ========================================================= */
         .botones-container {
             position: fixed;
@@ -321,7 +321,7 @@
             padding: 10px 22px;
             font-size: clamp(11px, 3vw, 13px);
             font-weight: 700;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 30px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -330,6 +330,14 @@
             font-family: 'Montserrat', sans-serif;
             color: white;
             letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .btn i {
+            font-size: 14px;
         }
 
         .btn:hover {
@@ -341,17 +349,48 @@
             transform: scale(0.96);
         }
 
+        /* Botón izquierda — Liga Lombarda */
         #btn-izquierda {
             background-color: var(--red-slide);
+            border-color: var(--red-slide);
         }
 
+        /* Botón derecha — Inmigrantes */
         #btn-derecha {
             background-color: var(--purple);
+            border-color: var(--purple);
         }
 
-        #btn-izquierda.active,
+        /* Estado ACTIVO — mucho más claro */
+        #btn-izquierda.active {
+            background-color: #ffd700;
+            color: #1a1a1a;
+            border-color: #ffffff;
+            box-shadow: 0 0 0 3px #ffffff, 0 0 25px rgba(255, 215, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
         #btn-derecha.active {
-            box-shadow: 0 0 0 2px #ffffff, 0 0 16px rgba(255, 255, 255, 0.5);
+            background-color: #ffd700;
+            color: #1a1a1a;
+            border-color: #ffffff;
+            box-shadow: 0 0 0 3px #ffffff, 0 0 25px rgba(255, 215, 0, 0.8), 0 4px 15px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Indicador de flecha en botón activo */
+        .btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #ffd700;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
 
         /* =========================================================
@@ -1082,6 +1121,10 @@
                 font-size: 10px;
             }
 
+            .btn i {
+                font-size: 12px;
+            }
+
             .slide {
                 padding: calc(var(--botones-height) + 25px) 5% 60px;
             }
@@ -1203,6 +1246,23 @@
             .card-content-bg {
                 top: 46vh;
             }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 9px;
+                gap: 4px;
+            }
+
+            .btn i {
+                font-size: 10px;
+            }
+
+            .btn.active::after {
+                border-left-width: 6px;
+                border-right-width: 6px;
+                border-top-width: 6px;
+                bottom: -11px;
+            }
         }
     </style>
 </head>
@@ -1240,8 +1300,12 @@
         </header>
 
         <div class="botones-container">
-            <button class="btn active" id="btn-izquierda" onclick="moverIzquierda()">Liga Lombarda</button>
-            <button class="btn" id="btn-derecha" onclick="moverDerecha()">Inmigrantes ilegales</button>
+            <button class="btn active" id="btn-izquierda" onclick="moverIzquierda()">
+                <i class="fas fa-shield-alt"></i> Liga Lombarda
+            </button>
+            <button class="btn" id="btn-derecha" onclick="moverDerecha()">
+                <i class="fas fa-passport"></i> Inmigrantes ilegales
+            </button>
         </div>
 
         <div class="viewport" id="viewport">
@@ -1558,6 +1622,39 @@
         window.verExpediente = verExpediente;
 
         // =========================================================
+        // DETECTAR SI UN EXPEDIENTE ES INMIGRANTE
+        // =========================================================
+        function esInmigrante(item) {
+            // 1. Campo explícito de categoría
+            if (item.categoria === 'inmigrante') return true;
+            if (item.esInmigrante === true) return true;
+            if (item.tipo === 'inmigrante') return true;
+
+            // 2. El rango contiene la palabra "inmigrante" (case-insensitive)
+            if (item.rank && item.rank.toLowerCase().includes('inmigrante')) return true;
+
+            // 3. El estado contiene "ILEGAL" o "INDOCUMENTADO"
+            if (item.status) {
+                const st = item.status.toUpperCase();
+                if (st.includes('ILEGAL') || st.includes('INDOCUMENTADO')) return true;
+            }
+
+            // 4. Si no tiene un rank que pertenezca a los rangos lombardos conocidos,
+            //    y tiene campos típicos de inmigrante, lo tratamos como inmigrante.
+            const rangosLombardos = [
+                'Elite Urbana', 'Caballero Lombardo', 'Infante Lombardo',
+                'Paladín Lombardo', 'Pavesero Lombardo', 'Milicia Urbana',
+                'Ballestero Genovés Condecorado', 'Ciudadano'
+            ];
+            if (item.rank && !rangosLombardos.includes(item.rank)) {
+                // Si el rank no es lombardo, probablemente es inmigrante
+                return true;
+            }
+
+            return false;
+        }
+
+        // =========================================================
         // RENDERIZAR CIUDADANOS (LIGA LOMBARDA)
         // =========================================================
         function renderizarCiudadanos(expedientes, searchTerm = '') {
@@ -1568,8 +1665,8 @@
                 ...expedientes[key]
             }));
 
-            // Filtrar solo los que NO son inmigrantes (categoria distinta a 'inmigrante')
-            items = items.filter(item => item.categoria !== 'inmigrante');
+            // Filtrar solo los que NO son inmigrantes
+            items = items.filter(item => !esInmigrante(item));
 
             // Filtrar por búsqueda
             if (searchLower) {
@@ -1702,8 +1799,8 @@
                 ...expedientes[key]
             }));
 
-            // Filtrar solo los que SÍ son inmigrantes (categoria === 'inmigrante')
-            items = items.filter(item => item.categoria === 'inmigrante');
+            // Filtrar solo los que SÍ son inmigrantes
+            items = items.filter(item => esInmigrante(item));
 
             if (searchLower) {
                 items = items.filter(item => {
@@ -1732,7 +1829,7 @@
                 return;
             }
 
-            // Renderizar en un solo grid (sin agrupar por rango, o puedes agrupar si quieres)
+            // Renderizar en un solo grid
             let html = `<div class="rank-grid">`;
             let cardIndex = 0;
 
