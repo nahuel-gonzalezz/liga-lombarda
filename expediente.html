@@ -54,7 +54,6 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ===== FONDO OSCURO ===== */
     body {
       background: radial-gradient(circle at top, #3a342e, #171717 70%);
       color: #fff;
@@ -283,26 +282,26 @@
       border-bottom: 2px solid #a4864a;
       padding-bottom: 4px;
     }
-    .clan-bajo {
-      font-family: "Montserrat", sans-serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: #d4b76c;
-      letter-spacing: 2px;
-      margin-top: 6px;
-      text-transform: uppercase;
-      opacity: 0.85;
-    }
-    .clan-bajo i {
-      color: #a4864a;
-      margin-right: 6px;
-    }
     .alias-bajo {
       font-size: 16px;
       color: #b8aa8c;
       margin-top: 6px;
       letter-spacing: 2px;
       font-family: "Montserrat", sans-serif;
+    }
+    .clan-bajo {
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #d4b76c;
+      letter-spacing: 2px;
+      margin-top: 4px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+    .clan-bajo i {
+      color: #a4864a;
+      margin-right: 6px;
     }
     .detalles-extra {
       display: flex;
@@ -768,52 +767,52 @@
     }
     .click-hint i { margin-right: 6px; }
 
-    /* ===== VARIANTE PASAPORTE ===== */
+    /* ===== VARIANTE PASAPORTE (VERDE OLIVA) ===== */
     .passport .front {
-      background: linear-gradient(145deg, #1a0524, #2a0a3d, #1a0524) !important;
-      color: #d0a8e8 !important;
-      border: 3px solid #4a1060;
+      background: linear-gradient(145deg, #142a14, #1e3d1e, #142a14) !important;
+      color: #d4af37 !important;
+      border: 3px solid #2a4a2a;
     }
-    .passport .front * { color: #d0a8e8 !important; }
+    .passport .front * { color: #d4af37 !important; }
     .passport .cover-border {
-      border-color: #d0a8e8;
-      background: radial-gradient(ellipse at center, rgba(156, 39, 176, 0.1) 0%, transparent 70%);
+      border-color: #d4af37;
+      background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
     }
     .passport .cover-border::before,
-    .passport .cover-border::after { color: #d0a8e8; }
-    .passport .cover h1 { color: #d0a8e8 !important; text-shadow: 0 2px 15px rgba(0,0,0,0.7); }
-    .passport .subtitle { color: #b88ad0 !important; }
+    .passport .cover-border::after { color: #d4af37; }
+    .passport .cover h1 { color: #d4af37 !important; text-shadow: 0 2px 15px rgba(0,0,0,0.7); }
+    .passport .subtitle { color: #c8b878 !important; }
     .passport .seal-gold {
-      border-color: #d0a8e8;
-      color: #d0a8e8 !important;
-      background: rgba(156, 39, 176, 0.1);
-      box-shadow: 0 0 30px rgba(156, 39, 176, 0.15);
+      border-color: #d4af37;
+      color: #d4af37 !important;
+      background: rgba(212, 175, 55, 0.08);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.12);
     }
-    .passport .click-hint { color: #d0a8e8 !important; }
-    .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(156, 39, 176, 0.4)); }
+    .passport .click-hint { color: #d4af37 !important; }
+    .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4)); }
 
-    /* Hoja pasaporte (interior morado) */
+    /* Hoja pasaporte (interior verde oliva suave) */
     .passport .page .front,
     .passport .page .back {
-      background: linear-gradient(170deg, #f0e6f5 0%, #e0d0eb 100%);
-      border-color: #b89cc8;
+      background: linear-gradient(170deg, #eef0e0 0%, #dfe4c8 100%);
+      border-color: #a8b88c;
     }
     .passport .page .front {
-      background: linear-gradient(175deg, #f5ecf9 0%, #ead9f2 100%);
-      border-right-color: #c8a8d8;
+      background: linear-gradient(175deg, #f2f4e6 0%, #e4e9d0 100%);
+      border-right-color: #b8c89c;
     }
     .passport .page .back {
-      background: linear-gradient(175deg, #ead9f2 0%, #ddc8e8 100%);
-      border-left-color: #c8a8d8;
+      background: linear-gradient(175deg, #e4e9d0 0%, #d4dcb8 100%);
+      border-left-color: #b8c89c;
     }
-    .passport .header-doc { border-bottom-color: #7b1fa2; }
+    .passport .header-doc { border-bottom-color: #2a4a2a; }
     .passport .header-doc * { color: #222 !important; }
-    .passport .header-title span { color: #7b1fa2 !important; }
-    .passport .red-text { color: #7b1fa2 !important; }
+    .passport .header-title span { color: #2a4a2a !important; }
+    .passport .red-text { color: #2a4a2a !important; }
     .passport .section-title {
-      color: #7b1fa2 !important;
-      border-top-color: #7b1fa2;
-      border-bottom-color: #7b1fa2;
+      color: #2a4a2a !important;
+      border-top-color: #2a4a2a;
+      border-bottom-color: #2a4a2a;
     }
     .passport .field-row label i,
     .passport .info-list p strong i,
@@ -825,26 +824,26 @@
     .passport .stat-title,
     .passport .stat-table td:first-child i,
     .passport .dni-icon,
-    .passport .stat-title i { color: #7b1fa2 !important; }
-    .passport .stat-title { border-bottom-color: #7b1fa2; color: #7b1fa2 !important; }
-    .passport .obs-section label { color: #7b1fa2 !important; border-bottom-color: #7b1fa2; }
+    .passport .stat-title i { color: #2a4a2a !important; }
+    .passport .stat-title { border-bottom-color: #2a4a2a; color: #2a4a2a !important; }
+    .passport .obs-section label { color: #2a4a2a !important; border-bottom-color: #2a4a2a; }
     .passport .status-badge {
-      border-color: #7b1fa2;
-      color: #7b1fa2 !important;
-      background: rgba(123, 31, 162, 0.06);
+      border-color: #2a4a2a;
+      color: #2a4a2a !important;
+      background: rgba(42, 74, 42, 0.06);
     }
     .passport .motto {
-      color: #7b1fa2 !important;
-      border-top-color: #7b1fa2;
+      color: #2a4a2a !important;
+      border-top-color: #2a4a2a;
     }
-    .passport .motto i { color: #7b1fa2 !important; }
+    .passport .motto i { color: #2a4a2a !important; }
     .passport .page:last-child .back {
-      background: linear-gradient(145deg, #150520, #2a0a3d) !important;
-      border: 3px solid #4a1060;
+      background: linear-gradient(145deg, #0e1e0e, #1e3d1e) !important;
+      border: 3px solid #2a4a2a;
     }
-    .passport .page:last-child .back h3 { color: #d0a8e8 !important; }
-    .passport .page:last-child .back p { color: #b88ad0 !important; }
-    .passport .page:last-child .back i { color: #d0a8e8 !important; }
+    .passport .page:last-child .back h3 { color: #d4af37 !important; }
+    .passport .page:last-child .back p { color: #c8b878 !important; }
+    .passport .page:last-child .back i { color: #d4af37 !important; }
 
     .inner-cover {
       display: flex;
@@ -881,11 +880,11 @@
     }
     .inner-cover .inner-seal i { font-size: 24px; color: #8c2323; }
     .passport .inner-cover {
-      background: linear-gradient(135deg, #f0e6f5, #e0d0eb);
+      background: linear-gradient(135deg, #eef0e0, #dfe4c8);
     }
-    .passport .inner-cover h3 { color: #2a0a3d !important; }
-    .passport .inner-cover .inner-seal { border-color: #7b1fa2; background: rgba(123,31,162,0.05); }
-    .passport .inner-cover .inner-seal i { color: #7b1fa2; }
+    .passport .inner-cover h3 { color: #1e3d1e !important; }
+    .passport .inner-cover .inner-seal { border-color: #2a4a2a; background: rgba(42,74,42,0.05); }
+    .passport .inner-cover .inner-seal i { color: #2a4a2a; }
 
     .page-inner {
       display: flex;
@@ -1159,8 +1158,8 @@
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
     }
     .passport .boxes-container i.fill {
-      background: #7b1fa2;
-      border-color: #4a1060;
+      background: #2a4a2a;
+      border-color: #142a14;
     }
 
     .status-badge {
@@ -1357,13 +1356,13 @@
     }
     .book-controls button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
     .passport .book-controls button {
-      color: #d0a8e8;
-      border-color: #d0a8e8;
+      color: #d4af37;
+      border-color: #d4af37;
     }
     .passport .book-controls button:hover:not(:disabled) {
-      background: linear-gradient(145deg, #d0a8e8, #9a6cb0);
-      color: #1a0524;
-      box-shadow: 0 6px 30px rgba(156, 39, 176, 0.3);
+      background: linear-gradient(145deg, #d4af37, #b8962a);
+      color: #142a14;
+      box-shadow: 0 6px 30px rgba(212, 175, 55, 0.3);
     }
 
     .error-state {
@@ -1496,8 +1495,8 @@
         </div>
         <div class="datos-persona">
           <div class="nombre-bajo" id="displayName">CARGANDO...</div>
-          <div class="clan-bajo" id="displayClan"><i class="fas fa-users"></i> SIN CLAN</div>
           <div class="alias-bajo" id="displayAlias">★ "Cargando..."</div>
+          <div class="clan-bajo" id="displayClan"><i class="fas fa-users"></i> LIGA LOMBARDA</div>
           <div class="detalles-extra">
             <span><i class="fas fa-chess-king"></i> <span id="displayRank">—</span></span>
             <span><i class="fas fa-flag"></i> <span id="displayNationality">—</span></span>
@@ -1766,7 +1765,6 @@
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
 
-    // Rango de lombardos (para detectar inmigrantes igual que en documentos.html)
     const RANK_ORDER = [
       'Elite Urbana',
       'Caballero Lombardo',
@@ -2188,42 +2186,34 @@
 
     // ===== APLICAR MODO PASAPORTE =====
     function aplicarModoPasaporte() {
-      // Ocultar DNI y botón
       const dniContainer = document.getElementById('dniContainer');
       const downloadWrapper = document.getElementById('downloadDniWrapper');
       if (dniContainer) dniContainer.style.display = 'none';
       if (downloadWrapper) downloadWrapper.style.display = 'none';
 
-      // Añadir clase 'passport' al libro
       const bookEl = document.getElementById('book');
       if (bookEl) bookEl.classList.add('passport');
 
-      // Cambiar textos de la carátula
-      document.getElementById('coverTitle').textContent = 'PASAPORTE';
-      document.getElementById('coverSubtitle').textContent = 'LIGA LOMBARDA · REGISTRO DE INDOCUMENTADOS';
+      document.getElementById('coverTitle').textContent = 'PASAPORTE LOMBARDO';
+      document.getElementById('coverSubtitle').textContent = 'REGISTRO DE EXTRANJEROS';
       document.getElementById('coverSeal').textContent = 'DOCUMENTO RESTRINGIDO';
 
-      // Cambiar textos internos
-      document.getElementById('innerCoverTitle').textContent = 'PASAPORTE';
-      document.getElementById('innerCoverSubtitle').textContent = 'Documento Oficial de Indocumentado';
+      document.getElementById('innerCoverTitle').textContent = 'PASAPORTE LOMBARDO';
+      document.getElementById('innerCoverSubtitle').textContent = 'Documento Oficial de Extranjero';
       document.getElementById('innerCoverFooter').textContent = 'Emitido bajo custodia de la Liga';
 
-      // Encabezados internos
-      document.getElementById('bookHeaderTitle').textContent = 'PASAPORTE';
+      document.getElementById('bookHeaderTitle').textContent = 'PASAPORTE LOMBARDO';
       document.getElementById('bookHeaderSubtitle').textContent = 'REGISTRO DE EXTRANJERO';
       document.getElementById('bookHeaderSmall').textContent = 'INDOCUMENTADO';
 
-      // Section title info
       const infoTitle = document.querySelector('#page-1 .back .section-title');
-      if (infoTitle) infoTitle.innerHTML = '<i class="fas fa-id-card"></i> INFORMACIÓN DEL INDOCUMENTADO';
+      if (infoTitle) infoTitle.innerHTML = '<i class="fas fa-id-card"></i> INFORMACIÓN DEL EXTRANJERO';
 
-      // Motto final
       const motto = document.getElementById('bookMotto');
       if (motto) motto.innerHTML = '<i class="fas fa-passport"></i> POR LA LIGA · CONTROL MIGRATORIO <i class="fas fa-passport"></i>';
 
-      // Último texto
       document.getElementById('bookEndTitle').textContent = 'FIN';
-      document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE OFICIAL <i class="fas fa-passport"></i>';
+      document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
     }
 
     function actualizarUI(data) {
@@ -2239,22 +2229,28 @@
       const description = data.description || 'Sin descripción registrada.';
       const fileNumber = data.fileNumber || 'LL-2026-0000';
       const minecraftNick = data.minecraftNick || '';
-      const clan = data.clan || '';
+      const clanRaw = data.clan || '';
       const stats = data.stats || {};
       const competencies = data.competencies || {};
 
       const inmigrante = esInmigrante(data);
 
-      // Nombre, alias, clan y extras
+      // Para lombardos: si no tiene clan, mostramos "LIGA LOMBARDA"
+      // Para inmigrantes: si no tiene clan, mostramos "SIN CLAN"
+      let clanDisplay;
+      if (clanRaw && String(clanRaw).trim() !== '') {
+        clanDisplay = clanRaw;
+      } else {
+        clanDisplay = inmigrante ? 'SIN CLAN' : 'LIGA LOMBARDA';
+      }
+
+      // Nombre y alias
       document.getElementById('displayName').textContent = name;
       document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
 
+      // Clan debajo del alias
       const clanEl = document.getElementById('displayClan');
-      if (clan && String(clan).trim() !== '') {
-        clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${clan}`;
-      } else {
-        clanEl.innerHTML = `<i class="fas fa-users"></i> SIN CLAN`;
-      }
+      clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${clanDisplay}`;
 
       document.getElementById('displayRank').textContent = rank;
       document.getElementById('displayNationality').textContent = nationality;
@@ -2295,13 +2291,12 @@
       document.getElementById('bookCertDate').textContent = f;
       document.getElementById('bookLastVerification').textContent = f;
 
-      // Clan en el libro
+      // Clan en el libro (debajo del alias)
       const bookClanEl = document.getElementById('bookClan');
       if (bookClanEl) {
-        bookClanEl.textContent = (clan && String(clan).trim() !== '') ? clan : '—';
+        bookClanEl.textContent = clanDisplay;
       }
 
-      // Si es inmigrante, aplicar modo pasaporte
       if (inmigrante) {
         aplicarModoPasaporte();
       }
