@@ -540,14 +540,15 @@
       justify-content: flex-end;
       padding: 4px 6px 2px 6px;
       position: relative;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-wrap: nowrap;
+      gap: 10px;
     }
     .dni-issue {
       text-align: right;
-      padding-right: 20px;
+      /* Ya no reserva espacio para el sello porque el sello va a la izquierda */
       position: relative;
       z-index: 6;
+      flex-shrink: 0;
     }
     .dni-issue-label {
       font-family: 'Montserrat', sans-serif;
@@ -559,11 +560,13 @@
     }
     .dni-issue-date { font-size: 0.8rem; font-weight: 800; color: #500a0e; letter-spacing: 1px; }
     .dni-seal {
-      position: absolute;
-      right: 8px; bottom: 4px;
       width: 48px; height: 48px;
       object-fit: contain;
       z-index: 5;
+      flex-shrink: 0;
+      /* El sello ya no se superpone al texto */
+      position: static;
+      margin-right: auto;
     }
     .dni-bottom-bar {
       background-color: #500a0e;
@@ -841,7 +844,6 @@
     }
     .passport .motto i { color: #2a4a2a !important; }
 
-    /* Última página (FIN) del pasaporte — verde oscuro, no marrón */
     .passport .page:last-child .back {
       background: linear-gradient(145deg, #0e1e0e, #1e3d1e) !important;
       border: 3px solid #2a4a2a !important;
@@ -850,7 +852,6 @@
     .passport .page:last-child .back p { color: #c8b878 !important; }
     .passport .page:last-child .back i { color: #d4af37 !important; }
 
-    /* FORZAR hojas específicas que antes quedaban marrones */
     .passport #page-3 .front,
     .passport #page-3 .back {
       background: linear-gradient(175deg, #f2f4e6 0%, #e4e9d0 100%) !important;
@@ -1406,7 +1407,7 @@
       .dni-grid { gap: 2px 8px; grid-template-columns: 1fr 1fr; }
       .dni-value { font-size: 0.55rem; }
       .dni-footer { padding: 2px 2px 0 2px; }
-      .dni-seal { width: 36px; height: 36px; right: 4px; bottom: 2px; }
+      .dni-seal { width: 36px; height: 36px; }
       .dni-bottom-bar { font-size: 0.32rem; letter-spacing: 1px; padding: 2px 0; margin: 0 -14px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 20px; }
       .dni-issue-date { font-size: 0.65rem; }
@@ -1455,7 +1456,7 @@
       .dni-footer { padding: 1px 0 0 0; }
       .dni-issue { padding-right: 10px; }
       .dni-issue-date { font-size: 0.5rem; }
-      .dni-seal { width: 28px; height: 28px; right: 2px; bottom: 2px; }
+      .dni-seal { width: 28px; height: 28px; }
       .dni-bottom-bar { font-size: 0.25rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -10px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
       .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 16px; }
       .cover h1 { font-size: 1rem; }
@@ -1568,11 +1569,11 @@
                 </div>
               </div>
               <div class="dni-footer">
+                <img class="dni-seal" src="./img/Sello.png" alt="Sello" />
                 <div class="dni-issue">
                   <div class="dni-issue-label">EMISIÓN</div>
                   <div class="dni-issue-date" id="dniDate">__/__/____</div>
                 </div>
-                <img class="dni-seal" src="./img/Sello.png" alt="Sello" />
               </div>
             </div>
             <div class="dni-bottom-bar">POR LA LIGA &nbsp;•&nbsp; POR LOMBARDOS &nbsp;•&nbsp; POR SIEMPRE</div>
@@ -1815,6 +1816,21 @@
       }
       if (item.rank && RANK_ORDER.includes(item.rank)) return false;
       return true;
+    }
+
+    // Formatea una fecha ISO (createdAt) a DD/MM/AAAA
+    function formatearFechaEmision(fechaISO) {
+      if (!fechaISO) return null;
+      try {
+        const d = new Date(fechaISO);
+        if (isNaN(d.getTime())) return null;
+        const dia = String(d.getUTCDate()).padStart(2, '0');
+        const mes = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const anio = d.getUTCFullYear();
+        return `${dia}/${mes}/${anio}`;
+      } catch (e) {
+        return null;
+      }
     }
 
     function showToast(message, type = 'info', duration = 4000) {
@@ -2269,6 +2285,12 @@
       document.getElementById('displayOccupation').textContent = occupation;
       document.getElementById('displayStatus').textContent = status;
 
+      // ===== FECHA DE EMISIÓN desde createdAt =====
+      const fechaEmisionFormateada = formatearFechaEmision(data.createdAt);
+      const hoy = new Date();
+      const fechaFallback = String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
+      const fechaFinal = fechaEmisionFormateada || fechaFallback;
+
       if (!inmigrante) {
         document.getElementById('dniName').textContent = name;
         document.getElementById('dniAlias').textContent = alias;
@@ -2281,10 +2303,8 @@
         document.getElementById('dniFileNumber').textContent = fileNumber;
       }
 
-      const hoy = new Date();
-      const f = String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
       const dniDateEl = document.getElementById('dniDate');
-      if (dniDateEl) dniDateEl.textContent = f;
+      if (dniDateEl) dniDateEl.textContent = fechaFinal;
 
       document.getElementById('bookName').textContent = name;
       document.getElementById('bookAlias').textContent = alias;
@@ -2298,8 +2318,8 @@
       document.getElementById('bookDescription').textContent = description;
       document.getElementById('bookObservations').textContent = description || 'Sin observaciones.';
       document.getElementById('bookFileNumber').textContent = fileNumber;
-      document.getElementById('bookCertDate').textContent = f;
-      document.getElementById('bookLastVerification').textContent = f;
+      document.getElementById('bookCertDate').textContent = fechaFinal;
+      document.getElementById('bookLastVerification').textContent = fechaFinal;
 
       const bookClanEl = document.getElementById('bookClan');
       if (bookClanEl) {
@@ -2459,13 +2479,10 @@
           const dniCard = document.getElementById('dniCard');
           if (!dniCard) return;
 
-          // 1. Forzar render del viewer del DNI justo antes de capturar
           if (dniViewer) {
             dniViewer.render();
           }
 
-          // 2. Capturar la imagen del canvas WebGL en el siguiente frame
-          //    (garantiza que el buffer tiene contenido)
           const skinDataURL = await new Promise((resolve) => {
             requestAnimationFrame(() => {
               if (dniViewer) dniViewer.render();
@@ -2479,7 +2496,6 @@
             });
           });
 
-          // 3. Clonar la tarjeta DNI
           const clone = dniCard.cloneNode(true);
           clone.style.position = 'fixed';
           clone.style.left = '-9999px';
@@ -2492,7 +2508,6 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
-          // 4. Reemplazar el canvas del clon por la imagen capturada
           const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
           if (dniCanvasClone) {
             if (skinDataURL) {
@@ -2504,7 +2519,6 @@
               img.style.display = 'block';
               dniCanvasClone.parentNode.replaceChild(img, dniCanvasClone);
             } else {
-              // Fallback: fondo gris
               const placeholder = document.createElement('div');
               placeholder.style.width = '100%';
               placeholder.style.height = '100%';
