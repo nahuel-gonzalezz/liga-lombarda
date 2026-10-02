@@ -791,28 +791,32 @@
     .passport .click-hint { color: #d4af37 !important; }
     .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.4)); }
 
-    /* Hoja pasaporte (interior verde oliva suave) */
+    /* Hoja pasaporte (interior verde oliva) — FORZAMOS todas las hojas */
     .passport .page .front,
-    .passport .page .back {
-      background: linear-gradient(170deg, #eef0e0 0%, #dfe4c8 100%);
-      border-color: #a8b88c;
+    .passport .page .back,
+    .passport #page-1 .front,
+    .passport #page-1 .back,
+    .passport #page-2 .front,
+    .passport #page-2 .back,
+    .passport #page-3 .front,
+    .passport #page-3 .back {
+      background: linear-gradient(175deg, #f2f4e6 0%, #e4e9d0 100%) !important;
+      border-color: #a8b88c !important;
     }
-    .passport .page .front {
-      background: linear-gradient(175deg, #f2f4e6 0%, #e4e9d0 100%);
-      border-right-color: #b8c89c;
+    .passport #page-1 .back,
+    .passport #page-2 .back,
+    .passport #page-3 .back {
+      background: linear-gradient(175deg, #e4e9d0 0%, #d4dcb8 100%) !important;
+      border-left-color: #b8c89c !important;
     }
-    .passport .page .back {
-      background: linear-gradient(175deg, #e4e9d0 0%, #d4dcb8 100%);
-      border-left-color: #b8c89c;
-    }
-    .passport .header-doc { border-bottom-color: #2a4a2a; }
+    .passport .header-doc { border-bottom-color: #2a4a2a !important; }
     .passport .header-doc * { color: #222 !important; }
     .passport .header-title span { color: #2a4a2a !important; }
     .passport .red-text { color: #2a4a2a !important; }
     .passport .section-title {
       color: #2a4a2a !important;
-      border-top-color: #2a4a2a;
-      border-bottom-color: #2a4a2a;
+      border-top-color: #2a4a2a !important;
+      border-bottom-color: #2a4a2a !important;
     }
     .passport .field-row label i,
     .passport .info-list p strong i,
@@ -823,27 +827,39 @@
     .passport .sig-label i,
     .passport .stat-title,
     .passport .stat-table td:first-child i,
-    .passport .dni-icon,
     .passport .stat-title i { color: #2a4a2a !important; }
-    .passport .stat-title { border-bottom-color: #2a4a2a; color: #2a4a2a !important; }
-    .passport .obs-section label { color: #2a4a2a !important; border-bottom-color: #2a4a2a; }
+    .passport .stat-title { border-bottom-color: #2a4a2a !important; color: #2a4a2a !important; }
+    .passport .obs-section label { color: #2a4a2a !important; border-bottom-color: #2a4a2a !important; }
     .passport .status-badge {
-      border-color: #2a4a2a;
+      border-color: #2a4a2a !important;
       color: #2a4a2a !important;
-      background: rgba(42, 74, 42, 0.06);
+      background: rgba(42, 74, 42, 0.06) !important;
     }
     .passport .motto {
       color: #2a4a2a !important;
-      border-top-color: #2a4a2a;
+      border-top-color: #2a4a2a !important;
     }
     .passport .motto i { color: #2a4a2a !important; }
+
+    /* Última página (FIN) del pasaporte — verde oscuro, no marrón */
     .passport .page:last-child .back {
       background: linear-gradient(145deg, #0e1e0e, #1e3d1e) !important;
-      border: 3px solid #2a4a2a;
+      border: 3px solid #2a4a2a !important;
     }
     .passport .page:last-child .back h3 { color: #d4af37 !important; }
     .passport .page:last-child .back p { color: #c8b878 !important; }
     .passport .page:last-child .back i { color: #d4af37 !important; }
+
+    /* FORZAR hojas específicas que antes quedaban marrones */
+    .passport #page-3 .front,
+    .passport #page-3 .back {
+      background: linear-gradient(175deg, #f2f4e6 0%, #e4e9d0 100%) !important;
+      border-color: #a8b88c !important;
+    }
+    .passport #page-3 .back {
+      background: linear-gradient(145deg, #0e1e0e, #1e3d1e) !important;
+      border: 3px solid #2a4a2a !important;
+    }
 
     .inner-cover {
       display: flex;
@@ -880,11 +896,11 @@
     }
     .inner-cover .inner-seal i { font-size: 24px; color: #8c2323; }
     .passport .inner-cover {
-      background: linear-gradient(135deg, #eef0e0, #dfe4c8);
+      background: linear-gradient(135deg, #eef0e0, #dfe4c8) !important;
     }
     .passport .inner-cover h3 { color: #1e3d1e !important; }
-    .passport .inner-cover .inner-seal { border-color: #2a4a2a; background: rgba(42,74,42,0.05); }
-    .passport .inner-cover .inner-seal i { color: #2a4a2a; }
+    .passport .inner-cover .inner-seal { border-color: #2a4a2a !important; background: rgba(42,74,42,0.05) !important; }
+    .passport .inner-cover .inner-seal i { color: #2a4a2a !important; }
 
     .page-inner {
       display: flex;
@@ -2235,8 +2251,6 @@
 
       const inmigrante = esInmigrante(data);
 
-      // Para lombardos: si no tiene clan, mostramos "LIGA LOMBARDA"
-      // Para inmigrantes: si no tiene clan, mostramos "SIN CLAN"
       let clanDisplay;
       if (clanRaw && String(clanRaw).trim() !== '') {
         clanDisplay = clanRaw;
@@ -2244,11 +2258,9 @@
         clanDisplay = inmigrante ? 'SIN CLAN' : 'LIGA LOMBARDA';
       }
 
-      // Nombre y alias
       document.getElementById('displayName').textContent = name;
       document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
 
-      // Clan debajo del alias
       const clanEl = document.getElementById('displayClan');
       clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${clanDisplay}`;
 
@@ -2257,7 +2269,6 @@
       document.getElementById('displayOccupation').textContent = occupation;
       document.getElementById('displayStatus').textContent = status;
 
-      // DNI (solo si lombardo)
       if (!inmigrante) {
         document.getElementById('dniName').textContent = name;
         document.getElementById('dniAlias').textContent = alias;
@@ -2275,7 +2286,6 @@
       const dniDateEl = document.getElementById('dniDate');
       if (dniDateEl) dniDateEl.textContent = f;
 
-      // Libro / Pasaporte
       document.getElementById('bookName').textContent = name;
       document.getElementById('bookAlias').textContent = alias;
       document.getElementById('bookRank').textContent = rank;
@@ -2291,7 +2301,6 @@
       document.getElementById('bookCertDate').textContent = f;
       document.getElementById('bookLastVerification').textContent = f;
 
-      // Clan en el libro (debajo del alias)
       const bookClanEl = document.getElementById('bookClan');
       if (bookClanEl) {
         bookClanEl.textContent = clanDisplay;
@@ -2301,7 +2310,6 @@
         aplicarModoPasaporte();
       }
 
-      // Stats
       const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
       statKeys.forEach((key) => {
         const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
@@ -2443,13 +2451,35 @@
       updateBookState();
     }, 100);
 
-    // ===== DESCARGAR DNI =====
+    // ===== DESCARGAR DNI (con foto de skin forzada) =====
     const downloadBtn = document.getElementById('downloadDniBtn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async function() {
         try {
           const dniCard = document.getElementById('dniCard');
           if (!dniCard) return;
+
+          // 1. Forzar render del viewer del DNI justo antes de capturar
+          if (dniViewer) {
+            dniViewer.render();
+          }
+
+          // 2. Capturar la imagen del canvas WebGL en el siguiente frame
+          //    (garantiza que el buffer tiene contenido)
+          const skinDataURL = await new Promise((resolve) => {
+            requestAnimationFrame(() => {
+              if (dniViewer) dniViewer.render();
+              try {
+                const url = dniCanvas.toDataURL('image/png');
+                resolve(url);
+              } catch (e) {
+                console.warn('No se pudo capturar el canvas WebGL:', e);
+                resolve(null);
+              }
+            });
+          });
+
+          // 3. Clonar la tarjeta DNI
           const clone = dniCard.cloneNode(true);
           clone.style.position = 'fixed';
           clone.style.left = '-9999px';
@@ -2462,26 +2492,36 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
-          const originalCanvas = document.getElementById('dniSkinCanvas');
+          // 4. Reemplazar el canvas del clon por la imagen capturada
           const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
-          if (dniCanvasClone && originalCanvas) {
-            try {
-              const dataURL = originalCanvas.toDataURL('image/png');
+          if (dniCanvasClone) {
+            if (skinDataURL) {
               const img = document.createElement('img');
-              img.src = dataURL;
+              img.src = skinDataURL;
               img.style.width = '100%';
               img.style.height = '100%';
               img.style.objectFit = 'contain';
               img.style.display = 'block';
               dniCanvasClone.parentNode.replaceChild(img, dniCanvasClone);
-            } catch (e) {
-              console.warn('No se pudo convertir el canvas del DNI:', e);
+            } else {
+              // Fallback: fondo gris
+              const placeholder = document.createElement('div');
+              placeholder.style.width = '100%';
+              placeholder.style.height = '100%';
+              placeholder.style.background = '#e8e4da';
+              placeholder.style.display = 'flex';
+              placeholder.style.alignItems = 'center';
+              placeholder.style.justifyContent = 'center';
+              placeholder.style.color = '#999';
+              placeholder.style.fontSize = '10px';
+              placeholder.textContent = 'SIN FOTO';
+              dniCanvasClone.parentNode.replaceChild(placeholder, dniCanvasClone);
             }
           }
 
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 150));
 
-          const canvas = await html2canvas(clone, {
+          const canvasCaptured = await html2canvas(clone, {
             scale: 3,
             backgroundColor: '#f7f5ef',
             useCORS: true,
@@ -2494,7 +2534,7 @@
 
           const link = document.createElement('a');
           link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
-          link.href = canvas.toDataURL('image/png');
+          link.href = canvasCaptured.toDataURL('image/png');
           link.click();
           showToast('✅ DNI descargado correctamente', 'success', 3000);
         } catch (error) {
