@@ -461,7 +461,7 @@
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       color: #500a0e;
-      background-color: #eee8e2;
+      background-color: #f7f5ef;
       padding: 0 6px;
       font-size: 0.5rem;
     }
@@ -538,7 +538,8 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 6px 6px 4px 6px;
+      padding: 0 6px 4px 6px;
+      margin-top: -18px;
       position: relative;
       flex-wrap: nowrap;
       gap: 10px;
@@ -551,13 +552,13 @@
     }
     .dni-issue-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       font-weight: 800;
       color: #665c54;
       letter-spacing: 0.5px;
       margin-bottom: 0;
     }
-    .dni-issue-date { font-size: 1rem; font-weight: 800; color: #500a0e; letter-spacing: 1px; }
+    .dni-issue-date { font-size: 0.85rem; font-weight: 800; color: #500a0e; letter-spacing: 1px; }
     .dni-bottom-bar {
       background-color: #500a0e;
       color: #fff;
@@ -1294,7 +1295,7 @@
     .passport .book-controls button:hover:not(:disabled) {
       background: linear-gradient(145deg, #d4af37, #b8962a);
       color: #1a0505;
-      box-shadow: 0 6px 30px rgba(212, 175, 55, 0.3);
+      box-shadow: 0 6px 30px rgba(212, 175,,55, 0.3);
     }
 
     .error-state {
@@ -1323,10 +1324,11 @@
       .dni-value { font-size: 0.7rem; }
       .dni-label { font-size: 0.45rem; }
       .dni-icon { font-size: 0.75rem; width: 18px; }
-      .dni-footer { padding: 4px 2px 2px 2px; }
+      .dni-footer { padding: 0 2px 2px 2px; margin-top: -14px; }
       .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; padding: 3px 0; margin: 0 -16px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 22px; }
-      .dni-issue-date { font-size: 0.8rem; }
+      .dni-issue-date { font-size: 0.7rem; }
+      .dni-issue-label { font-size: 0.45rem; }
       .book-wrapper { margin-top: 15px; padding: 15px 0; }
       .book-container { max-width: 360px; }
       .book.open { transform: translateX(38%) !important; }
@@ -1372,8 +1374,9 @@
       .dni-icon { font-size: 0.6rem; width: 15px; }
       .dni-label { font-size: 0.35rem; }
       .dni-value { font-size: 0.6rem; }
-      .dni-footer { padding: 2px 0 0 0; }
-      .dni-issue-date { font-size: 0.65rem; }
+      .dni-footer { padding: 0 0 0 0; margin-top: -10px; }
+      .dni-issue-date { font-size: 0.6rem; }
+      .dni-issue-label { font-size: 0.4rem; }
       .dni-bottom-bar { font-size: 0.3rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
       .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 18px; }
       .cover h1 { font-size: 1.2rem; }
@@ -1638,7 +1641,6 @@
                       <div class="signature-area">
                         <img src="./img/Firma.png" alt="Firma" class="sig-img" crossorigin="anonymous" />
                         <div class="sig-line"></div>
-                        <span class="sig-label"><i class="fas fa-pen-fancy"></i> REGISTRADOR</span>
                       </div>
                     </div>
                     <div>
