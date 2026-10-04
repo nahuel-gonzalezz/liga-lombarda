@@ -539,7 +539,7 @@
       align-items: center;
       justify-content: flex-end;
       padding: 0 6px 4px 6px;
-      margin-top: -18px;
+      margin-top: -34px; /* Subido más (antes -18px) */
       position: relative;
       flex-wrap: nowrap;
       gap: 10px;
@@ -1324,7 +1324,7 @@
       .dni-value { font-size: 0.7rem; }
       .dni-label { font-size: 0.45rem; }
       .dni-icon { font-size: 0.75rem; width: 18px; }
-      .dni-footer { padding: 0 2px 2px 2px; margin-top: -14px; }
+      .dni-footer { padding: 0 2px 2px 2px; margin-top: -28px; }
       .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; padding: 3px 0; margin: 0 -16px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 22px; }
       .dni-issue-date { font-size: 0.7rem; }
@@ -1374,7 +1374,7 @@
       .dni-icon { font-size: 0.6rem; width: 15px; }
       .dni-label { font-size: 0.35rem; }
       .dni-value { font-size: 0.6rem; }
-      .dni-footer { padding: 0 0 0 0; margin-top: -10px; }
+      .dni-footer { padding: 0 0 0 0; margin-top: -22px; }
       .dni-issue-date { font-size: 0.6rem; }
       .dni-issue-label { font-size: 0.4rem; }
       .dni-bottom-bar { font-size: 0.3rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
@@ -2223,7 +2223,7 @@
       document.getElementById('bookGender').textContent = gender;
       document.getElementById('bookSpecies').textContent = species;
       document.getElementById('bookDescription').textContent = description;
-      document.getElementById('bookObservations').textContent = description || 'Sin observaciones.';
+      document.getElementById('bookObservations').textContent = 'Sin observaciones.';
       document.getElementById('bookFileNumber').textContent = fileNumber;
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
