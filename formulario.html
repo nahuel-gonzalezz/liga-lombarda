@@ -2573,7 +2573,7 @@
         }
 
         // =========================================================
-        // OBTENER DATOS DEL FORMULARIO  // ✅ FIX: campos normalizados
+        // OBTENER DATOS DEL FORMULARIO  // ✅ FIX: POSE PLANA
         // =========================================================
         function getFormData() {
             const isInmigrante = document.body.classList.contains('theme-purple');
@@ -2590,7 +2590,6 @@
             const description = document.getElementById('description').value.trim() || 'Sin descripción registrada.';
             const minecraftNick = document.getElementById('minecraftNick').value.trim() || '';
 
-            // ✅ FIX: Siempre strings (nunca undefined)
             let rank = '';
             let clan = '';
 
@@ -2601,10 +2600,10 @@
                 } else {
                     clan = clanSelect.value || '';
                 }
-                rank = ''; // explícito
+                rank = '';
             } else {
                 rank = document.getElementById('rank').value || 'Ciudadano';
-                clan = ''; // explícito
+                clan = '';
             }
 
             let birthStr = '—';
@@ -2638,13 +2637,34 @@
                 if (btn.classList.contains('active')) activePose = btn.dataset.pose;
             });
 
+            // ✅ FIX: Pose PLANA al nivel raíz (así la lee el librito)
             return {
                 fileNumber,
                 type: isInmigrante ? 'inmigrante' : 'ciudadano',
                 name, alias, rank, clan, nationality, occupation, status,
                 birthDate: birthStr, gender, species, marital, description,
                 minecraftNick, stats, competencies,
-                pose: { name: activePose, values: poseData },
+
+                // === POSE PLANA ===
+                headPitch:  poseData.headPitch,
+                headRoll:   poseData.headRoll,
+                headYaw:    poseData.headYaw,
+                leftArmX:   poseData.leftArmX,
+                leftArmY:   poseData.leftArmY,
+                leftArmZ:   poseData.leftArmZ,
+                leftLegX:   poseData.leftLegX,
+                leftLegZ:   poseData.leftLegZ,
+                rightArmX:  poseData.rightArmX,
+                rightArmY:  poseData.rightArmY,
+                rightArmZ:  poseData.rightArmZ,
+                rightLegX:  poseData.rightLegX,
+                rightLegZ:  poseData.rightLegZ,
+                bodyYaw:    poseData.bodyYaw,
+                bodyPitch:  poseData.bodyPitch,
+
+                // Nombre de la pose usada (opcional, informativo)
+                pose: activePose,
+
                 background: {
                     type: currentBgType,
                     customImage: currentBgType === 'custom' ? (customBackgroundURL || null) : null
@@ -2708,7 +2728,7 @@
         }
 
         // =========================================================
-        // FIREBASE  // ✅ FIX: errores reales visibles
+        // FIREBASE
         // =========================================================
         async function saveToFirebase(data) {
             if (typeof window.firebaseDB === 'undefined' || !window.firebaseDB) {
