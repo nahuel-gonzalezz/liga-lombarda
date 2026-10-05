@@ -790,17 +790,6 @@
             z-index: 2;
         }
 
-        .portrait-bg-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: 1;
-            display: none;
-        }
-
-        .portrait-bg-image.visible { display: block; }
-
         .portrait-label {
             font-size: 6px;
             font-weight: 700;
@@ -1184,26 +1173,6 @@
             object-fit: contain;
         }
 
-        .bg-btn {
-            padding: 3px 10px !important;
-            border: 2px solid var(--border-soft) !important;
-            background: var(--bg-body) !important;
-            color: var(--text-mid) !important;
-            cursor: pointer !important;
-            font-family: "Plus Jakarta Sans", sans-serif !important;
-            font-weight: 700 !important;
-            font-size: 7px !important;
-            border-radius: 8px !important;
-            transition: all 0.2s !important;
-        }
-
-        .bg-btn:hover { background: var(--border-soft) !important; }
-        .bg-btn.active {
-            background: var(--accent) !important;
-            color: white !important;
-            border-color: var(--accent-dark) !important;
-        }
-
         footer {
             text-align: center;
             color: var(--text-soft);
@@ -1546,26 +1515,6 @@
                                         </div>
                                     </div>
 
-                                    <div class="control-group">
-                                        <div class="control-group-title">
-                                            <i class="fas fa-camera"></i> CÁMARA Y FONDO
-                                        </div>
-                                        <div class="slider-control" style="grid-template-columns: 1fr; gap: 5px; margin-bottom: 8px;">
-                                            <span style="font-size: 9px; color: var(--text-soft); font-weight: 600;">
-                                                <i class="fas fa-image"></i> FONDO DE LA FOTO
-                                            </span>
-                                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                                <button class="bg-btn active" data-bg="default">PREDETERMINADO</button>
-                                                <button class="bg-btn" data-bg="fondo1">FONDO 1</button>
-                                                <button class="bg-btn" data-bg="fondo2">FONDO 2</button>
-                                                <label style="padding: 3px 10px; border: 2px solid var(--border-soft); background: var(--bg-body); color: var(--text-mid); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 7px; border-radius: 8px; margin: 0;">
-                                                    <i class="fas fa-upload"></i> SUBIR
-                                                    <input type="file" id="bgUpload" accept="image/*" style="display: none;" />
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div class="control-buttons">
                                         <button id="resetPoseBtn" class="control-btn reset-btn">
                                             <i class="fas fa-undo"></i> RESTABLECER POSE
@@ -1801,7 +1750,6 @@
                         <div class="identity-section">
                             <div class="portrait-box">
                                 <div class="portrait-background">
-                                    <img id="portraitBgImage" class="portrait-bg-image" src="" alt="Fondo" />
                                     <canvas id="previewSkinCanvas"></canvas>
                                 </div>
                                 <div class="portrait-label">
@@ -2139,8 +2087,6 @@
 
         let skinViewer = null;
         let currentSkinURL = null;
-        let customBackgroundURL = null;
-        let currentBgType = 'default';
         let viewerReady = false;
         let currentPose = 'normal';
         let isAnimating = false;
@@ -2292,8 +2238,6 @@
                     .then(() => updateAllPreviews())
                     .catch(err => console.warn('Error cargando skin por defecto:', err));
 
-                applyBackground('default');
-
             } catch (error) {
                 console.error('Error al inicializar SkinViewer:', error);
                 setTimeout(initSkinViewer, 500);
@@ -2354,36 +2298,6 @@
                     status.innerHTML = '<i class="fas fa-exclamation-circle"></i> No se pudo cargar la skin.';
                     status.style.color = "#8b3024";
                 });
-        }
-
-        function applyBackgroundToPortrait(imageURL) {
-            const bgImg = document.getElementById('portraitBgImage');
-            if (!bgImg) return;
-
-            if (imageURL) {
-                bgImg.src = imageURL;
-                bgImg.classList.add('visible');
-                bgImg.onerror = function() {
-                    bgImg.classList.remove('visible');
-                };
-            } else {
-                bgImg.classList.remove('visible');
-                bgImg.src = '';
-            }
-        }
-
-        function applyBackground(bgType) {
-            currentBgType = bgType;
-            document.querySelectorAll('.bg-btn').forEach(btn => btn.classList.remove('active'));
-            const btn = document.querySelector(`.bg-btn[data-bg="${bgType}"]`);
-            if (btn) btn.classList.add('active');
-
-            let imageURL = null;
-            if (bgType === 'fondo1') imageURL = './img/fondo1.webp';
-            else if (bgType === 'fondo2') imageURL = './img/fondo2.webp';
-            else if (bgType === 'custom') imageURL = customBackgroundURL;
-
-            applyBackgroundToPortrait(imageURL);
         }
 
         // =========================================================
@@ -2665,10 +2579,6 @@
                 // Nombre de la pose usada (opcional, informativo)
                 pose: activePose,
 
-                background: {
-                    type: currentBgType,
-                    customImage: currentBgType === 'custom' ? (customBackgroundURL || null) : null
-                },
                 createdAt: new Date().toISOString()
             };
         }
@@ -2793,30 +2703,6 @@
             document.getElementById('loadSkinBtn').addEventListener('click', loadMinecraftSkin);
             document.getElementById('minecraftNick').addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') loadMinecraftSkin();
-            });
-
-            document.querySelectorAll('.bg-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    if (e.target.tagName === 'LABEL') return;
-                    const bgType = this.dataset.bg;
-                    if (bgType === 'custom') {
-                        document.getElementById('bgUpload').click();
-                        return;
-                    }
-                    applyBackground(bgType);
-                });
-            });
-
-            document.getElementById('bgUpload').addEventListener('change', function(e) {
-                const file = this.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    customBackgroundURL = event.target.result;
-                    applyBackground('custom');
-                };
-                reader.readAsDataURL(file);
-                this.value = '';
             });
 
             document.querySelectorAll('.pose-btn').forEach(btn => {
