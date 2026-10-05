@@ -541,8 +541,8 @@
                 text-align: center;
                 gap: 0;
                 padding-top: 28px;
-                padding-bottom: 20px;
-                overflow: hidden;
+                padding-bottom: 0;
+                overflow: visible;      /* ← sin recorte vertical */
                 justify-content: flex-start;
             }
 
@@ -567,30 +567,62 @@
                 font-size: 11px;
             }
 
-            /* ---- HERO STAGE (personaje que salta) ---- */
+            /* ---- HERO STAGE: sin límite hacia abajo ---- */
             .hero-stage {
                 width: 100%;
                 min-width: 100%;
-                height: 380px;
-                min-height: 340px;
-                max-height: 400px;
+                height: auto;           /* ← se adapta al contenido */
+                min-height: 0;          /* ← sin mínimo */
+                max-height: none;       /* ← sin máximo */
                 align-self: auto;
                 position: relative;
                 margin-top: 10px;
                 flex: 0 0 auto;
+                padding-bottom: 60px;   /* espacio para que el personaje se expanda */
             }
 
-            /* ===== PERSONAJE 60px MÁS ABAJO ===== */
-            .character-actor {
-                bottom: -45%;
+            /* ===== PERSONAJE SIN LÍMITE HACIA ABAJO ===== */
+            .character-clip {
+                position: relative;     /* ← deja de ser absoluto para que empuje la altura */
+                inset: auto;
+                width: 100%;
+                height: auto;
+                overflow: visible;      /* ← ya no recorta */
+                pointer-events: none;
             }
+
+            .character-actor {
+                position: relative;     /* ← deja de ser absoluto */
+                left: auto;
+                bottom: auto;
+                transform: translateX(0) translateY(30px);
+                opacity: 0;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                transition: opacity 0.5s ease, transform 0.5s ease;
+                pointer-events: none;
+                margin-top: -40px;      /* sube un poco el bloque para que el personaje baje */
+            }
+            .character-actor.visible {
+                opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+            .character-actor.leaving {
+                opacity: 0;
+                transform: translateX(0) translateY(120px);
+                transition: opacity 0.6s ease, transform 0.6s ease;
+            }
+
             .character-actor img {
-                width: clamp(240px, 72vw, 360px);
+                width: clamp(260px, 82vw, 420px);
+                height: auto;
+                display: block;
             }
 
             /* Burbuja en móvil */
             .character-bubble {
-                top: 4%;
+                top: 2%;
                 left: 50%;
                 max-width: 82vw;
                 width: max-content;
@@ -603,14 +635,19 @@
                     9px 9px 0px #666666,
                     12px 12px 0px #333333,
                     15px 15px 0px #000000;
+                z-index: 30;
             }
             .character-bubble.visible {
                 transform: translateX(-50%) rotate(-2deg) translateY(0);
             }
+
+            /* ===== FLECHA CENTRADA EN MÓVIL ===== */
             .character-bubble::after {
                 bottom: -22px;
-                left: 26px;
-                border-width: 22px 16px 0 0;
+                left: 50%;              /* ← centrada */
+                transform: translateX(-50%) rotate(0deg);
+                border-width: 22px 16px 0 16px;   /* triángulo isósceles centrado */
+                border-color: #ffffff transparent transparent transparent;
                 filter: drop-shadow(3px 3px 0px #666666) drop-shadow(6px 6px 0px #000000);
             }
             .bubble-name {
@@ -632,7 +669,7 @@
             .block-red {
                 flex-direction: column;
                 text-align: center;
-                padding: 40px 4% 50px;
+                padding: 40px 2% 50px;   /* ← menos padding lateral */
                 gap: 22px;
                 height: auto;
                 min-height: auto;
@@ -648,15 +685,15 @@
             }
             .block-red .block-buttons { justify-content: center; }
 
-            /* ===== DNI MÁS ANCHO EN MÓVIL ===== */
+            /* ===== DNI MUY ANCHO EN MÓVIL ===== */
             .block-red .block-media {
                 width: 100%;
                 padding: 0;
             }
             .card-3d {
                 width: 100%;
-                max-width: 480px;
-                height: 230px;
+                max-width: none;         /* ← sin límite */
+                height: 240px;
                 transform: rotateY(0deg) rotateX(8deg);
             }
             .card-3d:hover {
@@ -669,7 +706,7 @@
                 text-align: center;
                 height: auto;
                 min-height: auto;
-                padding: 50px 4% 60px;
+                padding: 50px 2% 60px;   /* ← menos padding lateral */
                 gap: 24px;
             }
             .block-orange .block-content { max-width: 100%; }
@@ -683,7 +720,7 @@
             }
             .block-orange .block-buttons { justify-content: center; }
 
-            /* ===== FORMULARIO MÁS ANCHO EN MÓVIL ===== */
+            /* ===== FORMULARIO MUY ANCHO EN MÓVIL ===== */
             .block-orange .block-media {
                 width: 100%;
                 padding: 0;
@@ -691,8 +728,8 @@
             .card-2d-tall {
                 position: static;
                 width: 100%;
-                max-width: 480px;
-                height: 480px;
+                max-width: none;         /* ← sin límite */
+                height: 500px;
                 margin: 0 auto;
             }
 
@@ -734,7 +771,7 @@
 
             .block-light {
                 padding-top: 22px;
-                padding-bottom: 14px;
+                padding-bottom: 0;
             }
             .block-light .block-content h2 {
                 font-size: clamp(26px, 10vw, 38px);
@@ -743,23 +780,37 @@
                 font-size: clamp(12px, 3.8vw, 14px);
             }
 
-            /* Más alto para que quepa el personaje abajo */
+            /* Sin límite hacia abajo también en pantallas pequeñas */
             .hero-stage {
-                height: 360px;
-                min-height: 330px;
-                max-height: 380px;
+                height: auto;
+                min-height: 0;
+                max-height: none;
+                padding-bottom: 50px;
             }
 
-            /* ===== PERSONAJE 60px MÁS ABAJO (PANTALLAS PEQUEÑAS) ===== */
+            .character-clip {
+                position: relative;
+                height: auto;
+                overflow: visible;
+            }
+
             .character-actor {
-                bottom: -50%;
+                position: relative;
+                left: auto;
+                bottom: auto;
+                margin-top: -30px;
+                transform: translateX(0) translateY(30px);
+            }
+            .character-actor.visible {
+                transform: translateX(0) translateY(0);
             }
             .character-actor img {
-                width: clamp(210px, 78vw, 320px);
+                width: clamp(220px, 88vw, 360px);
             }
 
+            /* Burbuja en pantallas pequeñas */
             .character-bubble {
-                top: 2%;
+                top: 1%;
                 max-width: 88vw;
                 padding: 10px 13px;
                 font-size: clamp(11px, 3.8vw, 13px);
@@ -772,8 +823,10 @@
             }
             .character-bubble::after {
                 bottom: -18px;
-                left: 20px;
-                border-width: 18px 13px 0 0;
+                left: 50%;
+                transform: translateX(-50%);
+                border-width: 18px 13px 0 13px;   /* ← flecha centrada */
+                border-color: #ffffff transparent transparent transparent;
                 filter: drop-shadow(2px 2px 0px #666666) drop-shadow(4px 4px 0px #000000);
             }
 
@@ -791,17 +844,19 @@
                 left: 4%;
             }
 
-            .block-red { padding: 34px 3% 44px; }
+            .block-red { padding: 34px 1.5% 44px; }
 
-            /* DNI ancho en pantallas pequeñas */
+            /* DNI ancho completo en pantallas pequeñas */
             .card-3d {
-                max-width: 100%;
-                height: 210px;
+                width: 100%;
+                max-width: none;
+                height: 220px;
             }
-            /* Formulario ancho en pantallas pequeñas */
+            /* Formulario ancho completo en pantallas pequeñas */
             .card-2d-tall {
-                max-width: 100%;
-                height: 440px;
+                width: 100%;
+                max-width: none;
+                height: 460px;
             }
 
             .green-character { width: clamp(140px, 55vw, 220px); }
