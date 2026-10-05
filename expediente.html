@@ -539,7 +539,7 @@
       align-items: center;
       justify-content: flex-end;
       padding: 0 6px 4px 6px;
-      margin-top: -34px; /* Subido más (antes -18px) */
+      margin-top: -46px;
       position: relative;
       flex-wrap: nowrap;
       gap: 10px;
@@ -1324,7 +1324,7 @@
       .dni-value { font-size: 0.7rem; }
       .dni-label { font-size: 0.45rem; }
       .dni-icon { font-size: 0.75rem; width: 18px; }
-      .dni-footer { padding: 0 2px 2px 2px; margin-top: -28px; }
+      .dni-footer { padding: 0 2px 2px 2px; margin-top: -38px; }
       .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; padding: 3px 0; margin: 0 -16px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
       .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 22px; }
       .dni-issue-date { font-size: 0.7rem; }
@@ -1374,7 +1374,7 @@
       .dni-icon { font-size: 0.6rem; width: 15px; }
       .dni-label { font-size: 0.35rem; }
       .dni-value { font-size: 0.6rem; }
-      .dni-footer { padding: 0 0 0 0; margin-top: -22px; }
+      .dni-footer { padding: 0 0 0 0; margin-top: -30px; }
       .dni-issue-date { font-size: 0.6rem; }
       .dni-issue-label { font-size: 0.4rem; }
       .dni-bottom-bar { font-size: 0.3rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
@@ -1879,6 +1879,70 @@
     bookViewer.globalLight.intensity = 2.5;
     bookViewer.cameraLight.intensity = 1.2;
 
+    // ===== POSE GUARDADA PARA EL LIBRO =====
+    // Se almacena aquí la última pose leída del expediente para reaplicarla
+    // cada vez que se recargue la skin del libro (por reintentos de URL).
+    window._poseLibro = null;
+
+    function aplicarPoseEnLibro(data) {
+      // Extrae la pose del expediente y la guarda para uso posterior
+      const pose = {
+        headPitch: Number(data.headPitch) || 0,
+        headRoll:  Number(data.headRoll)  || 0,
+        headYaw:   Number(data.headYaw)   || 0,
+        leftArmX:  Number(data.leftArmX)  || 0,
+        leftArmY:  Number(data.leftArmY)  || 0,
+        leftArmZ:  Number(data.leftArmZ)  || 0,
+        leftLegX:  Number(data.leftLegX)  || 0,
+        leftLegZ:  Number(data.leftLegZ)  || 0,
+        rightArmX: Number(data.rightArmX) || 0,
+        rightArmY: Number(data.rightArmY) || 0,
+        rightArmZ: Number(data.rightArmZ) || 0,
+        rightLegX: Number(data.rightLegX) || 0,
+        rightLegZ: Number(data.rightLegZ) || 0
+      };
+      window._poseLibro = pose;
+      aplicarPoseABookViewer();
+    }
+
+    function aplicarPoseABookViewer() {
+      if (!bookViewer || !bookViewer.playerObject || !bookViewer.playerObject.skin) return;
+      const pose = window._poseLibro;
+      if (!pose) return;
+      const player = bookViewer.playerObject;
+      const skin = player.skin;
+
+      // Resetear posición global (la pose no cambia posición, solo rotaciones)
+      player.position.x = 0;
+      player.position.y = 0;
+      player.rotation.y = 0;
+
+      // Cabeza: Y = yaw, X = pitch, Z = roll
+      skin.head.rotation.y = pose.headYaw;
+      skin.head.rotation.x = pose.headPitch;
+      skin.head.rotation.z = pose.headRoll;
+
+      // Brazos
+      skin.leftArm.rotation.x = pose.leftArmX;
+      skin.leftArm.rotation.y = pose.leftArmY;
+      skin.leftArm.rotation.z = pose.leftArmZ;
+
+      skin.rightArm.rotation.x = pose.rightArmX;
+      skin.rightArm.rotation.y = pose.rightArmY;
+      skin.rightArm.rotation.z = pose.rightArmZ;
+
+      // Piernas (solo X y Z según el expediente)
+      skin.leftLeg.rotation.x = pose.leftLegX;
+      skin.leftLeg.rotation.z = pose.leftLegZ;
+      skin.rightLeg.rotation.x = pose.rightLegX;
+      skin.rightLeg.rotation.z = pose.rightLegZ;
+
+      // Cuerpo: sin datos en la pose guardada, se deja neutro
+      skin.body.rotation.z = 0;
+
+      bookViewer.render();
+    }
+
     function programarProximoGesto() {
       const delay = GESTURE_MIN_DELAY + Math.random() * (GESTURE_MAX_DELAY - GESTURE_MIN_DELAY);
       nextGestureTime = performance.now() + delay;
@@ -2009,21 +2073,8 @@
               child.material.alphaTest = 0.1;
             }
           });
-          const player = bookViewer.playerObject;
-          if (player) {
-            player.position.x = 0;
-            player.position.y = 0;
-            player.rotation.y = 0;
-            if (player.skin) {
-              player.skin.leftArm.rotation.x = 0;
-              player.skin.rightArm.rotation.x = 0;
-              player.skin.leftLeg.rotation.x = 0;
-              player.skin.rightLeg.rotation.x = 0;
-              player.skin.head.rotation.y = 0;
-              player.skin.head.rotation.z = 0;
-              player.skin.body.rotation.z = 0;
-            }
-          }
+          // Aplicar la pose guardada del expediente (si existe)
+          aplicarPoseABookViewer();
           bookViewer.render();
         }
       });
@@ -2236,6 +2287,9 @@
       if (inmigrante) {
         aplicarModoPasaporte();
       }
+
+      // ===== GUARDAR Y APLICAR LA POSE AL LIBRO =====
+      aplicarPoseEnLibro(data);
 
       const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
       statKeys.forEach((key) => {
