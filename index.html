@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Liga Lombarda — Registro Oficial</title>
 
     <link rel="icon" type="image/png" href="./logo.png">
@@ -30,6 +30,7 @@
             background-color: var(--bg-body);
             color: var(--text-dark);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* HEADER */
@@ -393,64 +394,290 @@
         footer h3 { color: #ffffff; font-size: 14px; margin-bottom: 6px; letter-spacing: 1px; }
         footer p { font-size: 10px; letter-spacing: 1px; }
 
-        /* RESPONSIVE */
+        /* ============================================================
+           RESPONSIVE MEJORADO PARA MÓVIL
+           ============================================================ */
         @media (max-width: 900px) {
-            .section-block { padding: 80px 6%; min-height: auto; }
+            header {
+                height: 60px;
+                padding: 0 4%;
+            }
+            .brand img { width: 30px; }
+            nav { gap: 4px; }
+            nav a {
+                font-size: 10px;
+                padding: 8px 8px;
+                letter-spacing: 0.5px;
+            }
 
+            .section-block {
+                padding: 60px 5%;
+                min-height: auto;
+                gap: 30px;
+            }
+
+            /* ---- PRIMERA SECCIÓN (HERO) ---- */
             .block-light {
                 height: auto;
-                min-height: calc(100vh - 120px);
+                min-height: calc(100vh - 60px);
                 flex-direction: column;
                 text-align: center;
-                gap: 30px;
+                gap: 10px;
+                padding-top: 30px;
                 padding-bottom: 0;
                 overflow: hidden;
+                justify-content: flex-start;
             }
 
-            .section-block, .block-orange { flex-direction: column; text-align: center; height: auto; }
-
-            .block-green {
-                height: auto;
-                min-height: 380px;
-                padding-top: 60px;
-                padding-bottom: 60px;
+            .block-light .block-content {
+                max-width: 100%;
+                padding: 0 4%;
+                flex: 0 0 auto;
             }
 
+            .block-light .block-content h2 {
+                font-size: clamp(32px, 10vw, 52px);
+                margin-bottom: 12px;
+            }
+            .block-light .block-content p {
+                font-size: clamp(13px, 3.8vw, 18px);
+                margin-bottom: 20px;
+                max-width: 100%;
+            }
+            .block-light .btn {
+                padding: 14px 24px;
+                font-size: 12px;
+            }
+
+            /* ---- HERO STAGE (personaje que salta) ---- */
             .hero-stage {
                 width: 100%;
                 min-width: 100%;
-                height: 400px;
+                height: 52vh;
+                min-height: 320px;
+                max-height: 480px;
                 align-self: auto;
                 position: relative;
+                margin-top: 0;
+                flex: 1 1 auto;
             }
 
-            .character-actor { bottom: -18%; }
-            .character-actor img { width: 320px; }
+            .character-actor {
+                bottom: -12%;
+            }
+            .character-actor img {
+                width: clamp(280px, 85vw, 420px);
+            }
 
+            /* Burbuja en móvil: más arriba y más grande */
             .character-bubble {
-                top: 26%;
-                left: 58%;
-                max-width: 220px;
-                padding: 14px 16px;
-                font-size: 12px;
+                top: 8%;
+                left: 50%;
+                max-width: 85vw;
+                width: max-content;
+                padding: 14px 18px;
+                font-size: clamp(13px, 3.6vw, 16px);
                 transform: translateX(-50%) rotate(-2deg);
+                box-shadow:
+                    3px 3px 0px #cccccc,
+                    6px 6px 0px #999999,
+                    9px 9px 0px #666666,
+                    12px 12px 0px #333333,
+                    15px 15px 0px #000000;
             }
             .character-bubble.visible {
                 transform: translateX(-50%) rotate(-2deg) translateY(0);
             }
             .character-bubble::after {
-                bottom: -28px;
+                bottom: -24px;
                 left: 30px;
-                border-width: 28px 20px 0 0;
+                border-width: 24px 18px 0 0;
+                filter: drop-shadow(3px 3px 0px #666666) drop-shadow(6px 6px 0px #000000);
+            }
+            .bubble-name {
+                font-size: 0.65em;
+                margin-top: 4px;
             }
 
-            .card-3d { width: 100%; max-width: 320px; height: 200px; transform: rotateY(0deg) rotateX(10deg); }
-            .card-2d-tall { position: static; width: 100%; max-width: 320px; height: 420px; }
-            .folder-tab-trigger { left: 5%; width: 180px; }
-            .block-content h2 { font-size: 34px; }
-            .block-buttons { justify-content: center; }
-            nav { flex-wrap: wrap; justify-content: center; }
-            .green-character { width: 220px; }
+            /* ---- SECCIÓN ROJA ---- */
+            .block-red {
+                flex-direction: column;
+                text-align: center;
+                padding: 60px 5%;
+                gap: 30px;
+                height: auto;
+                min-height: auto;
+            }
+            .block-red .block-content {
+                max-width: 100%;
+            }
+            .block-red .block-content h2 {
+                font-size: clamp(32px, 9vw, 44px);
+            }
+            .block-red .block-content p {
+                font-size: clamp(13px, 3.8vw, 16px);
+            }
+            .block-red .block-buttons {
+                justify-content: center;
+            }
+
+            .card-3d {
+                width: 90%;
+                max-width: 340px;
+                height: 200px;
+                transform: rotateY(0deg) rotateX(10deg);
+            }
+            .card-3d:hover {
+                transform: rotateY(0deg) rotateX(6deg) scale(1.02);
+            }
+
+            /* ---- SECCIÓN NARANJA ---- */
+            .block-orange {
+                flex-direction: column;
+                text-align: center;
+                height: auto;
+                min-height: auto;
+                padding: 60px 5% 80px;
+                gap: 30px;
+            }
+            .block-orange .block-content {
+                max-width: 100%;
+            }
+            .block-orange .block-content h2 {
+                font-size: clamp(32px, 9vw, 44px);
+            }
+            .block-orange .block-content p {
+                font-size: clamp(13px, 3.8vw, 16px);
+            }
+            .block-orange .block-buttons {
+                justify-content: center;
+            }
+
+            .card-2d-tall {
+                position: static;
+                width: 90%;
+                max-width: 340px;
+                height: 420px;
+                margin: 0 auto;
+            }
+
+            /* ---- SECCIÓN VERDE ---- */
+            .block-green {
+                flex-direction: column;
+                text-align: center;
+                height: auto;
+                min-height: auto;
+                padding: 60px 5%;
+                gap: 30px;
+            }
+            .block-green .block-content {
+                max-width: 100%;
+            }
+            .block-green .block-content h2 {
+                font-size: clamp(28px, 8vw, 40px);
+            }
+            .block-green .block-content p {
+                font-size: clamp(13px, 3.8vw, 16px);
+            }
+
+            .green-character {
+                width: clamp(180px, 55vw, 280px);
+            }
+
+            /* ---- FOLDER TAB ---- */
+            .folder-tab-trigger {
+                left: 5%;
+                width: 150px;
+                height: 40px;
+                top: -40px;
+            }
+
+            footer {
+                padding: 30px 16px;
+            }
+        }
+
+        /* ============================================================
+           AJUSTES EXTRA PARA PANTALLAS MUY PEQUEÑAS
+           ============================================================ */
+        @media (max-width: 480px) {
+            header {
+                height: 54px;
+                padding: 0 3%;
+            }
+            .brand img { width: 26px; }
+            nav a {
+                font-size: 9px;
+                padding: 6px 6px;
+                letter-spacing: 0.3px;
+            }
+
+            .block-light {
+                min-height: calc(100vh - 54px);
+                padding-top: 20px;
+            }
+            .block-light .block-content h2 {
+                font-size: clamp(28px, 11vw, 40px);
+            }
+            .block-light .block-content p {
+                font-size: clamp(12px, 4vw, 15px);
+            }
+
+            .hero-stage {
+                height: 48vh;
+                min-height: 280px;
+            }
+            .character-actor {
+                bottom: -10%;
+            }
+            .character-actor img {
+                width: clamp(240px, 90vw, 360px);
+            }
+
+            .character-bubble {
+                top: 5%;
+                max-width: 90vw;
+                padding: 12px 14px;
+                font-size: clamp(12px, 3.8vw, 14px);
+                box-shadow:
+                    2px 2px 0px #cccccc,
+                    4px 4px 0px #999999,
+                    6px 6px 0px #666666,
+                    8px 8px 0px #333333,
+                    10px 10px 0px #000000;
+            }
+            .character-bubble::after {
+                bottom: -20px;
+                left: 20px;
+                border-width: 20px 15px 0 0;
+                filter: drop-shadow(2px 2px 0px #666666) drop-shadow(4px 4px 0px #000000);
+            }
+
+            .block-content h2 {
+                font-size: clamp(26px, 8vw, 34px) !important;
+            }
+            .block-content p {
+                font-size: clamp(12px, 3.5vw, 15px) !important;
+            }
+
+            .card-3d {
+                max-width: 300px;
+                height: 180px;
+            }
+            .card-2d-tall {
+                max-width: 300px;
+                height: 380px;
+            }
+            .green-character {
+                width: clamp(150px, 60vw, 240px);
+            }
+
+            .folder-tab-trigger {
+                width: 120px;
+                height: 34px;
+                top: -34px;
+                left: 4%;
+            }
         }
     </style>
 </head>
@@ -578,8 +805,8 @@
                 { actor: document.getElementById('actorA'), bubble: document.getElementById('bubbleA') }
             ];
 
-            const DURACION_APARICION = 10000; // 10s visible
-            const PAUSA_ENTRE = 2000;         // 2s de pausa
+            const DURACION_APARICION = 10000;
+            const PAUSA_ENTRE = 2000;
 
             let timersActivos = [];
             let cicloTimeoutId = null;
