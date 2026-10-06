@@ -533,7 +533,7 @@
                 gap: 24px;
             }
 
-            /* ---- PRIMERA SECCIÓN (HERO) - SIN OVERFLOW HIDDEN ---- */
+            /* ---- PRIMERA SECCIÓN (HERO) ---- */
             .block-light {
                 height: auto;
                 min-height: auto;
@@ -541,8 +541,8 @@
                 text-align: center;
                 gap: 0;
                 padding-top: 28px;
-                padding-bottom: 0; /* Sin padding abajo para que el personaje toque la sección roja */
-                overflow: visible;  /* Permite que el personaje se expanda hacia abajo */
+                padding-bottom: 0;
+                overflow: visible;
                 justify-content: flex-start;
             }
 
@@ -567,30 +567,30 @@
                 font-size: 11px;
             }
 
-            /* ---- HERO STAGE: personaje se expande hacia abajo ---- */
+            /* ---- HERO STAGE ---- */
             .hero-stage {
                 width: 100%;
                 min-width: 100%;
-                height: 340px;
-                min-height: 300px;
-                max-height: 360px;
+                height: 360px;
+                min-height: 320px;
+                max-height: 380px;
                 align-self: auto;
                 position: relative;
                 margin-top: 10px;
                 flex: 0 0 auto;
-                overflow: visible; /* Permite que el personaje sobresalga */
+                overflow: visible;
             }
 
             .character-clip {
-                overflow: visible; /* Deja que el personaje salga del clip */
+                overflow: visible;
             }
 
-            /* ===== PERSONAJE SE EXPANDE HACIA ABAJO SIN LÍMITE ===== */
+            /* ===== PERSONAJE: SE VE LA MITAD DEL CUERPO ===== */
             .character-actor {
-                bottom: -60%; /* Baja mucho para tocar la sección roja */
+                bottom: -22%;
             }
             .character-actor img {
-                width: clamp(260px, 78vw, 400px); /* Un poco más grande */
+                width: clamp(260px, 78vw, 400px);
             }
 
             /* ===== GLOBO DE TEXTO CON FLECHA AL CENTRO ===== */
@@ -612,7 +612,6 @@
             .character-bubble.visible {
                 transform: translateX(-50%) rotate(-2deg) translateY(0);
             }
-            /* Flecha apuntando al centro */
             .character-bubble::after {
                 bottom: -22px;
                 left: 50%;
@@ -626,8 +625,8 @@
                 margin-top: 4px;
             }
 
-            /* ---- SECCIÓN ROJA (UN POCO MÁS ARRIBA) ---- */
-            .folder-wrapper { margin-top: -10px; } /* Sube un poco la sección roja */
+            /* ---- SECCIÓN ROJA ---- */
+            .folder-wrapper { margin-top: -10px; }
             .folder-tab-trigger {
                 left: 5%;
                 width: 140px;
@@ -640,7 +639,7 @@
             .block-red {
                 flex-direction: column;
                 text-align: center;
-                padding: 30px 3% 40px; /* Menos padding para que suba */
+                padding: 30px 3% 40px;
                 gap: 20px;
                 height: auto;
                 min-height: auto;
@@ -656,7 +655,7 @@
             }
             .block-red .block-buttons { justify-content: center; }
 
-            /* ===== DNI MUY ANCHO EN MÓVIL ===== */
+            /* ===== DNI MUY ANCHO ===== */
             .block-red .block-media {
                 width: 100%;
                 padding: 0;
@@ -691,7 +690,7 @@
             }
             .block-orange .block-buttons { justify-content: center; }
 
-            /* ===== FORMULARIO MUY ANCHO EN MÓVIL ===== */
+            /* ===== FORMULARIO MUY ANCHO ===== */
             .block-orange .block-media {
                 width: 100%;
                 padding: 0;
@@ -752,14 +751,14 @@
             }
 
             .hero-stage {
-                height: 320px;
-                min-height: 290px;
-                max-height: 340px;
+                height: 340px;
+                min-height: 300px;
+                max-height: 360px;
             }
 
-            /* ===== PERSONAJE MUY ABAJO ===== */
+            /* ===== PERSONAJE: SE VE LA MITAD DEL CUERPO ===== */
             .character-actor {
-                bottom: -65%;
+                bottom: -26%;
             }
             .character-actor img {
                 width: clamp(230px, 82vw, 340px);
@@ -801,12 +800,10 @@
 
             .block-red { padding: 26px 2% 36px; }
 
-            /* DNI MUY ancho en pantallas pequeñas */
             .card-3d {
                 max-width: 100%;
                 height: 220px;
             }
-            /* Formulario MUY ancho en pantallas pequeñas */
             .card-2d-tall {
                 max-width: 100%;
                 height: 480px;
