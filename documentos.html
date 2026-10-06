@@ -47,7 +47,7 @@
             --color-ballestero: #10A1C3;
             --color-ciudadano: #888888;
 
-            --header-height: 70px;
+            --header-height: 64px;
             --botones-height: 52px;
             --slide-top-padding: calc(var(--botones-height) + 30px);
         }
@@ -119,7 +119,7 @@
         #mainContent.visible { display: block; }
 
         /* =========================================================
-           HEADER
+           HEADER FIJO
         ========================================================= */
         header {
             position: fixed;
@@ -143,10 +143,7 @@
             gap: 12px;
         }
 
-        .brand img {
-            width: 34px;
-            height: auto;
-        }
+        .brand img { width: 34px; height: auto; }
 
         .brand h1 {
             font-family: "Cinzel", serif;
@@ -197,44 +194,9 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
 
-        /* User info */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-info .email {
-            color: #b7a98f;
-            font-size: 10px;
-            font-family: "Montserrat", sans-serif;
-        }
-
-        .user-info .email i {
-            color: var(--gold-bright);
-            margin-right: 4px;
-        }
-
-        .logout-btn {
-            background: transparent;
-            border: 1px solid #4a3d2e;
-            color: #b7a98f;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: "Montserrat", sans-serif;
-            font-size: 9px;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: var(--red-slide);
-            border-color: var(--red-slide);
-            color: white;
-        }
-
-        /* Botón hamburguesa (oculto en escritorio) */
+        /* =========================================================
+           BOTÓN HAMBURGUESA (solo móvil)
+        ========================================================= */
         .menu-toggle {
             display: none;
             background: transparent;
@@ -279,16 +241,13 @@
             border-bottom: 1px solid #222;
             margin-bottom: 24px;
         }
-        .side-menu-header img {
-            width: 32px;
-            height: auto;
-        }
+        .side-menu-header img { width: 32px; height: auto; }
         .side-menu-header span {
             color: #ffffff;
             font-size: 13px;
+            font-family: "Cinzel", serif;
             font-weight: 800;
             letter-spacing: 2px;
-            font-family: "Montserrat", sans-serif;
         }
 
         .side-menu a {
@@ -297,6 +256,7 @@
             gap: 14px;
             color: #b0b0b0;
             text-decoration: none;
+            font-family: "Montserrat", sans-serif;
             font-size: 14px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -304,7 +264,6 @@
             border-radius: 10px;
             transition: all 0.25s ease;
             border: 1px solid transparent;
-            font-family: "Montserrat", sans-serif;
         }
         .side-menu a i {
             font-size: 16px;
@@ -327,42 +286,61 @@
         .side-menu a.active i { color: #ffffff; }
 
         .side-menu-user {
-            margin-top: auto;
-            padding-top: 20px;
+            margin-top: 16px;
+            padding: 16px 14px;
             border-top: 1px solid #222;
-            color: #b7a98f;
-            font-size: 11px;
-            font-family: "Montserrat", sans-serif;
+            border-bottom: 1px solid #222;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
+
         .side-menu-user .email {
             color: #b7a98f;
-            font-size: 10px;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.5px;
             word-break: break-all;
         }
         .side-menu-user .email i {
             color: var(--gold-bright);
-            margin-right: 4px;
+            margin-right: 6px;
         }
+
         .side-menu-user .logout-btn {
-            width: 100%;
-            text-align: center;
-            padding: 10px;
-            font-size: 10px;
+            background: transparent;
+            border: 1px solid #4a3d2e;
+            color: #b7a98f;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: "Montserrat", sans-serif;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .side-menu-user .logout-btn:hover {
+            background: var(--red-slide);
+            border-color: var(--red-slide);
+            color: white;
         }
 
         .side-menu-footer {
-            margin-top: 20px;
-            padding-top: 16px;
+            margin-top: auto;
+            padding-top: 20px;
             border-top: 1px solid #222;
             color: #555555;
             font-size: 10px;
+            font-family: "Montserrat", sans-serif;
             letter-spacing: 1px;
             text-align: center;
         }
 
+        /* Overlay oscuro detrás del menú */
         .menu-overlay {
             position: fixed;
             inset: 0;
@@ -463,24 +441,19 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
-
         .btn:active { transform: scale(0.96); }
 
         #btn-izquierda {
             color: #ff4444;
             border-color: #ff4444;
         }
-        #btn-izquierda:hover {
-            background-color: rgba(153, 0, 36, 0.15);
-        }
+        #btn-izquierda:hover { background-color: rgba(153, 0, 36, 0.15); }
 
         #btn-derecha {
             color: #ce93d8;
             border-color: #ce93d8;
         }
-        #btn-derecha:hover {
-            background-color: rgba(123, 31, 162, 0.15);
-        }
+        #btn-derecha:hover { background-color: rgba(123, 31, 162, 0.15); }
 
         #btn-izquierda.active {
             background-color: var(--red-slide);
@@ -1076,7 +1049,6 @@
         }
 
         .card-info .btn-view:hover::before { transform: scaleX(1); }
-
         .card-info .btn-view i { font-size: 9px; }
 
         /* =========================================================
@@ -1115,7 +1087,7 @@
         }
 
         /* =========================================================
-           FOOTER
+           FOOTER (mismo del index)
         ========================================================= */
         footer {
             background: #000000;
@@ -1130,17 +1102,19 @@
         footer h3 {
             color: #ffffff;
             font-size: 14px;
+            font-family: "Montserrat", sans-serif;
             margin-bottom: 6px;
             letter-spacing: 1px;
         }
 
         footer p {
             font-size: 10px;
+            font-family: "Montserrat", sans-serif;
             letter-spacing: 1px;
         }
 
         /* =========================================================
-           RESPONSIVE — MÓVIL
+           RESPONSIVE
         ========================================================= */
         @media (max-width: 900px) {
             :root {
@@ -1150,64 +1124,24 @@
 
             header { padding: 0 4%; }
             .brand img { width: 30px; }
-            .brand h1 { font-size: 13px; }
+            .brand h1 { font-size: 13px; letter-spacing: 1.5px; }
 
-            /* Ocultar navegación de escritorio, mostrar hamburguesa */
+            /* Ocultar nav desktop, mostrar hamburguesa */
             .nav-desktop { display: none; }
             .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
 
-            .botones-container {
-                gap: 10px;
-                top: calc(var(--header-height) + 10px);
-            }
-            .btn {
-                padding: 8px 14px;
-                font-size: 10px;
-                gap: 6px;
-            }
-            .btn i { font-size: 11px; }
-
-            .slide {
-                padding: calc(var(--botones-height) + 25px) 4% 60px;
-            }
-
-            .page-title {
-                padding: 16px 18px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .page-title .title-main { font-size: 18px; gap: 10px; }
-            .page-title .title-main i { font-size: 18px; }
-            .page-title .title-sub { font-size: 8px; letter-spacing: 2px; }
-
-            .search-bar {
-                flex-direction: column;
-                padding: 14px 16px;
-                gap: 12px;
-            }
-            .search-bar input {
-                width: 100%;
-                padding: 12px 14px 12px 40px;
-                font-size: 12px;
-            }
-            .search-bar .search-icon {
-                left: 28px;
-                top: 32px;
-                transform: none;
-            }
-
-            .rank-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 14px;
-            }
-
+            .botones-container { gap: 10px; top: calc(var(--header-height) + 10px); }
+            .btn { padding: 8px 16px; font-size: 10px; }
+            .btn i { font-size: 12px; }
+            .slide { padding: calc(var(--botones-height) + 25px) 5% 60px; }
+            .page-title { padding: 16px 18px; flex-direction: column; align-items: flex-start; }
+            .page-title .title-main { font-size: 18px; }
+            .search-bar { flex-direction: column; padding: 14px 16px; }
+            .search-bar input { width: 100%; }
+            .search-bar .search-icon { left: 28px; top: 36px; }
+            .rank-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
             .rank-section-header .rank-label { font-size: 14px; }
-            .rank-section-header .rank-count { font-size: 9px; padding: 4px 10px; }
-
             .card-content-bg { top: 42vh; }
-
-            .side-menu-user .email { font-size: 9px; }
         }
 
         @media (max-width: 480px) {
@@ -1224,49 +1158,29 @@
             .side-menu { padding: 70px 20px 30px; }
             .side-menu a { font-size: 13px; padding: 14px 12px; }
 
-            .botones-container {
-                gap: 8px;
-                top: calc(var(--header-height) + 8px);
-            }
-            .btn {
-                padding: 6px 10px;
-                font-size: 9px;
-                gap: 4px;
-            }
-            .btn i { font-size: 10px; }
-
             .slide { padding: calc(var(--botones-height) + 22px) 4% 40px; }
-
-            .page-title { padding: 14px 14px; }
             .page-title .title-main { font-size: 15px; gap: 8px; }
             .page-title .title-main i { font-size: 16px; }
             .page-title .title-sub { font-size: 7px; letter-spacing: 2px; }
-
-            .rank-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-
+            .rank-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .card-info { padding: 10px 8px 12px; }
             .card-info .card-name { font-size: 11px; }
             .card-info .card-alias { font-size: 8px; }
             .card-info .btn-view { font-size: 7px; padding: 5px 12px; }
             .card-skin { aspect-ratio: 1 / 0.85; }
-
             .rank-section-header .rank-label { font-size: 12px; }
             .rank-section-header .rank-dot { width: 10px; height: 10px; }
             .rank-section-header .rank-count { font-size: 8px; padding: 4px 10px; }
             .rank-section { margin-bottom: 26px; }
             .card-content-bg { top: 46vh; }
-
+            .btn { padding: 6px 12px; font-size: 9px; gap: 4px; }
+            .btn i { font-size: 10px; }
             .btn.active::after {
                 border-left-width: 6px;
                 border-right-width: 6px;
                 border-top-width: 6px;
                 bottom: -11px;
             }
-
-            footer { padding: 30px 16px; }
         }
     </style>
 </head>
@@ -1308,9 +1222,7 @@
             <a href="./index.html"><i class="fa-solid fa-house"></i> INICIO</a>
             <a href="./documentos.html" class="active"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
             <a href="./formulario.html"><i class="fa-solid fa-pen-to-square"></i> FORMULARIO</a>
-
-            <div class="side-menu-user" id="sideMenuUser" style="display: none;"></div>
-
+            <div class="side-menu-user" id="sideMenuUser" style="display:none;"></div>
             <div class="side-menu-footer">
                 SISTEMA OFICIAL · ARCHIVO CENTRAL
             </div>
@@ -1428,38 +1340,36 @@
         const slide2 = document.getElementById('slide-2');
         const visibleCount = document.getElementById('visibleCount');
         const totalVisible = document.getElementById('totalVisible');
-        const sideMenuUser = document.getElementById('sideMenuUser');
 
         // =========================================================
         // MENÚ LATERAL
         // =========================================================
-        (function() {
-            const menuToggle = document.getElementById('menuToggle');
-            const sideMenu = document.getElementById('sideMenu');
-            const menuOverlay = document.getElementById('menuOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const sideMenuUser = document.getElementById('sideMenuUser');
 
-            function openMenu() {
-                sideMenu.classList.add('open');
-                menuOverlay.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeMenu() {
-                sideMenu.classList.remove('open');
-                menuOverlay.classList.remove('open');
-                document.body.style.overflow = '';
-            }
+        function openMenu() {
+            sideMenu.classList.add('open');
+            menuOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMenu() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
 
-            menuToggle.addEventListener('click', openMenu);
-            menuOverlay.addEventListener('click', closeMenu);
+        menuToggle.addEventListener('click', openMenu);
+        menuOverlay.addEventListener('click', closeMenu);
 
-            sideMenu.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', closeMenu);
-            });
+        sideMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeMenu();
-            });
-        })();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMenu();
+        });
 
         // =========================================================
         // TOAST
@@ -1518,21 +1428,22 @@
         // =========================================================
         function renderNav(user, isAdmin = false) {
             if (user) {
+                // Nav desktop
                 userNav.style.display = 'flex';
                 userNav.innerHTML = `
-                    <span class="user-info">
-                        <span class="email">
-                            <i class="fas fa-user-circle"></i> ${user.email}
+                    <span class="user-info" style="display:flex;align-items:center;gap:12px;">
+                        <span class="email" style="color:#b7a98f;font-size:10px;font-family:'Montserrat',sans-serif;">
+                            <i class="fas fa-user-circle" style="color:var(--gold-bright);margin-right:4px;"></i> ${user.email}
                             ${isAdmin ? '<span style="color:var(--gold-bright);margin-left:4px;">👑</span>' : ''}
                         </span>
-                        <button class="logout-btn" id="logoutBtnNav">
+                        <button class="logout-btn" id="logoutBtnNav" style="background:transparent;border:1px solid #4a3d2e;color:#b7a98f;padding:5px 12px;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:1px;">
                             <i class="fas fa-sign-out-alt"></i> SALIR
                         </button>
                     </span>
                 `;
                 document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
 
-                // Menú lateral user info
+                // Menú lateral
                 sideMenuUser.style.display = 'flex';
                 sideMenuUser.innerHTML = `
                     <span class="email">
