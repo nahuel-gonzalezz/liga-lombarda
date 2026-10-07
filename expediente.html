@@ -159,7 +159,7 @@
     }
     .btn-share:hover { background: #d4b76c; transform: scale(1.02); }
 
-    /* ===== BOTÓN HAMBURGUESA (solo móvil) ===== */
+    /* ===== BOTÓN HAMBURGUESA ===== */
     .menu-toggle {
       display: none;
       background: transparent;
@@ -210,7 +210,6 @@
       font-weight: 800;
       letter-spacing: 2px;
     }
-
     .side-menu a {
       display: flex;
       align-items: center;
@@ -262,12 +261,8 @@
       letter-spacing: 0.5px;
       word-break: break-all;
     }
-    .side-menu-user .email i {
-      color: var(--gold-bright);
-      margin-right: 6px;
-    }
-    .side-menu-user .logout-btn,
-    .side-menu-user .share-btn {
+    .side-menu-user .email i { color: var(--gold-bright); margin-right: 6px; }
+    .side-menu-user .logout-btn {
       background: transparent;
       border: 1px solid #4a3d2e;
       color: #b7a98f;
@@ -283,9 +278,17 @@
       justify-content: center;
       gap: 8px;
     }
-    .side-menu-user .logout-btn:hover { background: var(--red-slide); border-color: var(--red-slide); color: white; }
-    .side-menu-user .share-btn { background: #a4864a; border-color: #a4864a; color: #1a1a1a; font-weight: 700; }
-    .side-menu-user .share-btn:hover { background: #d4b76c; border-color: #d4b76c; }
+    .side-menu-user .logout-btn:hover {
+      background: var(--red-slide);
+      border-color: var(--red-slide);
+      color: white;
+    }
+    .side-menu-user .btn-share {
+      width: 100%;
+      justify-content: center;
+      padding: 10px 14px;
+      font-size: 11px;
+    }
 
     .side-menu-footer {
       margin-top: auto;
@@ -487,7 +490,7 @@
       flex: 1;
     }
 
-    /* ======= DNI ======= */
+    /* ======= DNI (INTACTO) ======= */
     .dni-container {
       width: 100%;
       max-width: 750px;
@@ -895,7 +898,6 @@
       font-family: "Montserrat", sans-serif;
     }
 
-    /* ===== VARIANTE PASAPORTE (MARRÓN COMO EL OTRO) ===== */
     .passport .front {
       background: linear-gradient(145deg, #2a0808, #3d0e0e, #2a0808) !important;
       color: #d4af37 !important;
@@ -912,7 +914,6 @@
     .passport .subtitle { color: #d4b87a !important; text-shadow: none; }
     .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25)); }
 
-    /* Hoja pasaporte (interior claro) */
     .passport .page .front,
     .passport .page .back,
     .passport #page-1 .front,
@@ -1464,9 +1465,32 @@
     .error-state a { color: #a4864a; text-decoration: none; }
     .error-state a:hover { text-decoration: underline; }
 
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
+    /* ===== FOOTER (mismo del index) ===== */
+    footer.site-footer {
+      background: #000000;
+      color: #888888;
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid #222;
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      margin-top: 30px;
+    }
+    footer.site-footer h3 {
+      color: #ffffff;
+      font-size: 14px;
+      font-family: "Montserrat", sans-serif;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    footer.site-footer p {
+      font-size: 10px;
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 1px;
+    }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       :root { --header-height: 60px; }
 
@@ -1477,51 +1501,51 @@
       .nav-desktop { display: none; }
       .menu-toggle { display: inline-flex; align-items: center; justify-content: center; }
 
-      body { padding: calc(var(--header-height) + 15px) 12px 15px; }
-
-      .escenario { padding: 18px; border-radius: 28px; }
-      .contenido-vertical { gap: 14px; }
-
-      .panel-persona {
-        flex-direction: column;
-        text-align: center;
-        gap: 12px;
-        padding: 16px;
-        min-height: auto;
+      body {
+        padding: calc(var(--header-height) + 15px) 10px 15px;
       }
+      .escenario { padding: 16px; border-radius: 24px; }
+      .panel-persona { flex-direction: column; text-align: center; gap: 12px; }
       .visor-skin { width: 220px; height: 220px; }
       .nombre-bajo { font-size: 26px; }
-      .alias-bajo { font-size: 15px; }
-      .clan-bajo { font-size: 11px; }
       .datos-persona { align-items: center; }
-      .detalles-extra { justify-content: center; gap: 8px; font-size: 11px; }
-      .detalles-extra span { padding: 3px 10px; }
+      .detalles-extra { justify-content: center; }
+      .dni-card { padding: 14px 16px 0 16px; min-height: 240px; }
+      .dni-title { font-size: 1.3rem; }
+      .dni-shield { width: 40px; }
+      .dni-photo-frame { width: 115px; height: 135px; }
+      .dni-grid { gap: 4px 10px; }
+      .dni-value { font-size: 0.7rem; }
+      .dni-label { font-size: 0.45rem; }
+      .dni-icon { font-size: 0.75rem; width: 18px; }
+      .dni-footer { padding: 0 2px 2px 2px; margin-top: -38px; }
+      .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; padding: 3px 0; margin: 0 -16px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+      .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 22px; }
+      .dni-issue-date { font-size: 0.7rem; }
+      .dni-issue-label { font-size: 0.45rem; }
+      .book-wrapper { margin-top: 15px; padding: 15px 0; }
+      .book-container { max-width: 360px; }
+      .book.open { transform: translateX(38%) !important; }
+      .photo-frame { height: 120px; }
+      .panel-documentos { padding: 14px; }
+      .user-info .email { font-size: 8px; }
+      .logout-btn { font-size: 8px; padding: 4px 10px; }
+      .cover h1 { font-size: 1.6rem; }
+      .front, .back { padding: 18px 20px; }
+      .field-row label { font-size: 0.6rem; }
+      .line-fill { font-size: 0.75rem; }
+      .section-title { font-size: 0.7rem; }
+      .info-list p { font-size: 0.6rem; }
+      .info-list p span { font-size: 0.7rem; }
+      .stat-table td { font-size: 0.6rem; }
+      .stat-table td:first-child { font-size: 0.6rem; }
+      .stat-title { font-size: 0.7rem; }
+      .boxes-container i { width: 11px; height: 11px; }
+      .book-controls button { padding: 8px 20px; font-size: 0.65rem; }
+      .page:last-child .back h3 { font-size: 2rem; }
+      .cover-border::before, .cover-border::after { font-size: 12px; }
 
-      .panel-documentos { padding: 14px; gap: 16px; }
-
-      /* ===== DNI MÁS ANCHO EN MÓVIL ===== */
-      .dni-container {
-        max-width: 100%;
-        width: 100%;
-        padding: 0;
-      }
-      .dni-card {
-        max-width: 100%;
-        width: 100%;
-        padding: 14px 18px 0 18px;
-        min-height: 0;
-        /* aspect-ratio 750/380 se mantiene automáticamente */
-      }
-
-      /* ===== LIBRO MÁS PEQUEÑO EN MÓVIL ===== */
-      .book-wrapper { margin-top: 15px; padding: 15px 0; border-radius: 20px; }
-      .book-container { max-width: 320px; }
-      .book.open { transform: translateX(35%) !important; }
-
-      .book-controls { gap: 12px; margin-top: 10px; }
-      .book-controls button { padding: 8px 18px; font-size: 0.65rem; }
-
-      footer { font-size: 9px !important; padding: 16px !important; }
+      footer.site-footer { padding: 30px 16px; }
     }
 
     @media (max-width: 480px) {
@@ -1535,31 +1559,48 @@
       .side-menu { padding: 70px 20px 30px; }
       .side-menu a { font-size: 13px; padding: 14px 12px; }
 
-      body { padding: calc(var(--header-height) + 10px) 8px 10px; }
-
-      .escenario { padding: 12px; border-radius: 22px; }
-
-      .panel-persona { padding: 12px; gap: 10px; }
       .visor-skin { width: 180px; height: 180px; }
       .nombre-bajo { font-size: 22px; }
-      .alias-bajo { font-size: 13px; }
-      .clan-bajo { font-size: 10px; }
-      .detalles-extra { font-size: 10px; gap: 6px; }
-      .detalles-extra span { padding: 2px 8px; }
+      .book-wrapper { margin-top: 10px; padding: 10px 0; }
+      .book-container { max-width: 300px; }
+      .book.open { transform: translateX(32%) !important; }
+      .dni-card { padding: 10px 12px 0 12px; min-height: 200px; }
+      .dni-title { font-size: 1rem; }
+      .dni-subtitle { font-size: 0.55rem; letter-spacing: 1px; }
+      .dni-shield { width: 30px; }
+      .dni-expediente { padding: 3px 10px; }
+      .dni-exp-num { font-size: 0.7rem; }
+      .dni-photo-frame { width: 85px; height: 100px; }
+      .dni-grid { gap: 2px 6px; }
+      .dni-item { gap: 4px; }
+      .dni-icon { font-size: 0.6rem; width: 15px; }
+      .dni-label { font-size: 0.35rem; }
+      .dni-value { font-size: 0.6rem; }
+      .dni-footer { padding: 0 0 0 0; margin-top: -30px; }
+      .dni-issue-date { font-size: 0.6rem; }
+      .dni-issue-label { font-size: 0.4rem; }
+      .dni-bottom-bar { font-size: 0.3rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+      .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 18px; }
+      .cover h1 { font-size: 1.2rem; }
+      .front, .back { padding: 12px 14px; }
+      .field-row label { font-size: 0.55rem; }
+      .line-fill { font-size: 0.65rem; }
+      .section-title { font-size: 0.6rem; }
+      .info-list p { font-size: 0.5rem; }
+      .info-list p span { font-size: 0.6rem; }
+      .stat-table td { font-size: 0.5rem; }
+      .stat-table td:first-child { font-size: 0.5rem; }
+      .stat-title { font-size: 0.6rem; }
+      .photo-frame { height: 90px; }
+      .book-controls button { padding: 6px 14px; font-size: 0.55rem; }
+      .page:last-child .back h3 { font-size: 1.6rem; }
+      .cover-border::before, .cover-border::after { font-size: 10px; }
+      .dni-grid .dni-item:nth-child(7),
+      .dni-grid .dni-item:nth-child(8) { display: none; }
 
-      .panel-documentos { padding: 10px; gap: 12px; }
-
-      /* DNI todavía más ancho en pantallas pequeñas */
-      .dni-container { max-width: 100%; }
-      .dni-card { padding: 10px 12px 0 12px; }
-
-      /* Libro aún más pequeño */
-      .book-wrapper { margin-top: 12px; padding: 12px 0; }
-      .book-container { max-width: 260px; }
-      .book.open { transform: translateX(30%) !important; }
-      .book-controls button { padding: 6px 14px; font-size: 0.6rem; }
-
-      footer { font-size: 8px !important; padding: 12px !important; }
+      footer.site-footer { padding: 24px 14px; }
+      footer.site-footer h3 { font-size: 12px; }
+      footer.site-footer p { font-size: 9px; }
     }
   </style>
 </head>
@@ -1633,7 +1674,7 @@
       <!-- PANEL DOCUMENTOS -->
       <div class="panel-documentos">
 
-        <!-- DNI (solo lombardos) -->
+        <!-- DNI (intacto) -->
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
             <div class="dni-inner-border"></div>
@@ -1686,7 +1727,7 @@
           </div>
         </div>
 
-        <!-- Botón descargar DNI (solo lombardos) -->
+        <!-- Botón descargar DNI -->
         <div id="downloadDniWrapper" style="display:flex;justify-content:center;margin-top:10px;">
           <button class="btn-download-dni" id="downloadDniBtn">
             <i class="fas fa-download"></i> DESCARGAR DNI
@@ -1698,7 +1739,6 @@
           <div class="book-container">
             <div class="book" id="book">
 
-              <!-- carátula -->
               <div class="page cover" id="page-0">
                 <div class="front">
                   <div class="cover-border">
@@ -1715,7 +1755,6 @@
                 </div>
               </div>
 
-              <!-- hoja 1 -->
               <div class="page" id="page-1">
                 <div class="front">
                   <div class="page-inner">
@@ -1770,7 +1809,6 @@
                 </div>
               </div>
 
-              <!-- hoja 2 -->
               <div class="page" id="page-2">
                 <div class="front">
                   <div class="page-inner">
@@ -1815,7 +1853,6 @@
                 </div>
               </div>
 
-              <!-- hoja 3 -->
               <div class="page" id="page-3">
                 <div class="front">
                   <div class="cert-content">
@@ -1853,8 +1890,9 @@
       </div>
     </div>
 
-    <footer style="text-align:center;padding:20px;color:#6b5f4e;font-size:10px;letter-spacing:2px;font-family:'Montserrat',sans-serif;">
-      Liga Lombarda · Archivo Central · Expediente
+    <footer class="site-footer">
+      <h3>LIGA LOMBARDA</h3>
+      <p>SISTEMA OFICIAL DE DOCUMENTACIÓN · ARCHIVO CENTRAL</p>
     </footer>
 
   </div>
@@ -1897,11 +1935,9 @@
 
     menuToggle.addEventListener('click', openMenu);
     menuOverlay.addEventListener('click', closeMenu);
-
     sideMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
-
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });
@@ -1968,7 +2004,6 @@
 
     function renderNav(user) {
       if (user) {
-        // Nav desktop
         userNav.style.display = 'flex';
         userNav.innerHTML = `
           <span class="user-info">
@@ -1992,15 +2027,15 @@
           <span class="email">
             <i class="fas fa-user-circle"></i> ${user.email}
           </span>
-          <button class="share-btn" id="shareBtnSide">
-            <i class="fas fa-share-alt"></i> COMPARTIR
-          </button>
           <button class="logout-btn" id="logoutBtnSide">
             <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
           </button>
+          <button class="btn-share" id="shareBtnSide">
+            <i class="fas fa-share-alt"></i> COMPARTIR
+          </button>
         `;
-        document.getElementById('shareBtnSide').addEventListener('click', compartirURL);
         document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
+        document.getElementById('shareBtnSide').addEventListener('click', compartirURL);
       }
     }
 
@@ -2079,7 +2114,6 @@
     let skinLoaded = false;
     let currentNick = '';
 
-    // ===== SKIN VIEWER DNI =====
     const dniCanvas = document.getElementById('dniSkinCanvas');
     const dniViewer = new skinview3d.SkinViewer({
       canvas: dniCanvas,
@@ -2094,7 +2128,6 @@
     dniViewer.globalLight.intensity = 2.5;
     dniViewer.cameraLight.intensity = 1.2;
 
-    // ===== SKIN VIEWER LIBRO =====
     const bookCanvas = document.getElementById('bookSkinCanvas');
     const bookViewer = new skinview3d.SkinViewer({
       canvas: bookCanvas,
@@ -2109,7 +2142,6 @@
     bookViewer.globalLight.intensity = 2.5;
     bookViewer.cameraLight.intensity = 1.2;
 
-    // ===== POSE GUARDADA PARA EL LIBRO =====
     window._poseLibro = null;
 
     function aplicarPoseEnLibro(data) {
@@ -2587,7 +2619,6 @@
       }
     }
 
-    // ===== NAVEGACIÓN DEL LIBRO =====
     let currentStep = 1;
     const pages = document.querySelectorAll('.page');
     const book = document.getElementById('book');
@@ -2651,7 +2682,6 @@
       updateBookState();
     }, 100);
 
-    // ===== DESCARGAR DNI =====
     const downloadBtn = document.getElementById('downloadDniBtn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async function() {
