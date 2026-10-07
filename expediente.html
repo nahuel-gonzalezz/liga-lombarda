@@ -65,7 +65,6 @@
       align-items: flex-start;
     }
 
-    /* ===== HEADER FIJO ===== */
     header {
       position: fixed;
       top: 0;
@@ -606,7 +605,7 @@
       height: 1px;
       background-color: #500a0e;
       position: relative;
-      margin: 4px 0 8px 0;
+      margin: 2px 0 4px 0;
     }
     .dni-separator::after {
       content: '❖';
@@ -623,6 +622,8 @@
       gap: 18px;
       flex: 1;
       min-height: 110px;
+      align-items: flex-start;
+      margin-top: -6px;
     }
     .dni-photo-frame {
       width: 155px; height: 175px;
@@ -652,18 +653,18 @@
     .dni-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2px 16px;
+      gap: 8px 16px;
       flex: 1;
       padding-top: 0;
-      align-content: center;
+      align-content: start;
     }
     .dni-item {
       display: flex;
       align-items: center;
       gap: 7px;
       border-bottom: 1px solid rgba(140,120,99,0.2);
-      padding: 0 0 1px 0;
-      min-height: 24px;
+      padding: 0 0 3px 0;
+      min-height: 28px;
     }
     .dni-icon {
       font-size: 0.85rem;
@@ -672,7 +673,7 @@
       text-align: center;
       flex-shrink: 0;
     }
-    .dni-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
+    .dni-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
     .dni-label {
       font-family: 'Montserrat', sans-serif;
       font-size: 0.5rem;
@@ -696,7 +697,7 @@
       align-items: flex-start;
       justify-content: flex-end;
       padding: 0 6px 4px 6px;
-      margin-top: -70px;
+      margin-top: -95px;
       position: relative;
       flex-wrap: nowrap;
       gap: 10px;
@@ -1487,7 +1488,6 @@
       letter-spacing: 1px;
     }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       :root { --header-height: 60px; }
 
@@ -1604,7 +1604,6 @@
 
 <body>
 
-  <!-- ===== HEADER FIJO ===== -->
   <header>
     <div class="brand-header">
       <img src="./logo.png" alt="Logo" onerror="this.style.display='none'">
@@ -1623,7 +1622,6 @@
     </button>
   </header>
 
-  <!-- MENÚ LATERAL -->
   <div class="menu-overlay" id="menuOverlay"></div>
   <aside class="side-menu" id="sideMenu">
     <div class="side-menu-header">
@@ -1639,18 +1637,15 @@
     </div>
   </aside>
 
-  <!-- ===== OVERLAY AUTH ===== -->
   <div class="auth-overlay" id="authOverlay">
     <div class="spinner"></div>
     <p>VERIFICANDO ACCESO...</p>
   </div>
 
-  <!-- ===== ESCENARIO PRINCIPAL ===== -->
   <div class="escenario" id="mainContent" style="display:none;">
 
     <div class="contenido-vertical">
 
-      <!-- PANEL PERSONA -->
       <div class="panel-persona">
         <div class="visor-skin">
           <canvas id="skin-container"></canvas>
@@ -1668,10 +1663,8 @@
         </div>
       </div>
 
-      <!-- PANEL DOCUMENTOS -->
       <div class="panel-documentos">
 
-        <!-- DNI -->
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
             <div class="dni-inner-border"></div>
@@ -1730,7 +1723,6 @@
           </button>
         </div>
 
-        <!-- LIBRO / PASAPORTE -->
         <div class="book-wrapper">
           <div class="book-container">
             <div class="book" id="book">
@@ -1893,10 +1885,8 @@
 
   </div>
 
-  <!-- ===== TOAST ===== -->
   <div id="toast" class="toast"></div>
 
-  <!-- ===== SCRIPT PRINCIPAL ===== -->
   <script type="module">
     import {
       auth,
