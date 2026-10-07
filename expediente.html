@@ -90,7 +90,6 @@
       color: var(--paper);
     }
 
-    /* Navegación de escritorio */
     .nav-desktop { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
     .nav-desktop a {
       position: relative;
@@ -159,7 +158,6 @@
     }
     .btn-share:hover { background: #d4b76c; transform: scale(1.02); }
 
-    /* ===== BOTÓN HAMBURGUESA ===== */
     .menu-toggle {
       display: none;
       background: transparent;
@@ -174,7 +172,6 @@
     }
     .menu-toggle:hover { background: rgba(255,255,255,0.08); }
 
-    /* ===== MENÚ LATERAL ===== */
     .side-menu {
       position: fixed;
       top: 0;
@@ -316,7 +313,6 @@
       pointer-events: auto;
     }
 
-    /* ===== OVERLAY AUTH ===== */
     .auth-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -349,7 +345,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* ===== TOAST ===== */
     .toast {
       position: fixed;
       bottom: 30px;
@@ -373,7 +368,6 @@
     .toast.error { background: #4a1a1a; color: #e0b8b8; border: 1px solid #6a2a2a; }
     .toast.info { background: #1a2a4a; color: #b8c8e0; border: 1px solid #2a3a6a; }
 
-    /* ===== ESCENARIO ===== */
     .escenario {
       max-width: 1200px;
       width: 100%;
@@ -490,7 +484,7 @@
       flex: 1;
     }
 
-    /* ======= DNI (INTACTO) ======= */
+    /* ======= DNI ======= */
     .dni-container {
       width: 100%;
       max-width: 750px;
@@ -612,7 +606,7 @@
       height: 1px;
       background-color: #500a0e;
       position: relative;
-      margin: 4px 0 10px 0;
+      margin: 4px 0 8px 0;
     }
     .dni-separator::after {
       content: '❖';
@@ -658,47 +652,51 @@
     .dni-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px 16px;
+      gap: 2px 16px;
       flex: 1;
-      padding-top: 2px;
+      padding-top: 0;
+      align-content: center;
     }
     .dni-item {
       display: flex;
       align-items: center;
       gap: 7px;
       border-bottom: 1px solid rgba(140,120,99,0.2);
-      padding-bottom: 3px;
+      padding: 0 0 1px 0;
+      min-height: 24px;
     }
     .dni-icon {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #500a0e;
-      width: 22px;
+      width: 20px;
       text-align: center;
       flex-shrink: 0;
     }
-    .dni-text { display: flex; flex-direction: column; min-width: 0; }
+    .dni-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
     .dni-label {
       font-family: 'Montserrat', sans-serif;
-      font-size: 0.55rem;
+      font-size: 0.5rem;
       font-weight: 800;
       color: #665c54;
       letter-spacing: 0.5px;
       text-transform: uppercase;
+      line-height: 1.1;
     }
     .dni-value {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: #1a1a1a;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.15;
     }
     .dni-footer {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-end;
       padding: 0 6px 4px 6px;
-      margin-top: -46px;
+      margin-top: -70px;
       position: relative;
       flex-wrap: nowrap;
       gap: 10px;
@@ -1465,7 +1463,6 @@
     .error-state a { color: #a4864a; text-decoration: none; }
     .error-state a:hover { text-decoration: underline; }
 
-    /* ===== FOOTER (mismo del index) ===== */
     footer.site-footer {
       background: #000000;
       color: #888888;
@@ -1674,7 +1671,7 @@
       <!-- PANEL DOCUMENTOS -->
       <div class="panel-documentos">
 
-        <!-- DNI (intacto) -->
+        <!-- DNI -->
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
             <div class="dni-inner-border"></div>
@@ -1708,10 +1705,10 @@
                 <div class="dni-grid">
                   <div class="dni-item"><div class="dni-icon"><i class="fas fa-user"></i></div><div class="dni-text"><span class="dni-label">NOMBRE</span><span class="dni-value" id="dniName">—</span></div></div>
                   <div class="dni-item"><div class="dni-icon"><i class="fas fa-calendar-days"></i></div><div class="dni-text"><span class="dni-label">FECHA NAC.</span><span class="dni-value" id="dniBirthday">—</span></div></div>
-                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-helmet-safety"></i></div><div class="dni-text"><span class="dni-label">ALIAS</span><span class="dni-value" id="dniAlias">—</span></div></div>
-                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-paw"></i></div><div class="dni-text"><span class="dni-label">ESPECIE</span><span class="dni-value" id="dniSpecies">—</span></div></div>
+                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-signature"></i></div><div class="dni-text"><span class="dni-label">ALIAS</span><span class="dni-value" id="dniAlias">—</span></div></div>
+                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-dna"></i></div><div class="dni-text"><span class="dni-label">ESPECIE</span><span class="dni-value" id="dniSpecies">—</span></div></div>
                   <div class="dni-item"><div class="dni-icon"><i class="fas fa-shield-halved"></i></div><div class="dni-text"><span class="dni-label">RANGO</span><span class="dni-value" id="dniRank">—</span></div></div>
-                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-mars"></i></div><div class="dni-text"><span class="dni-label">GÉNERO</span><span class="dni-value" id="dniGender">—</span></div></div>
+                  <div class="dni-item"><div class="dni-icon"><i class="fas fa-venus-mars"></i></div><div class="dni-text"><span class="dni-label">GÉNERO</span><span class="dni-value" id="dniGender">—</span></div></div>
                   <div class="dni-item"><div class="dni-icon"><i class="fas fa-flag"></i></div><div class="dni-text"><span class="dni-label">NACIONALIDAD</span><span class="dni-value" id="dniNationality">—</span></div></div>
                   <div class="dni-item"><div class="dni-icon"><i class="fas fa-briefcase"></i></div><div class="dni-text"><span class="dni-label">PROFESIÓN</span><span class="dni-value" id="dniOccupation">—</span></div></div>
                 </div>
@@ -1727,7 +1724,6 @@
           </div>
         </div>
 
-        <!-- Botón descargar DNI -->
         <div id="downloadDniWrapper" style="display:flex;justify-content:center;margin-top:10px;">
           <button class="btn-download-dni" id="downloadDniBtn">
             <i class="fas fa-download"></i> DESCARGAR DNI
@@ -1778,7 +1774,7 @@
                         </div>
                         <div class="fields-section">
                           <div class="field-row"><label><i class="fas fa-user"></i> NOMBRE:</label><span class="line-fill" id="bookName">—</span></div>
-                          <div class="field-row"><label><i class="fas fa-helmet-safety"></i> ALIAS:</label><span class="line-fill" id="bookAlias">—</span></div>
+                          <div class="field-row"><label><i class="fas fa-signature"></i> ALIAS:</label><span class="line-fill" id="bookAlias">—</span></div>
                           <div class="field-row"><label><i class="fas fa-users"></i> CLAN:</label><span class="line-fill" id="bookClan">—</span></div>
                           <div class="field-row"><label><i class="fas fa-shield-halved"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
                           <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
@@ -1796,8 +1792,8 @@
                         <p><strong><i class="fas fa-briefcase"></i> PROFESIÓN:</strong> <span id="bookOccupation">—</span></p>
                         <p><strong><i class="fas fa-circle-dot"></i> ESTADO:</strong> <span id="bookStatus">—</span></p>
                         <p><strong><i class="fas fa-calendar-days"></i> FECHA NAC.:</strong> <span id="bookBirthday">—</span></p>
-                        <p><strong><i class="fas fa-mars"></i> GÉNERO:</strong> <span id="bookGender">—</span></p>
-                        <p><strong><i class="fas fa-paw"></i> ESPECIE:</strong> <span id="bookSpecies">—</span></p>
+                        <p><strong><i class="fas fa-venus-mars"></i> GÉNERO:</strong> <span id="bookGender">—</span></p>
+                        <p><strong><i class="fas fa-dna"></i> ESPECIE:</strong> <span id="bookSpecies">—</span></p>
                       </div>
                       <div class="description-box">
                         <label><i class="fas fa-pen"></i> DESCRIPCIÓN:</label>
@@ -1916,7 +1912,6 @@
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
 
-    // ===== MENÚ LATERAL =====
     const menuToggle = document.getElementById('menuToggle');
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -2021,7 +2016,6 @@
         document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
         document.getElementById('shareBtn').addEventListener('click', compartirURL);
 
-        // Menú lateral
         sideMenuUser.style.display = 'flex';
         sideMenuUser.innerHTML = `
           <span class="email">
@@ -2085,7 +2079,6 @@
       document.body.removeChild(input);
     }
 
-    // ===== SKIN VIEWER PRINCIPAL =====
     const canvas = document.getElementById('skin-container');
     const viewer = new skinview3d.SkinViewer({
       canvas: canvas,
