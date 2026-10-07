@@ -274,21 +274,16 @@
       font-size: 11px;
       border-radius: 6px;
     }
-    .side-menu-user .btn-share {
-      margin-top: 4px;
-      background: #a4864a;
-      color: #1a1a1a;
-      border: none;
+    .side-menu-user .logout-btn {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-family: "Montserrat", sans-serif;
-      font-weight: 700;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.3s;
     }
-    .side-menu-user .btn-share:hover { background: #d4b76c; }
+    .side-menu-user .btn-share {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .side-menu-footer {
       margin-top: auto;
@@ -490,7 +485,7 @@
       flex: 1;
     }
 
-    /* ======= DNI (RESPONSIVE - mantiene proporción 750/380) ======= */
+    /* ======= DNI ======= */
     .dni-container {
       width: 100%;
       max-width: 750px;
@@ -506,7 +501,7 @@
       position: relative;
       background-color: #f7f5ef;
       border-radius: 20px;
-      padding: 2.93% 4% 0 4%; /* 22/750 y 30/750 */
+      padding: 22px 30px 0 30px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       overflow: hidden;
       border: 2px solid #3a322b;
@@ -514,6 +509,7 @@
       flex-direction: column;
       justify-content: space-between;
       font-family: "Libre Baskerville", Georgia, serif;
+      min-height: 290px;
     }
     .dni-watermark {
       position: absolute;
@@ -526,7 +522,7 @@
     }
     .dni-inner-border {
       position: absolute;
-      top: 1.06%; left: 1.06%; right: 1.06%; bottom: 7.9%;
+      top: 8px; left: 8px; right: 8px; bottom: 30px;
       border: 1px solid #a89885;
       border-radius: 14px;
       pointer-events: none;
@@ -544,12 +540,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 0.53%;
+      padding-bottom: 4px;
       flex-wrap: wrap;
-      gap: 0.66%;
+      gap: 5px;
     }
-    .dni-header-left { display: flex; align-items: center; gap: 1.86%; }
-    .dni-shield { width: 6.93%; height: auto; object-fit: contain; }
+    .dni-header-left { display: flex; align-items: center; gap: 14px; }
+    .dni-shield { width: 52px; height: auto; object-fit: contain; }
     .dni-title {
       font-family: "Cinzel";
       font-size: 1.8rem;
@@ -570,7 +566,7 @@
       background-color: #500a0e;
       color: #fff;
       border-radius: 8px;
-      padding: 0.66% 2.13%;
+      padding: 5px 16px;
       text-align: center;
       border: 2px solid #8d2328;
       box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
@@ -611,7 +607,7 @@
       height: 1px;
       background-color: #500a0e;
       position: relative;
-      margin: 0.53% 0 1.33% 0;
+      margin: 4px 0 10px 0;
     }
     .dni-separator::after {
       content: '❖';
@@ -625,16 +621,15 @@
     }
     .dni-body {
       display: flex;
-      gap: 2.4%;
+      gap: 18px;
       flex: 1;
-      min-height: 29%;
+      min-height: 110px;
     }
     .dni-photo-frame {
-      width: 20.67%;
-      aspect-ratio: 155/175;
+      width: 155px; height: 175px;
       border: 2px solid #a89885;
       border-radius: 12px;
-      padding: 2.58%;
+      padding: 4px;
       background-color: rgba(255,255,255,0.4);
       flex-shrink: 0;
       overflow: hidden;
@@ -658,21 +653,21 @@
     .dni-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.6% 2.13%;
+      gap: 6px 16px;
       flex: 1;
-      padding-top: 0.26%;
+      padding-top: 2px;
     }
     .dni-item {
       display: flex;
       align-items: center;
-      gap: 0.93%;
+      gap: 7px;
       border-bottom: 1px solid rgba(140,120,99,0.2);
-      padding-bottom: 0.4%;
+      padding-bottom: 3px;
     }
     .dni-icon {
       font-size: 0.9rem;
       color: #500a0e;
-      width: 2.93%;
+      width: 22px;
       text-align: center;
       flex-shrink: 0;
     }
@@ -697,11 +692,11 @@
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      padding: 0 0.8% 0.53% 0.8%;
-      margin-top: -12.1%;
+      padding: 0 6px 4px 6px;
+      margin-top: -46px;
       position: relative;
       flex-wrap: nowrap;
-      gap: 1.33%;
+      gap: 10px;
     }
     .dni-issue {
       text-align: right;
@@ -726,8 +721,8 @@
       font-size: 0.55rem;
       font-weight: 700;
       letter-spacing: 2px;
-      padding: 0.53% 0;
-      margin: 0 -4%;
+      padding: 4px 0;
+      margin: 0 -30px;
       border-bottom-left-radius: 18px;
       border-bottom-right-radius: 18px;
       position: relative;
@@ -753,7 +748,7 @@
     }
     .btn-download-dni:hover { background: #2a6a3a; transform: scale(1.02); color: #fff; }
 
-    /* ======= LIBRO / PASAPORTE (RESPONSIVE) ======= */
+    /* ======= LIBRO / PASAPORTE ======= */
     .book-wrapper {
       width: 100%;
       display: flex;
@@ -810,7 +805,7 @@
       backface-visibility: hidden;
       background: linear-gradient(170deg, #f5efe0 0%, #e8dec9 100%);
       border: 2px solid #b8a98f;
-      padding: 4.89% 5.78%;
+      padding: 22px 26px;
       box-shadow:
         inset 0 0 40px rgba(0,0,0,0.06),
         inset 0 0 10px rgba(180,160,130,0.1),
@@ -845,7 +840,7 @@
     .cover .front * { color: #d4af37 !important; }
     .cover-border {
       border: 2px solid #d4af37;
-      padding: 6.67% 4.44%;
+      padding: 30px 20px;
       width: 100%; height: 100%;
       display: flex;
       flex-direction: column;
@@ -876,8 +871,8 @@
       letter-spacing: 10px;
     }
     .cover-logo {
-      width: 17.78%; height: auto;
-      margin-bottom: 3.56%;
+      width: 80px; height: auto;
+      margin-bottom: 16px;
       object-fit: contain;
       filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25));
     }
@@ -898,6 +893,7 @@
       font-family: "Montserrat", sans-serif;
     }
 
+    /* ===== VARIANTE PASAPORTE ===== */
     .passport .front {
       background: linear-gradient(145deg, #2a0808, #3d0e0e, #2a0808) !important;
       color: #d4af37 !important;
@@ -1022,15 +1018,15 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #8c2323;
-      padding-bottom: 1.82%;
+      padding-bottom: 10px;
       flex-wrap: wrap;
-      gap: 1.09%;
+      gap: 6px;
       color: #222 !important;
       flex-shrink: 0;
     }
     .header-doc * { color: #222 !important; }
     .logo-box {
-      width: 9.33%; aspect-ratio: 42/46;
+      width: 42px; height: 46px;
       border: 1px solid #8c2323;
       display: flex;
       justify-content: center;
@@ -1039,7 +1035,7 @@
       background: #e8dbc2;
       border-radius: 4px;
     }
-    .logo-box img { width: 71.43%; height: auto; object-fit: contain; }
+    .logo-box img { width: 30px; height: auto; object-fit: contain; }
     .header-title { text-align: center; color: #222 !important; }
     .header-title h2 {
       font-size: 1.15rem;
@@ -1057,7 +1053,7 @@
     .header-title small { font-size: 0.6rem; color: #555 !important; display: block; }
     .expediente-box {
       border: 1px solid #aaa;
-      padding: 0.91% 2.55%;
+      padding: 5px 14px;
       font-size: 0.7rem;
       text-align: center;
       border-radius: 4px;
@@ -1078,18 +1074,18 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 1.82%;
-      padding: 1.45% 0;
+      gap: 10px;
+      padding: 8px 0;
     }
     .main-content-area > *:last-child { margin-top: auto; }
 
-    .main-info { display: flex; flex-direction: column; gap: 1.82%; flex: 1; }
+    .main-info { display: flex; flex-direction: column; gap: 10px; flex: 1; }
     .photo-section { width: 100%; display: flex; flex-direction: column; align-items: center; }
     .photo-frame {
       width: 50%;
-      height: 25.45%;
+      height: 140px;
       border: 2px solid #888;
-      padding: 0.73%;
+      padding: 4px;
       background: #faf8f2;
       overflow: hidden;
       border-radius: 8px;
@@ -1104,17 +1100,17 @@
     .photo-label {
       font-size: 0.7rem;
       text-align: center;
-      margin-top: 0.73%;
+      margin-top: 4px;
       color: #555 !important;
       font-weight: 600;
       letter-spacing: 1px;
       font-family: "Montserrat", sans-serif;
     }
-    .fields-section { width: 100%; margin-top: 1.09%; }
+    .fields-section { width: 100%; margin-top: 6px; }
     .field-row {
-      margin-bottom: 0.91%;
+      margin-bottom: 5px;
       border-bottom: 1px solid #ddd;
-      padding-bottom: 0.73%;
+      padding-bottom: 4px;
       display: flex;
       justify-content: space-between;
       align-items: baseline;
@@ -1141,8 +1137,8 @@
       color: #8c2323 !important;
       font-weight: 700;
       font-size: 0.85rem;
-      padding: 1.09% 0;
-      margin-bottom: 1.82%;
+      padding: 6px 0;
+      margin-bottom: 10px;
       font-family: "Cinzel";
       flex-shrink: 0;
       letter-spacing: 1px;
@@ -1154,13 +1150,13 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 0.36%;
+      gap: 2px;
     }
     .info-list p {
       font-size: 0.7rem;
-      margin-bottom: 0.55%;
+      margin-bottom: 3px;
       border-bottom: 1px dotted #ddd;
-      padding-bottom: 0.73%;
+      padding-bottom: 4px;
       color: #222 !important;
       display: flex;
       justify-content: space-between;
@@ -1177,7 +1173,7 @@
 
     .description-box {
       border: 1px solid #bbb;
-      padding: 1.45% 2.18%;
+      padding: 8px 12px;
       font-size: 0.75rem;
       background: rgba(255,255,240,0.2);
       flex: 1;
@@ -1185,12 +1181,12 @@
       display: flex;
       flex-direction: column;
       border-radius: 4px;
-      margin-top: 1.09%;
+      margin-top: 6px;
     }
     .description-box label {
       font-weight: 700;
       display: block;
-      margin-bottom: 0.55%;
+      margin-bottom: 3px;
       color: #333 !important;
       font-size: 0.6rem;
       font-family: "Montserrat", sans-serif;
@@ -1209,8 +1205,8 @@
       color: #8c2323 !important;
       font-size: 0.8rem;
       border-bottom: 2px solid #8c2323;
-      padding-bottom: 0.73%;
-      margin-bottom: 1.45%;
+      padding-bottom: 4px;
+      margin-bottom: 8px;
       text-align: center;
       font-family: "Cinzel";
       flex-shrink: 0;
@@ -1220,7 +1216,7 @@
     .stat-table { width: 100%; border-collapse: collapse; flex: 1; }
     .stat-table tr { border-bottom: 1px dotted #ddd; }
     .stat-table td {
-      padding: 0.73% 0;
+      padding: 4px 0;
       font-size: 0.7rem;
       font-weight: 600;
       color: #222 !important;
@@ -1235,7 +1231,7 @@
     .stat-table td:first-child i { width: 20px; color: #8c2323; margin-right: 5px; }
     .boxes-container {
       display: flex;
-      gap: 0.73%;
+      gap: 4px;
       justify-content: flex-end;
       flex-wrap: wrap;
     }
@@ -1264,10 +1260,10 @@
       background: rgba(46,125,50,0.06);
       font-weight: 700;
       text-align: center;
-      padding: 1.45%;
+      padding: 8px;
       font-size: 0.75rem;
       letter-spacing: 2px;
-      margin-bottom: 1.82%;
+      margin-bottom: 10px;
       flex-shrink: 0;
       border-radius: 4px;
       font-family: "Montserrat", sans-serif;
@@ -1277,14 +1273,14 @@
       font-size: 0.7rem;
       line-height: 1.6;
       color: #222 !important;
-      margin-bottom: 1.45%;
+      margin-bottom: 8px;
       flex-shrink: 0;
     }
     .audit-info * { color: #222 !important; }
     .audit-info p {
-      margin-bottom: 0.73%;
+      margin-bottom: 4px;
       border-bottom: 1px dotted #ddd;
-      padding-bottom: 0.73%;
+      padding-bottom: 4px;
       display: flex;
       justify-content: space-between;
       font-family: "Montserrat", sans-serif;
@@ -1296,7 +1292,7 @@
     .obs-section {
       border: 1px solid #bbb;
       background: rgba(255,255,240,0.15);
-      padding: 1.45% 2.18%;
+      padding: 8px 12px;
       flex: 1;
       min-height: 60px;
       display: flex;
@@ -1308,8 +1304,8 @@
       font-size: 0.6rem;
       color: #8c2323 !important;
       border-bottom: 1px solid #8c2323;
-      padding-bottom: 0.55%;
-      margin-bottom: 0.91%;
+      padding-bottom: 3px;
+      margin-bottom: 5px;
       display: block;
       flex-shrink: 0;
       font-family: "Montserrat", sans-serif;
@@ -1340,18 +1336,18 @@
       line-height: 1.6;
       color: #222 !important;
       border: 2px solid #bbb;
-      padding: 2.91%;
+      padding: 16px;
       background: rgba(255,255,240,0.2);
       border-radius: 4px;
       font-family: "Libre Baskerville", serif;
     }
     .cert-text i { color: #2e7d32 !important; margin-right: 6px; }
-    .cert-date { font-size: 0.85rem; margin-top: 2.18%; color: #222 !important; }
+    .cert-date { font-size: 0.85rem; margin-top: 12px; color: #222 !important; }
     .cert-date * { color: #222 !important; }
     .cert-date i { color: #8c2323 !important; margin-right: 4px; }
     .cert-date strong { font-family: "Libre Baskerville", serif; font-weight: 700; font-size: 1rem; }
     .signature-area {
-      margin-top: 2.55%;
+      margin-top: 14px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -1362,10 +1358,10 @@
       height: 36px;
       max-width: 120px;
       object-fit: contain;
-      margin-bottom: 0.91%;
+      margin-bottom: 5px;
       opacity: 0.85;
     }
-    .sig-line { border-top: 2px solid #333; width: 45%; margin: 0 auto 0.91% auto; }
+    .sig-line { border-top: 2px solid #333; width: 45%; margin: 0 auto 5px auto; }
     .sig-label {
       font-size: 0.65rem;
       color: #555 !important;
@@ -1379,9 +1375,9 @@
       color: #8c2323 !important;
       font-weight: 700;
       border-top: 2px solid #8c2323;
-      padding-top: 2.18%;
+      padding-top: 12px;
       font-family: "Cinzel";
-      margin-top: 1.45%;
+      margin-top: 8px;
     }
     .motto i { margin: 0 6px; color: #8c2323 !important; }
 
@@ -1389,7 +1385,7 @@
       font-size: 0.65rem;
       color: #999 !important;
       text-align: center;
-      margin-top: 1.82%;
+      margin-top: 10px;
       flex-shrink: 0;
       font-family: "Montserrat", sans-serif;
       letter-spacing: 1px;
@@ -1402,7 +1398,7 @@
       align-items: center;
       justify-content: center;
     }
-    .page:last-child .back > div { text-align: center; padding: 3.64%; }
+    .page:last-child .back > div { text-align: center; padding: 20px; }
     .page:last-child .back h3 {
       font-family: 'Cinzel';
       font-size: 2.8rem;
@@ -1411,7 +1407,7 @@
       text-shadow: 0 0 30px rgba(212,175,55,0.15);
     }
     .page:last-child .back p {
-      margin-top: 3.27%;
+      margin-top: 18px;
       font-size: 0.85rem;
       color: #b8964a !important;
       letter-spacing: 4px;
@@ -1480,106 +1476,96 @@
 
       body { padding: calc(var(--header-height) + 15px) 12px 15px; }
 
-      .escenario { padding: 18px; border-radius: 28px; }
+      .escenario {
+        padding: 18px 16px 20px;
+        border-radius: 28px;
+      }
+
+      .contenido-vertical { gap: 14px; }
 
       .panel-persona {
         flex-direction: column;
         text-align: center;
-        gap: 14px;
-        padding: 16px;
+        gap: 12px;
+        padding: 16px 14px 18px;
+        min-height: auto;
       }
-      .visor-skin { width: 240px; height: 240px; }
-      .nombre-bajo { font-size: 26px; }
+      .visor-skin {
+        width: 220px;
+        height: 220px;
+      }
+      .nombre-bajo { font-size: 26px; text-align: center; }
+      .alias-bajo { font-size: 15px; text-align: center; }
+      .clan-bajo { font-size: 12px; text-align: center; }
       .datos-persona { align-items: center; }
-      .detalles-extra { justify-content: center; gap: 10px; }
+      .detalles-extra {
+        justify-content: center;
+        gap: 8px;
+        font-size: 11px;
+      }
+      .detalles-extra span { padding: 3px 10px; }
 
-      .panel-documentos { padding: 16px; }
+      .panel-documentos {
+        padding: 14px 12px 16px;
+        gap: 16px;
+      }
 
-      /* DNI se mantiene en proporción 750/380, solo achica el ancho */
+      /* DNI MÁS ANCHO EN MÓVIL — mantiene aspect-ratio 750/380 */
       .dni-container { max-width: 100%; }
-      .dni-card { max-width: 100%; }
+      .dni-card {
+        max-width: 100%;
+        min-height: auto;
+      }
+      .dni-title { font-size: 1.3rem; }
+      .dni-shield { width: 40px; }
+      .dni-photo-frame { width: 115px; height: 135px; }
+      .dni-grid { gap: 4px 10px; }
+      .dni-value { font-size: 0.7rem; }
+      .dni-label { font-size: 0.45rem; }
+      .dni-icon { font-size: 0.75rem; width: 18px; }
+      .dni-bottom-bar {
+        font-size: 0.4rem;
+        letter-spacing: 1px;
+        padding: 3px 0;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
+      .dni-issue-date { font-size: 0.7rem; }
+      .dni-issue-label { font-size: 0.45rem; }
 
-      /* Libro más pequeño manteniendo proporción 450/550 */
-      .book-wrapper { margin-top: 20px; padding: 18px 0 16px; }
-      .book-container { max-width: 380px; }
+      .book-wrapper {
+        margin-top: 20px;
+        padding: 18px 0 15px;
+        border-radius: 22px;
+      }
+      .book-container {
+        max-width: 380px;
+      }
       .book.open { transform: translateX(40%) !important; }
 
-      .cover h1 { font-size: 1.7rem; }
-      .cover-border { padding: 5% 4%; }
-      .cover-logo { width: 60px; }
+      .front, .back { padding: 18px 20px; }
+      .cover h1 { font-size: 1.6rem; }
+      .cover-logo { width: 60px; margin-bottom: 12px; }
+      .subtitle { font-size: 0.75rem; letter-spacing: 2px; }
 
-      .book-controls button { padding: 8px 22px; font-size: 0.7rem; }
-    }
+      .field-row label { font-size: 0.6rem; }
+      .line-fill { font-size: 0.75rem; }
+      .section-title { font-size: 0.7rem; }
+      .info-list p { font-size: 0.6rem; }
+      .info-list p span { font-size: 0.7rem; }
+      .stat-table td { font-size: 0.6rem; }
+      .stat-table td:first-child { font-size: 0.6rem; }
+      .stat-title { font-size: 0.7rem; }
+      .boxes-container i { width: 11px; height: 11px; }
+      .photo-frame { height: 120px; }
 
-    @media (max-width: 600px) {
-      body { padding: calc(var(--header-height) + 12px) 8px 12px; }
+      .book-controls button {
+        padding: 9px 22px;
+        font-size: 0.7rem;
+      }
 
-      .escenario { padding: 14px; border-radius: 22px; }
-
-      .panel-persona { padding: 14px; }
-      .visor-skin { width: 200px; height: 200px; }
-      .nombre-bajo { font-size: 22px; }
-      .alias-bajo { font-size: 14px; }
-      .clan-bajo { font-size: 11px; }
-      .detalles-extra { font-size: 11px; gap: 8px; }
-      .detalles-extra span { padding: 3px 9px; }
-
-      .panel-documentos { padding: 12px; gap: 14px; }
-
-      /* DNI achicado en móvil, mantiene proporción */
-      .dni-card { border-radius: 14px; }
-      .dni-title { font-size: 1.1rem; }
-      .dni-subtitle { font-size: 0.55rem; }
-      .dni-exp-num { font-size: 0.7rem; }
-      .dni-exp-label { font-size: 0.45rem; }
-      .dni-class-label { font-size: 0.4rem; }
-      .dni-class-val { font-size: 0.65rem; }
-      .dni-label { font-size: 0.4rem; }
-      .dni-value { font-size: 0.65rem; }
-      .dni-icon { font-size: 0.65rem; }
-      .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; }
-
-      /* Ocultar algunos campos del DNI en pantallas pequeñas */
-      .dni-grid .dni-item:nth-child(7),
-      .dni-grid .dni-item:nth-child(8) { display: none; }
-
-      /* Libro más chico */
-      .book-container { max-width: 300px; }
-      .book.open { transform: translateX(36%) !important; }
-
-      .cover h1 { font-size: 1.3rem; letter-spacing: 3px; }
-      .cover-border { padding: 6% 4%; }
-      .cover-logo { width: 50px; }
-
-      .front, .back { padding: 4.5% 5%; }
-      .header-title h2 { font-size: 0.9rem; }
-      .header-title span { font-size: 0.55rem; }
-      .header-title small { font-size: 0.5rem; }
-      .red-text { font-size: 0.65rem; }
-      .section-title { font-size: 0.65rem; }
-      .field-row label { font-size: 0.55rem; }
-      .line-fill { font-size: 0.7rem; }
-      .info-list p { font-size: 0.55rem; }
-      .info-list p span { font-size: 0.65rem; }
-      .stat-title { font-size: 0.65rem; }
-      .stat-table td { font-size: 0.55rem; }
-      .stat-table td:first-child { font-size: 0.55rem; }
-      .stat-table td:first-child i { width: 14px; margin-right: 3px; }
-      .boxes-container i { width: 9px; height: 9px; }
-      .status-badge { font-size: 0.6rem; }
-      .audit-info p { font-size: 0.55rem; }
-      .audit-info p span { font-size: 0.6rem; }
-      .obs-section label { font-size: 0.5rem; }
-      .cert-text { font-size: 0.7rem; }
-      .cert-date { font-size: 0.7rem; }
-      .sig-img { height: 30px; }
-      .sig-label { font-size: 0.55rem; }
-      .motto { font-size: 0.6rem; }
       .page:last-child .back h3 { font-size: 2rem; }
-      .page:last-child .back p { font-size: 0.7rem; }
-
-      .book-controls { gap: 12px; margin-top: 10px; }
-      .book-controls button { padding: 7px 16px; font-size: 0.6rem; }
+      .cover-border::before, .cover-border::after { font-size: 12px; }
     }
 
     @media (max-width: 480px) {
@@ -1593,84 +1579,144 @@
       .side-menu { padding: 70px 20px 30px; }
       .side-menu a { font-size: 13px; padding: 14px 12px; }
 
-      body { padding: calc(var(--header-height) + 10px) 6px 10px; }
+      body { padding: calc(var(--header-height) + 10px) 8px 10px; }
 
-      .escenario { padding: 12px; border-radius: 18px; }
+      .escenario {
+        padding: 12px 10px 14px;
+        border-radius: 20px;
+      }
 
-      .visor-skin { width: 170px; height: 170px; }
-      .nombre-bajo { font-size: 18px; }
-      .alias-bajo { font-size: 12px; }
+      .panel-persona {
+        padding: 12px 10px 14px;
+        gap: 8px;
+        border-radius: 18px;
+      }
+      .visor-skin {
+        width: 180px;
+        height: 180px;
+        border-radius: 14px;
+      }
+      .nombre-bajo { font-size: 22px; padding-bottom: 2px; }
+      .alias-bajo { font-size: 13px; }
       .clan-bajo { font-size: 10px; }
-      .detalles-extra { font-size: 10px; gap: 6px; }
+      .detalles-extra { gap: 6px; font-size: 10px; }
       .detalles-extra span { padding: 2px 8px; }
 
-      .panel-documentos { padding: 10px; gap: 12px; }
+      .panel-documentos {
+        padding: 12px 8px 14px;
+        gap: 12px;
+        border-radius: 18px;
+      }
 
-      /* DNI bien chico pero mantiene proporción */
-      .dni-title { font-size: 0.9rem; letter-spacing: 1px; }
-      .dni-subtitle { font-size: 0.45rem; letter-spacing: 1px; }
-      .dni-exp-num { font-size: 0.6rem; }
-      .dni-exp-label { font-size: 0.4rem; }
-      .dni-class-label { font-size: 0.35rem; }
-      .dni-class-val { font-size: 0.55rem; }
+      /* DNI ancho completo en pantallas muy pequeñas */
+      .dni-card {
+        padding: 12px 14px 0 14px;
+        border-radius: 14px;
+      }
+      .dni-title { font-size: 1rem; letter-spacing: 1px; }
+      .dni-subtitle { font-size: 0.55rem; letter-spacing: 1px; }
+      .dni-shield { width: 30px; }
+      .dni-header-left { gap: 8px; }
+      .dni-expediente { padding: 3px 10px; border-radius: 6px; }
+      .dni-exp-num { font-size: 0.7rem; }
+      .dni-exp-label { font-size: 0.45rem; }
+      .dni-class-label { font-size: 0.4rem; }
+      .dni-class-val { font-size: 0.65rem; }
+      .dni-photo-frame { width: 78px; height: 92px; border-radius: 8px; }
+      .dni-photo-inner { border-radius: 6px; }
+      .dni-grid { gap: 2px 6px; }
+      .dni-item { gap: 4px; padding-bottom: 2px; }
+      .dni-icon { font-size: 0.6rem; width: 14px; }
       .dni-label { font-size: 0.35rem; }
-      .dni-value { font-size: 0.55rem; }
-      .dni-icon { font-size: 0.55rem; }
-      .dni-bottom-bar { font-size: 0.35rem; letter-spacing: 0.5px; }
+      .dni-value { font-size: 0.6rem; }
+      .dni-footer { margin-top: -30px; padding: 0 2px 2px 2px; }
+      .dni-issue-date { font-size: 0.6rem; }
+      .dni-issue-label { font-size: 0.4rem; }
+      .dni-bottom-bar {
+        font-size: 0.3rem;
+        letter-spacing: 0.5px;
+        padding: 2px 0;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+      .dni-inner-border {
+        top: 4px; left: 4px; right: 4px; bottom: 22px;
+        border-radius: 10px;
+      }
+      .dni-separator { margin: 2px 0 6px 0; }
 
-      /* Libro chico */
-      .book-wrapper { margin-top: 12px; padding: 12px 0 10px; border-radius: 20px; }
-      .book-container { max-width: 260px; }
+      .btn-download-dni {
+        padding: 8px 16px;
+        font-size: 9px;
+      }
+
+      /* Libro más compacto en pantallas muy pequeñas */
+      .book-wrapper {
+        margin-top: 14px;
+        padding: 12px 0 10px;
+        border-radius: 16px;
+      }
+      .book-container {
+        max-width: 290px;
+      }
       .book.open { transform: translateX(32%) !important; }
 
-      .cover h1 { font-size: 1.1rem; letter-spacing: 2px; }
-      .cover-logo { width: 42px; }
-      .cover-border::before, .cover-border::after { font-size: 10px; letter-spacing: 6px; }
+      .front, .back { padding: 12px 14px; }
+      .cover h1 { font-size: 1.2rem; letter-spacing: 2px; }
+      .cover-logo { width: 50px; margin-bottom: 10px; }
+      .subtitle { font-size: 0.6rem; letter-spacing: 1.5px; }
+      .cover-border { padding: 20px 14px; }
 
-      .front, .back { padding: 4% 4.5%; }
-      .logo-box { width: 10%; }
-      .header-title h2 { font-size: 0.75rem; letter-spacing: 1px; }
-      .header-title span { font-size: 0.5rem; }
-      .header-title small { font-size: 0.45rem; }
-      .expediente-box { padding: 0.8% 2%; font-size: 0.55rem; }
-      .expediente-box label { font-size: 0.4rem; }
-      .red-text { font-size: 0.55rem; }
-      .section-title { font-size: 0.55rem; padding: 0.9% 0; }
-      .field-row label { font-size: 0.5rem; }
-      .line-fill { font-size: 0.6rem; }
-      .photo-frame { height: 22%; }
-      .photo-label { font-size: 0.55rem; }
+      .header-doc { padding-bottom: 6px; }
+      .header-title h2 { font-size: 0.85rem; }
+      .header-title span { font-size: 0.55rem; }
+      .header-title small { font-size: 0.5rem; }
+      .logo-box { width: 32px; height: 36px; }
+      .logo-box img { width: 22px; }
+      .expediente-box { padding: 3px 8px; }
+      .red-text { font-size: 0.7rem; }
+
+      .field-row label { font-size: 0.55rem; }
+      .line-fill { font-size: 0.65rem; }
+      .section-title { font-size: 0.6rem; padding: 4px 0; }
       .info-list p { font-size: 0.5rem; }
-      .info-list p span { font-size: 0.55rem; }
-      .stat-title { font-size: 0.55rem; }
-      .stat-table td { font-size: 0.5rem; padding: 0.6% 0; }
-      .stat-table td:first-child { font-size: 0.5rem; width: 45%; }
-      .stat-table td:first-child i { width: 12px; margin-right: 2px; }
-      .boxes-container i { width: 7px; height: 7px; }
-      .description-box { padding: 1.5% 2%; min-height: 40px; }
-      .description-box label { font-size: 0.45rem; }
-      .description-box p { font-size: 0.55rem; }
-      .status-badge { font-size: 0.5rem; padding: 1.2%; }
-      .audit-info p { font-size: 0.5rem; }
-      .audit-info p span { font-size: 0.55rem; }
-      .obs-section { padding: 1.2% 2%; min-height: 45px; }
-      .obs-section label { font-size: 0.45rem; }
-      .obs-lines { font-size: 0.55rem; line-height: 18px; min-height: 45px; }
-      .cert-text { font-size: 0.6rem; padding: 2%; }
-      .cert-date { font-size: 0.6rem; }
-      .cert-date strong { font-size: 0.75rem; }
-      .sig-img { height: 24px; }
+      .info-list p span { font-size: 0.6rem; }
+      .info-list p strong i { width: 14px; margin-right: 4px; }
+      .description-box { padding: 6px 8px; }
+      .description-box p { font-size: 0.6rem; }
+      .stat-table td { font-size: 0.5rem; padding: 3px 0; }
+      .stat-table td:first-child { font-size: 0.5rem; }
+      .stat-title { font-size: 0.6rem; }
+      .boxes-container i { width: 9px; height: 9px; gap: 3px; }
+      .boxes-container { gap: 2px; }
+      .photo-frame { height: 90px; }
+      .photo-label { font-size: 0.55rem; }
+
+      .status-badge { font-size: 0.6rem; padding: 5px; letter-spacing: 1px; }
+      .audit-info { font-size: 0.55rem; }
+      .audit-info p span { font-size: 0.6rem; }
+      .obs-section { padding: 6px 8px; }
+      .obs-section label { font-size: 0.5rem; }
+      .obs-lines { font-size: 0.6rem; }
+
+      .cert-text { font-size: 0.65rem; padding: 10px; }
+      .cert-date { font-size: 0.65rem; }
+      .cert-date strong { font-size: 0.8rem; }
+      .sig-img { height: 28px; }
       .sig-label { font-size: 0.5rem; }
-      .motto { font-size: 0.5rem; letter-spacing: 2px; padding-top: 1.8%; }
-      .page:last-child .back h3 { font-size: 1.5rem; letter-spacing: 4px; }
-      .page:last-child .back p { font-size: 0.6rem; letter-spacing: 2px; }
+      .motto { font-size: 0.55rem; letter-spacing: 1.5px; padding-top: 8px; }
 
-      .book-controls { gap: 8px; margin-top: 8px; }
-      .book-controls button { padding: 6px 12px; font-size: 0.55rem; letter-spacing: 1px; }
+      .book-controls { gap: 10px; margin-top: 10px; }
+      .book-controls button {
+        padding: 8px 16px;
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+      }
 
-      /* Ocultar más campos del DNI en pantallas muy chicas */
-      .dni-grid .dni-item:nth-child(5),
-      .dni-grid .dni-item:nth-child(6) { display: none; }
+      .page:last-child .back h3 { font-size: 1.6rem; letter-spacing: 3px; }
+      .page:last-child .back p { font-size: 0.7rem; letter-spacing: 2px; }
+      .cover-border::before, .cover-border::after { font-size: 10px; letter-spacing: 6px; }
+      .page-number { font-size: 0.55rem; }
     }
   </style>
 </head>
@@ -1686,7 +1732,7 @@
 
     <nav class="nav-desktop">
       <a href="./index.html">INICIO</a>
-      <a href="./documentos.html">DOCUMENTOS</a>
+      <a href="./documentos.html" class="active">DOCUMENTOS</a>
       <a href="./formulario.html">FORMULARIO</a>
       <div id="userNav" style="display: none;"></div>
     </nav>
@@ -1704,7 +1750,7 @@
       <span>LIGA LOMBARDA</span>
     </div>
     <a href="./index.html"><i class="fa-solid fa-house"></i> INICIO</a>
-    <a href="./documentos.html"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
+    <a href="./documentos.html" class="active"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
     <a href="./formulario.html"><i class="fa-solid fa-pen-to-square"></i> FORMULARIO</a>
     <div class="side-menu-user" id="sideMenuUser" style="display:none;"></div>
     <div class="side-menu-footer">
@@ -1797,7 +1843,7 @@
           </div>
         </div>
 
-        <!-- Botón descargar DNI -->
+        <!-- Botón descargar DNI (solo lombardos) -->
         <div id="downloadDniWrapper" style="display:flex;justify-content:center;margin-top:10px;">
           <button class="btn-download-dni" id="downloadDniBtn">
             <i class="fas fa-download"></i> DESCARGAR DNI
@@ -1989,6 +2035,36 @@
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
 
+    // =========================================================
+    // MENÚ LATERAL
+    // =========================================================
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const sideMenuUser = document.getElementById('sideMenuUser');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      menuOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      menuOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    menuToggle.addEventListener('click', openMenu);
+    menuOverlay.addEventListener('click', closeMenu);
+
+    sideMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
     const RANK_ORDER = [
       'Elite Urbana',
       'Caballero Lombardo',
@@ -2048,32 +2124,6 @@
       }, duration);
     }
     window.showToast = showToast;
-
-    // ===== MENÚ LATERAL =====
-    const menuToggle = document.getElementById('menuToggle');
-    const sideMenu = document.getElementById('sideMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const sideMenuUser = document.getElementById('sideMenuUser');
-
-    function openMenu() {
-      sideMenu.classList.add('open');
-      menuOverlay.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeMenu() {
-      sideMenu.classList.remove('open');
-      menuOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    menuToggle.addEventListener('click', openMenu);
-    menuOverlay.addEventListener('click', closeMenu);
-    sideMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', closeMenu);
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
-    });
 
     function renderNav(user) {
       if (user) {
@@ -2188,6 +2238,7 @@
     let skinLoaded = false;
     let currentNick = '';
 
+    // ===== SKIN VIEWER DNI =====
     const dniCanvas = document.getElementById('dniSkinCanvas');
     const dniViewer = new skinview3d.SkinViewer({
       canvas: dniCanvas,
@@ -2202,6 +2253,7 @@
     dniViewer.globalLight.intensity = 2.5;
     dniViewer.cameraLight.intensity = 1.2;
 
+    // ===== SKIN VIEWER LIBRO =====
     const bookCanvas = document.getElementById('bookSkinCanvas');
     const bookViewer = new skinview3d.SkinViewer({
       canvas: bookCanvas,
