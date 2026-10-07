@@ -159,7 +159,7 @@
     }
     .btn-share:hover { background: #d4b76c; transform: scale(1.02); }
 
-    /* ===== BOTÓN HAMBURGUESA ===== */
+    /* ===== BOTÓN HAMBURGUESA (solo móvil) ===== */
     .menu-toggle {
       display: none;
       background: transparent;
@@ -267,23 +267,25 @@
       margin-right: 6px;
     }
     .side-menu-user .logout-btn,
-    .side-menu-user .btn-share {
-      width: 100%;
-      justify-content: center;
+    .side-menu-user .share-btn {
+      background: transparent;
+      border: 1px solid #4a3d2e;
+      color: #b7a98f;
       padding: 10px 14px;
-      font-size: 11px;
       border-radius: 6px;
-    }
-    .side-menu-user .logout-btn {
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      transition: all 0.3s;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
     }
-    .side-menu-user .btn-share {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .side-menu-user .logout-btn:hover { background: var(--red-slide); border-color: var(--red-slide); color: white; }
+    .side-menu-user .share-btn { background: #a4864a; border-color: #a4864a; color: #1a1a1a; font-weight: 700; }
+    .side-menu-user .share-btn:hover { background: #d4b76c; border-color: #d4b76c; }
 
     .side-menu-footer {
       margin-top: auto;
@@ -893,7 +895,7 @@
       font-family: "Montserrat", sans-serif;
     }
 
-    /* ===== VARIANTE PASAPORTE ===== */
+    /* ===== VARIANTE PASAPORTE (MARRÓN COMO EL OTRO) ===== */
     .passport .front {
       background: linear-gradient(145deg, #2a0808, #3d0e0e, #2a0808) !important;
       color: #d4af37 !important;
@@ -910,6 +912,7 @@
     .passport .subtitle { color: #d4b87a !important; text-shadow: none; }
     .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25)); }
 
+    /* Hoja pasaporte (interior claro) */
     .passport .page .front,
     .passport .page .back,
     .passport #page-1 .front,
@@ -1476,96 +1479,49 @@
 
       body { padding: calc(var(--header-height) + 15px) 12px 15px; }
 
-      .escenario {
-        padding: 18px 16px 20px;
-        border-radius: 28px;
-      }
-
+      .escenario { padding: 18px; border-radius: 28px; }
       .contenido-vertical { gap: 14px; }
 
       .panel-persona {
         flex-direction: column;
         text-align: center;
         gap: 12px;
-        padding: 16px 14px 18px;
+        padding: 16px;
         min-height: auto;
       }
-      .visor-skin {
-        width: 220px;
-        height: 220px;
-      }
-      .nombre-bajo { font-size: 26px; text-align: center; }
-      .alias-bajo { font-size: 15px; text-align: center; }
-      .clan-bajo { font-size: 12px; text-align: center; }
+      .visor-skin { width: 220px; height: 220px; }
+      .nombre-bajo { font-size: 26px; }
+      .alias-bajo { font-size: 15px; }
+      .clan-bajo { font-size: 11px; }
       .datos-persona { align-items: center; }
-      .detalles-extra {
-        justify-content: center;
-        gap: 8px;
-        font-size: 11px;
-      }
+      .detalles-extra { justify-content: center; gap: 8px; font-size: 11px; }
       .detalles-extra span { padding: 3px 10px; }
 
-      .panel-documentos {
-        padding: 14px 12px 16px;
-        gap: 16px;
-      }
+      .panel-documentos { padding: 14px; gap: 16px; }
 
-      /* DNI MÁS ANCHO EN MÓVIL — mantiene aspect-ratio 750/380 */
-      .dni-container { max-width: 100%; }
+      /* ===== DNI MÁS ANCHO EN MÓVIL ===== */
+      .dni-container {
+        max-width: 100%;
+        width: 100%;
+        padding: 0;
+      }
       .dni-card {
         max-width: 100%;
-        min-height: auto;
-      }
-      .dni-title { font-size: 1.3rem; }
-      .dni-shield { width: 40px; }
-      .dni-photo-frame { width: 115px; height: 135px; }
-      .dni-grid { gap: 4px 10px; }
-      .dni-value { font-size: 0.7rem; }
-      .dni-label { font-size: 0.45rem; }
-      .dni-icon { font-size: 0.75rem; width: 18px; }
-      .dni-bottom-bar {
-        font-size: 0.4rem;
-        letter-spacing: 1px;
-        padding: 3px 0;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-      }
-      .dni-issue-date { font-size: 0.7rem; }
-      .dni-issue-label { font-size: 0.45rem; }
-
-      .book-wrapper {
-        margin-top: 20px;
-        padding: 18px 0 15px;
-        border-radius: 22px;
-      }
-      .book-container {
-        max-width: 380px;
-      }
-      .book.open { transform: translateX(40%) !important; }
-
-      .front, .back { padding: 18px 20px; }
-      .cover h1 { font-size: 1.6rem; }
-      .cover-logo { width: 60px; margin-bottom: 12px; }
-      .subtitle { font-size: 0.75rem; letter-spacing: 2px; }
-
-      .field-row label { font-size: 0.6rem; }
-      .line-fill { font-size: 0.75rem; }
-      .section-title { font-size: 0.7rem; }
-      .info-list p { font-size: 0.6rem; }
-      .info-list p span { font-size: 0.7rem; }
-      .stat-table td { font-size: 0.6rem; }
-      .stat-table td:first-child { font-size: 0.6rem; }
-      .stat-title { font-size: 0.7rem; }
-      .boxes-container i { width: 11px; height: 11px; }
-      .photo-frame { height: 120px; }
-
-      .book-controls button {
-        padding: 9px 22px;
-        font-size: 0.7rem;
+        width: 100%;
+        padding: 14px 18px 0 18px;
+        min-height: 0;
+        /* aspect-ratio 750/380 se mantiene automáticamente */
       }
 
-      .page:last-child .back h3 { font-size: 2rem; }
-      .cover-border::before, .cover-border::after { font-size: 12px; }
+      /* ===== LIBRO MÁS PEQUEÑO EN MÓVIL ===== */
+      .book-wrapper { margin-top: 15px; padding: 15px 0; border-radius: 20px; }
+      .book-container { max-width: 320px; }
+      .book.open { transform: translateX(35%) !important; }
+
+      .book-controls { gap: 12px; margin-top: 10px; }
+      .book-controls button { padding: 8px 18px; font-size: 0.65rem; }
+
+      footer { font-size: 9px !important; padding: 16px !important; }
     }
 
     @media (max-width: 480px) {
@@ -1581,142 +1537,29 @@
 
       body { padding: calc(var(--header-height) + 10px) 8px 10px; }
 
-      .escenario {
-        padding: 12px 10px 14px;
-        border-radius: 20px;
-      }
+      .escenario { padding: 12px; border-radius: 22px; }
 
-      .panel-persona {
-        padding: 12px 10px 14px;
-        gap: 8px;
-        border-radius: 18px;
-      }
-      .visor-skin {
-        width: 180px;
-        height: 180px;
-        border-radius: 14px;
-      }
-      .nombre-bajo { font-size: 22px; padding-bottom: 2px; }
+      .panel-persona { padding: 12px; gap: 10px; }
+      .visor-skin { width: 180px; height: 180px; }
+      .nombre-bajo { font-size: 22px; }
       .alias-bajo { font-size: 13px; }
       .clan-bajo { font-size: 10px; }
-      .detalles-extra { gap: 6px; font-size: 10px; }
+      .detalles-extra { font-size: 10px; gap: 6px; }
       .detalles-extra span { padding: 2px 8px; }
 
-      .panel-documentos {
-        padding: 12px 8px 14px;
-        gap: 12px;
-        border-radius: 18px;
-      }
+      .panel-documentos { padding: 10px; gap: 12px; }
 
-      /* DNI ancho completo en pantallas muy pequeñas */
-      .dni-card {
-        padding: 12px 14px 0 14px;
-        border-radius: 14px;
-      }
-      .dni-title { font-size: 1rem; letter-spacing: 1px; }
-      .dni-subtitle { font-size: 0.55rem; letter-spacing: 1px; }
-      .dni-shield { width: 30px; }
-      .dni-header-left { gap: 8px; }
-      .dni-expediente { padding: 3px 10px; border-radius: 6px; }
-      .dni-exp-num { font-size: 0.7rem; }
-      .dni-exp-label { font-size: 0.45rem; }
-      .dni-class-label { font-size: 0.4rem; }
-      .dni-class-val { font-size: 0.65rem; }
-      .dni-photo-frame { width: 78px; height: 92px; border-radius: 8px; }
-      .dni-photo-inner { border-radius: 6px; }
-      .dni-grid { gap: 2px 6px; }
-      .dni-item { gap: 4px; padding-bottom: 2px; }
-      .dni-icon { font-size: 0.6rem; width: 14px; }
-      .dni-label { font-size: 0.35rem; }
-      .dni-value { font-size: 0.6rem; }
-      .dni-footer { margin-top: -30px; padding: 0 2px 2px 2px; }
-      .dni-issue-date { font-size: 0.6rem; }
-      .dni-issue-label { font-size: 0.4rem; }
-      .dni-bottom-bar {
-        font-size: 0.3rem;
-        letter-spacing: 0.5px;
-        padding: 2px 0;
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-      }
-      .dni-inner-border {
-        top: 4px; left: 4px; right: 4px; bottom: 22px;
-        border-radius: 10px;
-      }
-      .dni-separator { margin: 2px 0 6px 0; }
+      /* DNI todavía más ancho en pantallas pequeñas */
+      .dni-container { max-width: 100%; }
+      .dni-card { padding: 10px 12px 0 12px; }
 
-      .btn-download-dni {
-        padding: 8px 16px;
-        font-size: 9px;
-      }
+      /* Libro aún más pequeño */
+      .book-wrapper { margin-top: 12px; padding: 12px 0; }
+      .book-container { max-width: 260px; }
+      .book.open { transform: translateX(30%) !important; }
+      .book-controls button { padding: 6px 14px; font-size: 0.6rem; }
 
-      /* Libro más compacto en pantallas muy pequeñas */
-      .book-wrapper {
-        margin-top: 14px;
-        padding: 12px 0 10px;
-        border-radius: 16px;
-      }
-      .book-container {
-        max-width: 290px;
-      }
-      .book.open { transform: translateX(32%) !important; }
-
-      .front, .back { padding: 12px 14px; }
-      .cover h1 { font-size: 1.2rem; letter-spacing: 2px; }
-      .cover-logo { width: 50px; margin-bottom: 10px; }
-      .subtitle { font-size: 0.6rem; letter-spacing: 1.5px; }
-      .cover-border { padding: 20px 14px; }
-
-      .header-doc { padding-bottom: 6px; }
-      .header-title h2 { font-size: 0.85rem; }
-      .header-title span { font-size: 0.55rem; }
-      .header-title small { font-size: 0.5rem; }
-      .logo-box { width: 32px; height: 36px; }
-      .logo-box img { width: 22px; }
-      .expediente-box { padding: 3px 8px; }
-      .red-text { font-size: 0.7rem; }
-
-      .field-row label { font-size: 0.55rem; }
-      .line-fill { font-size: 0.65rem; }
-      .section-title { font-size: 0.6rem; padding: 4px 0; }
-      .info-list p { font-size: 0.5rem; }
-      .info-list p span { font-size: 0.6rem; }
-      .info-list p strong i { width: 14px; margin-right: 4px; }
-      .description-box { padding: 6px 8px; }
-      .description-box p { font-size: 0.6rem; }
-      .stat-table td { font-size: 0.5rem; padding: 3px 0; }
-      .stat-table td:first-child { font-size: 0.5rem; }
-      .stat-title { font-size: 0.6rem; }
-      .boxes-container i { width: 9px; height: 9px; gap: 3px; }
-      .boxes-container { gap: 2px; }
-      .photo-frame { height: 90px; }
-      .photo-label { font-size: 0.55rem; }
-
-      .status-badge { font-size: 0.6rem; padding: 5px; letter-spacing: 1px; }
-      .audit-info { font-size: 0.55rem; }
-      .audit-info p span { font-size: 0.6rem; }
-      .obs-section { padding: 6px 8px; }
-      .obs-section label { font-size: 0.5rem; }
-      .obs-lines { font-size: 0.6rem; }
-
-      .cert-text { font-size: 0.65rem; padding: 10px; }
-      .cert-date { font-size: 0.65rem; }
-      .cert-date strong { font-size: 0.8rem; }
-      .sig-img { height: 28px; }
-      .sig-label { font-size: 0.5rem; }
-      .motto { font-size: 0.55rem; letter-spacing: 1.5px; padding-top: 8px; }
-
-      .book-controls { gap: 10px; margin-top: 10px; }
-      .book-controls button {
-        padding: 8px 16px;
-        font-size: 0.6rem;
-        letter-spacing: 1px;
-      }
-
-      .page:last-child .back h3 { font-size: 1.6rem; letter-spacing: 3px; }
-      .page:last-child .back p { font-size: 0.7rem; letter-spacing: 2px; }
-      .cover-border::before, .cover-border::after { font-size: 10px; letter-spacing: 6px; }
-      .page-number { font-size: 0.55rem; }
+      footer { font-size: 8px !important; padding: 12px !important; }
     }
   </style>
 </head>
@@ -2010,7 +1853,7 @@
       </div>
     </div>
 
-    <footer style="text-align:center;padding:20px;color:#6b5f4e;font-size:10px;letter-spacing:2px;">
+    <footer style="text-align:center;padding:20px;color:#6b5f4e;font-size:10px;letter-spacing:2px;font-family:'Montserrat',sans-serif;">
       Liga Lombarda · Archivo Central · Expediente
     </footer>
 
@@ -2035,9 +1878,7 @@
     const userNav = document.getElementById('userNav');
     const toast = document.getElementById('toast');
 
-    // =========================================================
-    // MENÚ LATERAL
-    // =========================================================
+    // ===== MENÚ LATERAL =====
     const menuToggle = document.getElementById('menuToggle');
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -2151,15 +1992,15 @@
           <span class="email">
             <i class="fas fa-user-circle"></i> ${user.email}
           </span>
+          <button class="share-btn" id="shareBtnSide">
+            <i class="fas fa-share-alt"></i> COMPARTIR
+          </button>
           <button class="logout-btn" id="logoutBtnSide">
             <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
           </button>
-          <button class="btn-share" id="shareBtnSide">
-            <i class="fas fa-share-alt"></i> COMPARTIR
-          </button>
         `;
-        document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
         document.getElementById('shareBtnSide').addEventListener('click', compartirURL);
+        document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
       }
     }
 
@@ -2268,6 +2109,7 @@
     bookViewer.globalLight.intensity = 2.5;
     bookViewer.cameraLight.intensity = 1.2;
 
+    // ===== POSE GUARDADA PARA EL LIBRO =====
     window._poseLibro = null;
 
     function aplicarPoseEnLibro(data) {
