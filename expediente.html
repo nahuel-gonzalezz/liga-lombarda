@@ -1488,6 +1488,9 @@
       letter-spacing: 1px;
     }
 
+    /* ============================================================
+       RESPONSIVE — El DNI mantiene PROPORCIÓN EXACTA usando scale()
+       ============================================================ */
     @media (max-width: 900px) {
       :root { --header-height: 60px; }
 
@@ -1507,19 +1510,6 @@
       .nombre-bajo { font-size: 26px; }
       .datos-persona { align-items: center; }
       .detalles-extra { justify-content: center; }
-      .dni-card { padding: 14px 16px 0 16px; min-height: 240px; }
-      .dni-title { font-size: 1.3rem; }
-      .dni-shield { width: 40px; }
-      .dni-photo-frame { width: 115px; height: 135px; }
-      .dni-grid { gap: 4px 10px; }
-      .dni-value { font-size: 0.7rem; }
-      .dni-label { font-size: 0.45rem; }
-      .dni-icon { font-size: 0.75rem; width: 18px; }
-      .dni-footer { padding: 0 2px 2px 2px; margin-top: -38px; }
-      .dni-bottom-bar { font-size: 0.4rem; letter-spacing: 1px; padding: 3px 0; margin: 0 -16px; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
-      .dni-inner-border { top: 4px; left: 4px; right: 4px; bottom: 22px; }
-      .dni-issue-date { font-size: 0.7rem; }
-      .dni-issue-label { font-size: 0.45rem; }
       .book-wrapper { margin-top: 15px; padding: 15px 0; }
       .book-container { max-width: 360px; }
       .book.open { transform: translateX(38%) !important; }
@@ -1542,6 +1532,28 @@
       .page:last-child .back h3 { font-size: 2rem; }
       .cover-border::before, .cover-border::after { font-size: 12px; }
 
+      /* ===== DNI ESCALADO PROPORCIONALMENTE ===== */
+      /* Escalo toda la tarjeta manteniendo el tamaño interno (750x380) */
+      .dni-container {
+        max-width: 750px;
+        width: 100%;
+        height: auto;
+        /* La altura real la determina el contenido escalado */
+      }
+      .dni-card {
+        /* Mantengo el tamaño real de PC */
+        width: 750px;
+        height: 380px;
+        min-height: 380px;
+        max-width: none;
+        padding: 22px 30px 0 30px;
+        transform-origin: top left;
+        /* Lo escalo para que entre en el contenedor móvil */
+        transform: scale(0.5);
+        /* Compenso el espacio que "ocupa de más" tras escalar */
+        margin-bottom: -190px;
+      }
+
       footer.site-footer { padding: 30px 16px; }
     }
 
@@ -1561,23 +1573,7 @@
       .book-wrapper { margin-top: 10px; padding: 10px 0; }
       .book-container { max-width: 300px; }
       .book.open { transform: translateX(32%) !important; }
-      .dni-card { padding: 10px 12px 0 12px; min-height: 200px; }
-      .dni-title { font-size: 1rem; }
-      .dni-subtitle { font-size: 0.55rem; letter-spacing: 1px; }
-      .dni-shield { width: 30px; }
-      .dni-expediente { padding: 3px 10px; }
-      .dni-exp-num { font-size: 0.7rem; }
-      .dni-photo-frame { width: 85px; height: 100px; }
-      .dni-grid { gap: 2px 6px; }
-      .dni-item { gap: 4px; }
-      .dni-icon { font-size: 0.6rem; width: 15px; }
-      .dni-label { font-size: 0.35rem; }
-      .dni-value { font-size: 0.6rem; }
-      .dni-footer { padding: 0 0 0 0; margin-top: -30px; }
-      .dni-issue-date { font-size: 0.6rem; }
-      .dni-issue-label { font-size: 0.4rem; }
-      .dni-bottom-bar { font-size: 0.3rem; letter-spacing: 0.5px; padding: 2px 0; margin: 0 -12px; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
-      .dni-inner-border { top: 3px; left: 3px; right: 3px; bottom: 18px; }
+      .photo-frame { height: 90px; }
       .cover h1 { font-size: 1.2rem; }
       .front, .back { padding: 12px 14px; }
       .field-row label { font-size: 0.55rem; }
@@ -1588,16 +1584,27 @@
       .stat-table td { font-size: 0.5rem; }
       .stat-table td:first-child { font-size: 0.5rem; }
       .stat-title { font-size: 0.6rem; }
-      .photo-frame { height: 90px; }
       .book-controls button { padding: 6px 14px; font-size: 0.55rem; }
       .page:last-child .back h3 { font-size: 1.6rem; }
       .cover-border::before, .cover-border::after { font-size: 10px; }
-      .dni-grid .dni-item:nth-child(7),
-      .dni-grid .dni-item:nth-child(8) { display: none; }
+
+      /* ===== DNI ESCALADO AÚN MÁS PEQUEÑO ===== */
+      .dni-card {
+        transform: scale(0.42);
+        margin-bottom: -220px;
+      }
 
       footer.site-footer { padding: 24px 14px; }
       footer.site-footer h3 { font-size: 12px; }
       footer.site-footer p { font-size: 9px; }
+    }
+
+    /* Pantallas muy chicas */
+    @media (max-width: 380px) {
+      .dni-card {
+        transform: scale(0.36);
+        margin-bottom: -245px;
+      }
     }
   </style>
 </head>
