@@ -1489,7 +1489,7 @@
     }
 
     /* ============================================================
-       RESPONSIVE — El DNI mantiene PROPORCIÓN EXACTA usando scale()
+       RESPONSIVE — DNI ESCALADO + LIBRO MÁS PEQUEÑO
        ============================================================ */
     @media (max-width: 900px) {
       :root { --header-height: 60px; }
@@ -1510,49 +1510,89 @@
       .nombre-bajo { font-size: 26px; }
       .datos-persona { align-items: center; }
       .detalles-extra { justify-content: center; }
-      .book-wrapper { margin-top: 15px; padding: 15px 0; }
-      .book-container { max-width: 360px; }
-      .book.open { transform: translateX(38%) !important; }
-      .photo-frame { height: 120px; }
       .panel-documentos { padding: 14px; }
       .user-info .email { font-size: 8px; }
       .logout-btn { font-size: 8px; padding: 4px 10px; }
-      .cover h1 { font-size: 1.6rem; }
-      .front, .back { padding: 18px 20px; }
-      .field-row label { font-size: 0.6rem; }
-      .line-fill { font-size: 0.75rem; }
-      .section-title { font-size: 0.7rem; }
-      .info-list p { font-size: 0.6rem; }
-      .info-list p span { font-size: 0.7rem; }
-      .stat-table td { font-size: 0.6rem; }
-      .stat-table td:first-child { font-size: 0.6rem; }
-      .stat-title { font-size: 0.7rem; }
-      .boxes-container i { width: 11px; height: 11px; }
-      .book-controls button { padding: 8px 20px; font-size: 0.65rem; }
-      .page:last-child .back h3 { font-size: 2rem; }
-      .cover-border::before, .cover-border::after { font-size: 12px; }
 
       /* ===== DNI ESCALADO PROPORCIONALMENTE ===== */
-      /* Escalo toda la tarjeta manteniendo el tamaño interno (750x380) */
-      .dni-container {
-        max-width: 750px;
-        width: 100%;
-        height: auto;
-        /* La altura real la determina el contenido escalado */
-      }
       .dni-card {
-        /* Mantengo el tamaño real de PC */
         width: 750px;
         height: 380px;
         min-height: 380px;
         max-width: none;
         padding: 22px 30px 0 30px;
         transform-origin: top left;
-        /* Lo escalo para que entre en el contenedor móvil */
         transform: scale(0.5);
-        /* Compenso el espacio que "ocupa de más" tras escalar */
         margin-bottom: -190px;
       }
+
+      /* ===== LIBRO MÁS PEQUEÑO ===== */
+      .book-wrapper {
+        margin-top: 15px;
+        padding: 12px 0 10px;
+      }
+      .book-container {
+        max-width: 280px;
+      }
+      .book.open { transform: translateX(35%) !important; }
+
+      /* Reduzco textos internos del libro */
+      .cover h1 { font-size: 1.6rem; }
+      .cover-logo { width: 60px; margin-bottom: 10px; }
+      .subtitle { font-size: 0.75rem; letter-spacing: 2px; }
+      .cover-border { padding: 20px 14px; }
+      .cover-border::before, .cover-border::after { font-size: 12px; top: 10px; bottom: 10px; }
+
+      .front, .back { padding: 16px 18px; }
+
+      .header-title h2 { font-size: 0.95rem; }
+      .header-title span { font-size: 0.6rem; }
+      .header-title small { font-size: 0.5rem; }
+      .logo-box { width: 34px; height: 38px; }
+      .logo-box img { width: 24px; }
+      .expediente-box { padding: 3px 10px; }
+      .expediente-box label { font-size: 0.45rem; }
+      .red-text { font-size: 0.7rem; }
+
+      .photo-frame { height: 100px; }
+      .photo-label { font-size: 0.55rem; }
+      .field-row label { font-size: 0.55rem; }
+      .line-fill { font-size: 0.72rem; }
+
+      .section-title { font-size: 0.65rem; padding: 4px 0; margin-bottom: 8px; }
+
+      .info-list p { font-size: 0.55rem; }
+      .info-list p span { font-size: 0.65rem; }
+
+      .description-box { padding: 6px 8px; }
+      .description-box label { font-size: 0.5rem; }
+      .description-box p { font-size: 0.65rem; }
+
+      .stat-title { font-size: 0.65rem; }
+      .stat-table td { font-size: 0.55rem; padding: 3px 0; }
+      .stat-table td:first-child { font-size: 0.55rem; }
+      .boxes-container { gap: 2px; }
+      .boxes-container i { width: 9px; height: 9px; }
+
+      .status-badge { font-size: 0.6rem; padding: 5px; margin-bottom: 6px; }
+      .audit-info { font-size: 0.55rem; }
+      .audit-info p span { font-size: 0.65rem; }
+      .obs-section label { font-size: 0.5rem; }
+      .obs-lines { font-size: 0.6rem; min-height: 45px; }
+
+      .cert-text { font-size: 0.7rem; padding: 10px; }
+      .cert-date { font-size: 0.7rem; }
+      .cert-date strong { font-size: 0.85rem; }
+      .sig-img { height: 28px; }
+      .sig-label { font-size: 0.55rem; }
+      .motto { font-size: 0.6rem; padding-top: 8px; letter-spacing: 2px; }
+
+      .page-number { font-size: 0.55rem; margin-top: 6px; }
+      .page:last-child .back h3 { font-size: 2rem; }
+      .page:last-child .back p { font-size: 0.7rem; }
+
+      .book-controls button { padding: 7px 18px; font-size: 0.6rem; }
+      .book-controls { gap: 12px; margin-top: 10px; }
 
       footer.site-footer { padding: 30px 16px; }
     }
@@ -1570,29 +1610,84 @@
 
       .visor-skin { width: 180px; height: 180px; }
       .nombre-bajo { font-size: 22px; }
-      .book-wrapper { margin-top: 10px; padding: 10px 0; }
-      .book-container { max-width: 300px; }
-      .book.open { transform: translateX(32%) !important; }
-      .photo-frame { height: 90px; }
-      .cover h1 { font-size: 1.2rem; }
-      .front, .back { padding: 12px 14px; }
-      .field-row label { font-size: 0.55rem; }
-      .line-fill { font-size: 0.65rem; }
-      .section-title { font-size: 0.6rem; }
-      .info-list p { font-size: 0.5rem; }
-      .info-list p span { font-size: 0.6rem; }
-      .stat-table td { font-size: 0.5rem; }
-      .stat-table td:first-child { font-size: 0.5rem; }
-      .stat-title { font-size: 0.6rem; }
-      .book-controls button { padding: 6px 14px; font-size: 0.55rem; }
-      .page:last-child .back h3 { font-size: 1.6rem; }
-      .cover-border::before, .cover-border::after { font-size: 10px; }
 
       /* ===== DNI ESCALADO AÚN MÁS PEQUEÑO ===== */
       .dni-card {
         transform: scale(0.42);
         margin-bottom: -220px;
       }
+
+      /* ===== LIBRO AÚN MÁS PEQUEÑO ===== */
+      .book-wrapper {
+        margin-top: 10px;
+        padding: 8px 0 8px;
+      }
+      .book-container {
+        max-width: 220px;
+      }
+      .book.open { transform: translateX(32%) !important; }
+
+      .cover h1 { font-size: 1.2rem; letter-spacing: 3px; }
+      .cover-logo { width: 45px; margin-bottom: 8px; }
+      .subtitle { font-size: 0.6rem; letter-spacing: 1.5px; }
+      .cover-border { padding: 14px 10px; }
+      .cover-border::before, .cover-border::after { font-size: 10px; top: 8px; bottom: 8px; letter-spacing: 6px; }
+
+      .front, .back { padding: 12px 14px; }
+
+      .header-title h2 { font-size: 0.75rem; letter-spacing: 1px; }
+      .header-title span { font-size: 0.5rem; }
+      .header-title small { font-size: 0.4rem; }
+      .logo-box { width: 28px; height: 32px; }
+      .logo-box img { width: 20px; }
+      .expediente-box { padding: 2px 8px; }
+      .expediente-box label { font-size: 0.4rem; }
+      .red-text { font-size: 0.6rem; }
+
+      .photo-frame { height: 80px; }
+      .photo-label { font-size: 0.45rem; }
+      .field-row label { font-size: 0.48rem; }
+      .line-fill { font-size: 0.6rem; }
+
+      .section-title { font-size: 0.55rem; padding: 3px 0; margin-bottom: 6px; }
+
+      .info-list p { font-size: 0.48rem; }
+      .info-list p span { font-size: 0.55rem; }
+      .info-list p strong i { width: 14px; margin-right: 4px; }
+
+      .description-box { padding: 5px 6px; min-height: 35px; }
+      .description-box label { font-size: 0.45rem; }
+      .description-box p { font-size: 0.55rem; }
+
+      .stat-title { font-size: 0.55rem; }
+      .stat-table td { font-size: 0.48rem; padding: 2px 0; }
+      .stat-table td:first-child { font-size: 0.48rem; }
+      .stat-table td:first-child i { width: 14px; margin-right: 3px; }
+      .boxes-container { gap: 1.5px; }
+      .boxes-container i { width: 7px; height: 7px; }
+
+      .status-badge { font-size: 0.5rem; padding: 4px; margin-bottom: 5px; }
+      .audit-info { font-size: 0.48rem; }
+      .audit-info p span { font-size: 0.55rem; }
+      .obs-section label { font-size: 0.45rem; }
+      .obs-lines { font-size: 0.5rem; min-height: 35px; line-height: 16px; background-image: repeating-linear-gradient(transparent, transparent 16px, #ddd 16px, #ddd 17px); }
+
+      .cert-text { font-size: 0.55rem; padding: 8px; }
+      .cert-date { font-size: 0.55rem; margin-top: 8px; }
+      .cert-date strong { font-size: 0.7rem; }
+      .sig-img { height: 22px; }
+      .sig-label { font-size: 0.45rem; }
+      .motto { font-size: 0.5rem; padding-top: 6px; letter-spacing: 1.5px; }
+
+      .page-number { font-size: 0.45rem; margin-top: 4px; }
+      .page:last-child .back h3 { font-size: 1.6rem; }
+      .page:last-child .back p { font-size: 0.55rem; letter-spacing: 2px; }
+
+      .book-controls button { padding: 6px 14px; font-size: 0.55rem; }
+      .book-controls { gap: 8px; margin-top: 8px; }
+
+      .dni-grid .dni-item:nth-child(7),
+      .dni-grid .dni-item:nth-child(8) { display: none; }
 
       footer.site-footer { padding: 24px 14px; }
       footer.site-footer h3 { font-size: 12px; }
@@ -1605,6 +1700,14 @@
         transform: scale(0.36);
         margin-bottom: -245px;
       }
+
+      .book-container {
+        max-width: 190px;
+      }
+
+      .cover h1 { font-size: 1rem; }
+      .cover-logo { width: 38px; }
+      .subtitle { font-size: 0.5rem; }
     }
   </style>
 </head>
