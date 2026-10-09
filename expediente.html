@@ -1489,7 +1489,7 @@
     }
 
     /* ============================================================
-       RESPONSIVE — DNI ESCALADO + LIBRO MÁS PEQUEÑO
+       RESPONSIVE
        ============================================================ */
     @media (max-width: 900px) {
       :root { --header-height: 60px; }
@@ -1526,23 +1526,51 @@
         margin-bottom: -190px;
       }
 
-      /* ===== LIBRO MÁS PEQUEÑO ===== */
+      /* ===== LIBRO: UNA PÁGINA A LA VEZ EN MÓVIL ===== */
       .book-wrapper {
         margin-top: 15px;
         padding: 12px 0 10px;
       }
       .book-container {
-        max-width: 280px;
+        max-width: 300px;
+        /* Mantengo la relación de aspecto */
+        aspect-ratio: 450/550;
+        margin: 0 auto;
       }
-      .book.open { transform: translateX(35%) !important; }
+      /* En móvil el libro NO se desplaza: se muestra centrado */
+      .book.open { transform: translateX(0) !important; }
 
-      /* Reduzco textos internos del libro */
+      /* El page en móvil: se muestra centrado sin 3D doble */
+      .page {
+        transform-origin: center center;
+      }
+      /* La hoja girada se "oculta" en vez de girarse 180° */
+      .page.flipped {
+        transform: none;
+      }
+      .page.flipped .front {
+        transform: translateX(100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .page.flipped .back {
+        transform: rotateY(0deg);
+      }
+      /* La cara trasera se gira individualmente */
+      .page .back {
+        transform: rotateY(180deg);
+        transform-origin: center center;
+      }
+      .page.flipped .back {
+        transform: rotateY(0deg);
+      }
+
+      /* Ajustes tipográficos internos del libro */
       .cover h1 { font-size: 1.6rem; }
       .cover-logo { width: 60px; margin-bottom: 10px; }
       .subtitle { font-size: 0.75rem; letter-spacing: 2px; }
       .cover-border { padding: 20px 14px; }
       .cover-border::before, .cover-border::after { font-size: 12px; top: 10px; bottom: 10px; }
-
       .front, .back { padding: 16px 18px; }
 
       .header-title h2 { font-size: 0.95rem; }
@@ -1611,21 +1639,19 @@
       .visor-skin { width: 180px; height: 180px; }
       .nombre-bajo { font-size: 22px; }
 
-      /* ===== DNI ESCALADO AÚN MÁS PEQUEÑO ===== */
       .dni-card {
         transform: scale(0.42);
         margin-bottom: -220px;
       }
 
-      /* ===== LIBRO AÚN MÁS PEQUEÑO ===== */
+      /* LIBRO AÚN MÁS PEQUEÑO Y CENTRADO */
       .book-wrapper {
         margin-top: 10px;
         padding: 8px 0 8px;
       }
       .book-container {
-        max-width: 220px;
+        max-width: 240px;
       }
-      .book.open { transform: translateX(32%) !important; }
 
       .cover h1 { font-size: 1.2rem; letter-spacing: 3px; }
       .cover-logo { width: 45px; margin-bottom: 8px; }
@@ -1694,7 +1720,6 @@
       footer.site-footer p { font-size: 9px; }
     }
 
-    /* Pantallas muy chicas */
     @media (max-width: 380px) {
       .dni-card {
         transform: scale(0.36);
@@ -1702,7 +1727,7 @@
       }
 
       .book-container {
-        max-width: 190px;
+        max-width: 200px;
       }
 
       .cover h1 { font-size: 1rem; }
