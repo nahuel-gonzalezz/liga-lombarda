@@ -509,9 +509,6 @@
       font-family: "Libre Baskerville", Georgia, serif;
       min-height: 290px;
     }
-
-    /* Watermark como div con background-image en data URL.
-       html2canvas SÍ captura este formato correctamente. */
     .dni-watermark {
       position: absolute;
       top: 0; left: 0;
@@ -519,11 +516,7 @@
       opacity: 0.06;
       pointer-events: none;
       z-index: 1;
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: 100% 100%;
     }
-
     .dni-inner-border {
       position: absolute;
       top: 8px; left: 8px; right: 8px; bottom: 30px;
@@ -1801,7 +1794,6 @@
 
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
-            <!-- Watermark ahora es un DIV con background-image en data URL -->
             <div class="dni-watermark" id="dniWatermark"></div>
             <div class="dni-inner-border"></div>
             <div class="dni-content">
@@ -2039,23 +2031,6 @@
     const sideMenu = document.getElementById('sideMenu');
     const menuOverlay = document.getElementById('menuOverlay');
     const sideMenuUser = document.getElementById('sideMenuUser');
-
-    // ============================================================
-    // WATERMARK COMO DATA URL
-    // ============================================================
-    // Generamos el SVG del watermark (la cruz con el cuadrado en el centro)
-    // y lo convertimos a data URL para usarlo como background-image.
-    // html2canvas captura background-image sin problemas.
-    const WATERMARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M42,0 L58,0 L58,42 L100,42 L100,58 L58,58 L58,100 L42,100 L42,58 L0,58 L0,42 L42,42 Z" fill="#500a0e"/></svg>`;
-    const WATERMARK_DATA_URL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(WATERMARK_SVG);
-
-    function aplicarWatermark() {
-      const wm = document.getElementById('dniWatermark');
-      if (wm) {
-        wm.style.backgroundImage = `url("${WATERMARK_DATA_URL}")`;
-      }
-    }
-    aplicarWatermark();
 
     function openMenu() {
       sideMenu.classList.add('open');
@@ -2815,6 +2790,75 @@
       updateBookState();
     }, 100);
 
+    // ============================================================
+    // WATERMARK DIBUJADO CON CANVAS (SOLUCIÓN DEFINITIVA)
+    // ============================================================
+    // Dibuja el watermark (la cruz con el cuadrado central) directamente
+    // en un canvas 2D. Se usa tanto para la vista previa como para la
+    // descarga. html2canvas NO puede ignorar un canvas real.
+    function dibujarWatermarkEnCanvas(canvasEl, ancho, alto) {
+      const ctx = canvasEl.getContext('2d');
+      canvasEl.width = ancho;
+      canvasEl.height = alto;
+      ctx.clearRect(0, 0, ancho, alto);
+
+      ctx.save();
+      ctx.globalAlpha = 0.06;
+      ctx.fillStyle = '#500a0e';
+
+      // Escalar el viewBox 100x100 al tamaño del canvas
+      const escalaX = ancho / 100;
+      const escalaY = alto / 100;
+
+      // La forma: cruz con cuadrado central
+      // Path: M42,0 L58,0 L58,42 L100,42 L100,58 L58,58 L58,100 L42,100 L42,58 L0,58 L0,42 L42,42 Z
+      const puntos = [
+        [42, 0], [58, 0], [58, 42], [100, 42], [100, 58],
+        [58, 58], [58, 100], [42, 100], [42, 58], [0, 58],
+        [0, 42], [42, 42]
+      ];
+
+      ctx.beginPath();
+      ctx.moveTo(puntos[0][0] * escalaX, puntos[0][1] * escalaY);
+      for (let i = 1; i < puntos.length; i++) {
+        ctx.lineTo(puntos[i][0] * escalaX, puntos[i][1] * escalaY);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function actualizarWatermarkDOM() {
+      const wm = document.getElementById('dniWatermark');
+      if (!wm) return;
+      // Reemplazamos el div por un canvas real
+      if (wm.tagName !== 'CANVAS') {
+        const canvasWm = document.createElement('canvas');
+        canvasWm.id = 'dniWatermark';
+        canvasWm.className = 'dni-watermark';
+        wm.parentNode.replaceChild(canvasWm, wm);
+      }
+      const canvasWm = document.getElementById('dniWatermark');
+      dibujarWatermarkEnCanvas(canvasWm, 750, 380);
+      // Ajustar estilo para que se vea como watermark
+      canvasWm.style.position = 'absolute';
+      canvasWm.style.top = '0';
+      canvasWm.style.left = '0';
+      canvasWm.style.width = '100%';
+      canvasWm.style.height = '100%';
+      canvasWm.style.zIndex = '1';
+      canvasWm.style.pointerEvents = 'none';
+      canvasWm.style.opacity = '1'; // la opacidad la controla el alpha del dibujo
+    }
+
+    // Reemplazar el div por canvas cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', actualizarWatermarkDOM);
+    // Si ya está listo (script al final del body), hacerlo ya
+    actualizarWatermarkDOM();
+
+    // ============================================================
+    // DESCARGA DEL DNI
+    // ============================================================
     const downloadBtn = document.getElementById('downloadDniBtn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async function() {
@@ -2851,21 +2895,21 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
-          // Forzar el watermark en el clon (por si acaso)
+          // Reemplazar el watermark del clon por un canvas dibujado
+          // (por si el clon heredó el div en vez del canvas)
           const cloneWatermark = clone.querySelector('.dni-watermark');
           if (cloneWatermark) {
-            cloneWatermark.style.backgroundImage = `url("${WATERMARK_DATA_URL}")`;
-            cloneWatermark.style.backgroundRepeat = 'no-repeat';
-            cloneWatermark.style.backgroundPosition = 'center center';
-            cloneWatermark.style.backgroundSize = '100% 100%';
-            cloneWatermark.style.opacity = '0.06';
-            cloneWatermark.style.position = 'absolute';
-            cloneWatermark.style.top = '0';
-            cloneWatermark.style.left = '0';
-            cloneWatermark.style.width = '100%';
-            cloneWatermark.style.height = '100%';
-            cloneWatermark.style.zIndex = '1';
-            cloneWatermark.style.pointerEvents = 'none';
+            const canvasWm = document.createElement('canvas');
+            canvasWm.className = 'dni-watermark';
+            dibujarWatermarkEnCanvas(canvasWm, 750, 380);
+            canvasWm.style.position = 'absolute';
+            canvasWm.style.top = '0';
+            canvasWm.style.left = '0';
+            canvasWm.style.width = '100%';
+            canvasWm.style.height = '100%';
+            canvasWm.style.zIndex = '1';
+            canvasWm.style.pointerEvents = 'none';
+            cloneWatermark.parentNode.replaceChild(canvasWm, cloneWatermark);
           }
 
           const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
@@ -2905,6 +2949,32 @@
             height: 380,
           });
           document.body.removeChild(clone);
+
+          // ============================================================
+          // GARANTÍA FINAL: dibujar el watermark directamente sobre el
+          // canvas capturado. Así nos aseguramos de que SIEMPRE aparezca.
+          // ============================================================
+          const ctxFinal = canvasCaptured.getContext('2d');
+          const anchoFinal = canvasCaptured.width;
+          const altoFinal = canvasCaptured.height;
+          ctxFinal.save();
+          ctxFinal.globalAlpha = 0.06;
+          ctxFinal.fillStyle = '#500a0e';
+          const escalaXf = anchoFinal / 100;
+          const escalaYf = altoFinal / 100;
+          const puntosF = [
+            [42, 0], [58, 0], [58, 42], [100, 42], [100, 58],
+            [58, 58], [58, 100], [42, 100], [42, 58], [0, 58],
+            [0, 42], [42, 42]
+          ];
+          ctxFinal.beginPath();
+          ctxFinal.moveTo(puntosF[0][0] * escalaXf, puntosF[0][1] * escalaYf);
+          for (let i = 1; i < puntosF.length; i++) {
+            ctxFinal.lineTo(puntosF[i][0] * escalaXf, puntosF[i][1] * escalaYf);
+          }
+          ctxFinal.closePath();
+          ctxFinal.fill();
+          ctxFinal.restore();
 
           const link = document.createElement('a');
           link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
