@@ -558,7 +558,6 @@
         .expediente-row:last-child { border-bottom: none; }
         .expediente-row:hover { background: #fafafa; }
 
-        /* ⬇️ NOMBRE CON CARA DE SKIN */
         .cell-name {
             display: flex;
             align-items: center;
@@ -640,7 +639,6 @@
             border: 1px solid rgba(138, 138, 138, 0.2);
         }
 
-        /* ⬇️ ETIQUETA DE ANTECEDENTES EN LA TABLA */
         .cell-name small.has-notes {
             color: #8a6a1a;
             font-weight: 700;
@@ -817,7 +815,6 @@
             border-bottom: 2px solid var(--accent-bg);
         }
 
-        /* ⬇️ CAJA DE ANTECEDENTES EN EL MODAL VER */
         .notes-box {
             background: rgba(138, 106, 26, 0.06);
             border: 2px solid rgba(138, 106, 26, 0.2);
@@ -1317,6 +1314,7 @@
             ref,
             get,
             set,
+            update,
             remove,
             onValue
         } from "./firebase-init.js";
@@ -1376,6 +1374,62 @@
         let unsubscribeExpedientes = null;
 
         const MAX_NOTES_LENGTH = 2000;
+
+        // =========================================================
+        // CONSTANTES DE OPCIONES (para selects)
+        // =========================================================
+        const RANGOS_LIGA = [
+            'Ciudadano',
+            'Ballestero Genovés Condecorado',
+            'Milicia Urbana',
+            'Pavesero Lombardo',
+            'Paladín Lombardo',
+            'Infante Lombardo',
+            'Caballero Lombardo',
+            'Elite Urbana'
+        ];
+
+        const CLANES_INMIGRANTES = [
+            'Gremios Redstone',
+            'Goatania',
+            'Otro'
+        ];
+
+        const GENEROS = [
+            'Masculino',
+            'Femenino',
+            'No binario',
+            'Otro',
+            'Prefiero no especificar'
+        ];
+
+        const ESTADOS_CIVILES = [
+            'Soltero/a',
+            'Casado/a',
+            'Comprometido/a',
+            'Viudo/a',
+            'Divorciado/a',
+            'Otro'
+        ];
+
+        const ESPECIES_COMUNES = [
+            'Humano',
+            'Enderman',
+            'Slime',
+            'Zombie',
+            'Esqueleto',
+            'Villager',
+            'Iron Golem',
+            'Blaze',
+            'Witch',
+            'Otro'
+        ];
+
+        const ESTADOS_EXPEDIENTE = [
+            '☑ ACTIVO',
+            '☐ INACTIVO',
+            '☐ RETIRADO'
+        ];
 
         // =========================================================
         // MENÚ LATERAL
@@ -1539,6 +1593,28 @@
 
         function tieneNotas(data) {
             return data && data.antecedentes && String(data.antecedentes).trim().length > 0;
+        }
+
+        // =========================================================
+        // HELPER: genera <option> para un select
+        // =========================================================
+        function buildOptions(options, currentValue, includeEmpty = false) {
+            let html = '';
+            if (includeEmpty) {
+                html += `<option value="">Seleccionar...</option>`;
+            }
+            // Si el valor actual no está en la lista, lo agrego al principio
+            // (para no perder datos viejos)
+            const valueStr = currentValue != null ? String(currentValue) : '';
+            const hasValue = options.some(o => String(o) === valueStr);
+            if (valueStr && !hasValue) {
+                html += `<option value="${escapeHtml(valueStr)}" selected>${escapeHtml(valueStr)} (actual)</option>`;
+            }
+            options.forEach(opt => {
+                const selected = String(opt) === valueStr ? 'selected' : '';
+                html += `<option value="${escapeHtml(opt)}" ${selected}>${escapeHtml(opt)}</option>`;
+            });
+            return html;
         }
 
         // =========================================================
@@ -1887,7 +1963,7 @@
         });
 
         // =========================================================
-        // MODAL EDITAR
+        // MODAL EDITAR (con SELECTS limitados)
         // =========================================================
         function abrirEditModal(id) {
             const exp = expedientesData.find(e => e.id === id);
@@ -1901,59 +1977,77 @@
             const stats = data.stats || {};
             const comps = data.competencies || {};
 
+            // Opciones dinámicas para el campo rango/clan según tipo
+            const rankOrClanOptions = esInm ? CLANES_INMIGRANTES : RANGOS_LIGA;
+            const rankOrClanValue = esInm ? (data.clan || '') : (data.rank || 'Ciudadano');
+            const rankOrClanLabel = esInm ? 'Clan' : 'Rango';
+            const rankOrClanIcon = esInm ? 'fas fa-people-group' : 'fas fa-chess-king';
+
             editModalBody.innerHTML = `
                 <div class="form-grid">
                     <div class="form-field">
-                        <label>Nombre</label>
-                        <input type="text" id="editName" value="${escapeHtml(data.name || '')}" />
+                        <label><i class="fas fa-user"></i> Nombre</label>
+                        <input type="text" id="editName" value="${escapeHtml(data.name || '')}" maxlength="60" />
                     </div>
                     <div class="form-field">
-                        <label>Alias</label>
-                        <input type="text" id="editAlias" value="${escapeHtml(data.alias || '')}" />
+                        <label><i class="fas fa-tag"></i> Alias</label>
+                        <input type="text" id="editAlias" value="${escapeHtml(data.alias || '')}" maxlength="40" />
                     </div>
+
                     <div class="form-field">
-                        <label>${esInm ? 'Clan' : 'Rango'}</label>
-                        <input type="text" id="editRankOrClan" value="${escapeHtml(esInm ? (data.clan || '') : (data.rank || ''))}" />
+                        <label><i class="${rankOrClanIcon}"></i> ${rankOrClanLabel}</label>
+                        <select id="editRankOrClan">
+                            ${buildOptions(rankOrClanOptions, rankOrClanValue)}
+                        </select>
                     </div>
+
                     <div class="form-field">
-                        <label>Nacionalidad</label>
-                        <input type="text" id="editNationality" value="${escapeHtml(data.nationality || '')}" />
-                    </div>
-                    <div class="form-field">
-                        <label>Profesión / Oficio</label>
-                        <input type="text" id="editOccupation" value="${escapeHtml(data.occupation || '')}" />
-                    </div>
-                    <div class="form-field">
-                        <label>Estado actual</label>
+                        <label><i class="fas fa-circle"></i> Estado actual</label>
                         <select id="editStatus">
-                            <option value="☑ ACTIVO" ${data.status === '☑ ACTIVO' ? 'selected' : ''}>☑ ACTIVO</option>
-                            <option value="☐ INACTIVO" ${data.status === '☐ INACTIVO' ? 'selected' : ''}>☐ INACTIVO</option>
-                            <option value="☐ RETIRADO" ${data.status === '☐ RETIRADO' ? 'selected' : ''}>☐ RETIRADO</option>
+                            ${buildOptions(ESTADOS_EXPEDIENTE, data.status || '☑ ACTIVO')}
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label><i class="fas fa-flag"></i> Nacionalidad</label>
+                        <input type="text" id="editNationality" value="${escapeHtml(data.nationality || '')}" maxlength="40" />
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-briefcase"></i> Profesión / Oficio</label>
+                        <input type="text" id="editOccupation" value="${escapeHtml(data.occupation || '')}" maxlength="40" />
+                    </div>
+
+                    <div class="form-field">
+                        <label><i class="fas fa-cake-candles"></i> Fecha de cumpleaños</label>
+                        <input type="text" id="editBirthday" value="${escapeHtml(data.birthDate || '')}" placeholder="DD/MM/AAAA" maxlength="10" />
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-venus-mars"></i> Género</label>
+                        <select id="editGender">
+                            ${buildOptions(GENEROS, data.gender || '', true)}
+                        </select>
+                    </div>
+
+                    <div class="form-field">
+                        <label><i class="fas fa-dragon"></i> Especie</label>
+                        <select id="editSpecies">
+                            ${buildOptions(ESPECIES_COMUNES, data.species || '', true)}
                         </select>
                     </div>
                     <div class="form-field">
-                        <label>Fecha de cumpleaños</label>
-                        <input type="text" id="editBirthday" value="${escapeHtml(data.birthDate || '')}" placeholder="DD/MM/AAAA" />
+                        <label><i class="fas fa-heart"></i> Estado civil</label>
+                        <select id="editMarital">
+                            ${buildOptions(ESTADOS_CIVILES, data.marital || '')}
+                        </select>
                     </div>
-                    <div class="form-field">
-                        <label>Género</label>
-                        <input type="text" id="editGender" value="${escapeHtml(data.gender || '')}" />
-                    </div>
-                    <div class="form-field">
-                        <label>Especie</label>
-                        <input type="text" id="editSpecies" value="${escapeHtml(data.species || '')}" />
-                    </div>
-                    <div class="form-field">
-                        <label>Estado civil</label>
-                        <input type="text" id="editMarital" value="${escapeHtml(data.marital || '')}" />
+
+                    <div class="form-field full">
+                        <label><i class="fas fa-gamepad"></i> Nick de Minecraft</label>
+                        <input type="text" id="editMinecraftNick" value="${escapeHtml(data.minecraftNick || '')}" maxlength="16" />
                     </div>
                     <div class="form-field full">
-                        <label>Nick de Minecraft</label>
-                        <input type="text" id="editMinecraftNick" value="${escapeHtml(data.minecraftNick || '')}" />
-                    </div>
-                    <div class="form-field full">
-                        <label>Descripción</label>
-                        <textarea id="editDescription">${escapeHtml(data.description || '')}</textarea>
+                        <label><i class="fas fa-align-left"></i> Descripción</label>
+                        <textarea id="editDescription" maxlength="300">${escapeHtml(data.description || '')}</textarea>
                     </div>
 
                     <div class="form-field full" style="margin-top: 8px;">
@@ -2027,17 +2121,16 @@
                     nuevasComps[inp.dataset.comp] = parseInt(inp.value) || 0;
                 });
 
-                const dataActualizada = {
-                    ...exp.data,
+                const camposActualizar = {
                     name: document.getElementById('editName').value.trim() || 'SIN REGISTRO',
                     alias: document.getElementById('editAlias').value.trim() || '—',
                     nationality: document.getElementById('editNationality').value.trim() || '—',
                     occupation: document.getElementById('editOccupation').value.trim() || '—',
-                    status: document.getElementById('editStatus').value,
+                    status: document.getElementById('editStatus').value || '☑ ACTIVO',
                     birthDate: document.getElementById('editBirthday').value.trim() || '—',
-                    gender: document.getElementById('editGender').value.trim() || '—',
-                    species: document.getElementById('editSpecies').value.trim() || '—',
-                    marital: document.getElementById('editMarital').value.trim() || '—',
+                    gender: document.getElementById('editGender').value || '—',
+                    species: document.getElementById('editSpecies').value || '—',
+                    marital: document.getElementById('editMarital').value || '—',
                     minecraftNick: document.getElementById('editMinecraftNick').value.trim() || '',
                     description: document.getElementById('editDescription').value.trim() || 'Sin descripción registrada.',
                     stats: nuevosStats,
@@ -2045,12 +2138,13 @@
                 };
 
                 if (esInm) {
-                    dataActualizada.clan = document.getElementById('editRankOrClan').value.trim() || '';
+                    camposActualizar.clan = document.getElementById('editRankOrClan').value || '';
                 } else {
-                    dataActualizada.rank = document.getElementById('editRankOrClan').value.trim() || 'Ciudadano';
+                    camposActualizar.rank = document.getElementById('editRankOrClan').value || 'Ciudadano';
                 }
 
-                await set(ref(database, `expedientes/${currentEditId}`), dataActualizada);
+                // Usar update() en vez de set() para modificar solo los campos
+                await update(ref(database, `expedientes/${currentEditId}`), camposActualizar);
 
                 showToast('✅ Expediente actualizado correctamente', 'success', 3000);
                 editModal.classList.remove('visible');
@@ -2125,13 +2219,11 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
 
             try {
-                const dataActualizada = {
-                    ...exp.data,
+                // Usar update() en vez de set() para modificar solo los campos de notas
+                await update(ref(database, `expedientes/${currentNotesId}`), {
                     antecedentes: texto.trim(),
                     antecedentesUpdatedAt: new Date().toISOString()
-                };
-
-                await set(ref(database, `expedientes/${currentNotesId}`), dataActualizada);
+                });
 
                 showToast('✅ Antecedentes guardados', 'success', 3000);
                 notesModal.classList.remove('visible');
