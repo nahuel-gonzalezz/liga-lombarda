@@ -158,6 +158,53 @@
         }
         .user-info .email i { color: #a4864a; margin-right: 4px; }
 
+        /* =========================================================
+           EMAIL CLICKEABLE PARA ADMIN
+        ========================================================= */
+        .user-info .email.email-admin {
+            cursor: pointer;
+            transition: all 0.25s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        .user-info .email.email-admin:hover {
+            background: rgba(164, 134, 74, 0.12);
+            border-color: rgba(164, 134, 74, 0.4);
+            color: #d4b76c;
+        }
+        .user-info .email.email-admin:hover i {
+            color: #d4b76c;
+        }
+        .user-info .email.email-admin::after {
+            content: ' ⚙️';
+            font-size: 9px;
+            opacity: 0.6;
+            margin-left: 4px;
+        }
+
+        .side-menu-user .email.email-admin {
+            cursor: pointer;
+            transition: all 0.25s ease;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+        }
+        .side-menu-user .email.email-admin:hover {
+            background: rgba(164, 134, 74, 0.12);
+            border-color: rgba(164, 134, 74, 0.4);
+            color: #d4b76c;
+        }
+        .side-menu-user .email.email-admin:hover i {
+            color: #d4b76c;
+        }
+        .side-menu-user .email.email-admin::after {
+            content: ' ⚙️';
+            font-size: 9px;
+            opacity: 0.6;
+            margin-left: 4px;
+        }
+
         .logout-btn {
             background: transparent;
             border: 1px solid #4a3d2e;
@@ -2026,12 +2073,18 @@
 
         window.showToast = showToast;
 
+        // =========================================================
+        // RENDER NAV (con email clickeable para admin)
+        // =========================================================
         function renderNav(user, isAdmin = false) {
             if (user) {
+                const adminClass = isAdmin ? 'email-admin' : '';
+                const adminTitle = isAdmin ? 'title="Ir al panel de administración"' : '';
+
                 userNav.style.display = 'flex';
                 userNav.innerHTML = `
                     <span class="user-info">
-                        <span class="email">
+                        <span class="email ${adminClass}" ${adminTitle} id="emailNav">
                             <i class="fas fa-user-circle"></i> ${user.email}
                             ${isAdmin ? '<span style="color:#a4864a;margin-left:4px;">👑</span>' : ''}
                         </span>
@@ -2043,9 +2096,18 @@
 
                 document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
 
+                if (isAdmin) {
+                    const emailNav = document.getElementById('emailNav');
+                    if (emailNav) {
+                        emailNav.addEventListener('click', () => {
+                            window.location.href = 'admin.html';
+                        });
+                    }
+                }
+
                 sideMenuUser.style.display = 'flex';
                 sideMenuUser.innerHTML = `
-                    <span class="email">
+                    <span class="email ${adminClass}" ${adminTitle} id="emailSide">
                         <i class="fas fa-user-circle"></i> ${user.email}
                         ${isAdmin ? '<span style="color:#a4864a;margin-left:4px;">👑</span>' : ''}
                     </span>
@@ -2054,6 +2116,15 @@
                     </button>
                 `;
                 document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
+
+                if (isAdmin) {
+                    const emailSide = document.getElementById('emailSide');
+                    if (emailSide) {
+                        emailSide.addEventListener('click', () => {
+                            window.location.href = 'admin.html';
+                        });
+                    }
+                }
             }
         }
 
