@@ -1270,6 +1270,17 @@
       font-family: "Montserrat", sans-serif;
     }
     .status-badge i { margin-right: 6px; }
+    .status-badge.warn {
+      border-color: #8a6a1a;
+      color: #8a6a1a !important;
+      background: rgba(138,106,26,0.06);
+    }
+    .status-badge.warn i { color: #8a6a1a; }
+    .passport .status-badge.warn {
+      border-color: #8a6a1a !important;
+      color: #8a6a1a !important;
+      background: rgba(138,106,26,0.06) !important;
+    }
     .audit-info {
       font-size: 0.7rem;
       line-height: 1.6;
@@ -1314,14 +1325,42 @@
     }
     .obs-section label i { margin-right: 4px; }
     .obs-lines {
-      background-image: repeating-linear-gradient(transparent, transparent 20px, #ddd 20px, #ddd 21px);
-      line-height: 21px;
       flex: 1;
       min-height: 60px;
       font-size: 0.7rem;
-      color: #444 !important;
+      color: #222 !important;
       font-family: "Libre Baskerville", serif;
       padding: 0 2px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .obs-lines.empty {
+      font-style: italic;
+      color: #888 !important;
+    }
+
+    /* ⬇️ Página de continuación de notas */
+    .notes-continuation-title {
+      text-align: center;
+      border-top: 2px solid #8c2323;
+      border-bottom: 2px solid #8c2323;
+      color: #8c2323 !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 0;
+      margin-bottom: 10px;
+      font-family: "Cinzel";
+      letter-spacing: 1px;
+    }
+    .notes-page-info {
+      font-size: 0.6rem;
+      color: #888 !important;
+      text-align: center;
+      font-family: "Montserrat", sans-serif;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
 
     .cert-content {
@@ -1685,7 +1724,7 @@
       .audit-info { font-size: 0.48rem; }
       .audit-info p span { font-size: 0.55rem; }
       .obs-section label { font-size: 0.45rem; }
-      .obs-lines { font-size: 0.5rem; min-height: 35px; line-height: 16px; background-image: repeating-linear-gradient(transparent, transparent 16px, #ddd 16px, #ddd 17px); }
+      .obs-lines { font-size: 0.5rem; min-height: 35px; line-height: 1.5; }
 
       .cert-text { font-size: 0.55rem; padding: 8px; }
       .cert-date { font-size: 0.55rem; margin-top: 8px; }
@@ -1919,6 +1958,8 @@
                 </div>
               </div>
 
+              <!-- PÁGINA 2: CAPACIDADES + ANTECEDENTES -->
+              <!-- ⚠️ El back de esta página se llena con contenido dinámico de antecedentes -->
               <div class="page" id="page-2">
                 <div class="front">
                   <div class="page-inner">
@@ -1947,21 +1988,26 @@
                 <div class="back">
                   <div class="page-inner">
                     <div class="section-title"><i class="fas fa-history"></i> ANTECEDENTES</div>
-                    <div class="main-content-area">
-                      <div class="status-badge"><i class="fas fa-check-circle"></i> SIN ANTECEDENTES</div>
+                    <div class="main-content-area" id="antecedentesMainArea">
+                      <div class="status-badge" id="bookStatusBadge">
+                        <i class="fas fa-check-circle"></i> SIN ANTECEDENTES
+                      </div>
                       <div class="audit-info">
-                        <p><strong><i class="fas fa-gavel"></i> EVALUACIÓN JUDICIAL:</strong> <span>No se registran sanciones.</span></p>
+                        <p><strong><i class="fas fa-gavel"></i> EVALUACIÓN JUDICIAL:</strong> <span id="bookAuditJudicial">No se registran sanciones.</span></p>
                         <p><strong><i class="fas fa-clock"></i> ÚLTIMA VERIFICACIÓN:</strong> <span id="bookLastVerification">—</span></p>
                       </div>
                       <div class="obs-section">
                         <label><i class="fas fa-sticky-note"></i> OBSERVACIONES:</label>
-                        <div class="obs-lines" id="bookObservations">Sin observaciones.</div>
+                        <div class="obs-lines empty" id="bookObservations">Sin observaciones.</div>
                       </div>
                     </div>
-                    <div class="page-number">- 4 -</div>
+                    <div class="page-number" id="page-2-back-number">- 4 -</div>
                   </div>
                 </div>
               </div>
+
+              <!-- PÁGINAS DINÁMICAS DE ANTECEDENTES (se insertan acá por JS) -->
+              <!-- <div id="antecedentes-pages-container"></div> -->
 
               <div class="page" id="page-3">
                 <div class="front">
@@ -1977,7 +2023,7 @@
                     </div>
                     <div>
                       <div class="motto" id="bookMotto"><i class="fas fa-shield-halved"></i> POR LA LIGA · POR LOMBARDOS <i class="fas fa-shield-halved"></i></div>
-                      <div class="page-number">- 5 -</div>
+                      <div class="page-number" id="lastPageNumber">- 5 -</div>
                     </div>
                   </div>
                 </div>
@@ -2564,6 +2610,160 @@
       document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
     }
 
+    // ============================================================
+    // 📌 PAGINACIÓN DE ANTECEDENTES
+    // ============================================================
+    // Divide el texto en chunks según un máximo de caracteres por página.
+    // Aproximación: ~700 caracteres caben cómodos en el área de observaciones.
+    const MAX_CHARS_PER_NOTES_PAGE = 700;
+
+    function dividirTextoEnPaginas(texto, maxChars) {
+      if (!texto || !texto.trim()) return [];
+      const textoLimpio = texto.trim();
+      if (textoLimpio.length <= maxChars) return [textoLimpio];
+
+      const paginas = [];
+      const parrafos = textoLimpio.split(/\n\s*\n/); // separar por párrafos
+
+      let buffer = '';
+      for (const parrafo of parrafos) {
+        // Si el párrafo solo ya entra en una página, sumarlo al buffer
+        if (parrafo.length <= maxChars) {
+          if ((buffer + (buffer ? '\n\n' : '') + parrafo).length <= maxChars) {
+            buffer = buffer ? (buffer + '\n\n' + parrafo) : parrafo;
+          } else {
+            if (buffer) paginas.push(buffer);
+            buffer = parrafo;
+          }
+        } else {
+          // Párrafo muy largo: partirlo por oraciones o por corte duro
+          if (buffer) { paginas.push(buffer); buffer = ''; }
+          let resto = parrafo;
+          while (resto.length > maxChars) {
+            // Buscar un punto o salto cercano al límite
+            let corte = resto.lastIndexOf('. ', maxChars);
+            if (corte < maxChars * 0.5) corte = resto.lastIndexOf(' ', maxChars);
+            if (corte < maxChars * 0.5) corte = maxChars;
+            paginas.push(resto.slice(0, corte + 1).trim());
+            resto = resto.slice(corte + 1).trim();
+          }
+          if (resto) buffer = resto;
+        }
+      }
+      if (buffer) paginas.push(buffer);
+      return paginas;
+    }
+
+    function construirPaginasAntecedentes(texto) {
+      const container = document.getElementById('book');
+
+      // Eliminar páginas anteriores generadas (si existen)
+      document.querySelectorAll('.page-notas-dinamica').forEach(el => el.remove());
+
+      const page3 = document.getElementById('page-3');
+      if (!page3 || !container) return;
+
+      const paginas = dividirTextoEnPaginas(texto, MAX_CHARS_PER_NOTES_PAGE);
+      // Si no hay más de 1 página, no hacemos nada extra
+      if (paginas.length <= 1) {
+        // Actualizar numeración de la última página
+        actualizarNumeracionPaginas();
+        return;
+      }
+
+      // Las páginas adicionales van entre page-2 y page-3
+      // paginas[0] ya va en el back de page-2 (lo maneja actualizarUI)
+      // paginas[1..n] son nuevas páginas
+
+      for (let i = 1; i < paginas.length; i++) {
+        const textoPagina = paginas[i];
+        const esUltima = (i === paginas.length - 1);
+
+        const pageEl = document.createElement('div');
+        pageEl.className = 'page page-notas-dinamica';
+        pageEl.innerHTML = `
+          <div class="front">
+            <div class="page-inner">
+              <div class="notes-continuation-title">
+                <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+              </div>
+              <div class="notes-page-info">
+                Página ${i + 1} de ${paginas.length}
+              </div>
+              <div class="obs-section" style="flex:1;">
+                <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
+                <div class="obs-lines">${escapeHtml(textoPagina)}</div>
+              </div>
+              <div class="page-number" data-dynamic-page-num></div>
+            </div>
+          </div>
+          <div class="back">
+            <div class="page-inner">
+              <div class="notes-continuation-title">
+                <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+              </div>
+              <div class="notes-page-info">
+                Página ${i + 1} de ${paginas.length}
+              </div>
+              <div class="obs-section" style="flex:1;">
+                <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
+                <div class="obs-lines">${escapeHtml(textoPagina)}</div>
+              </div>
+              <div class="page-number" data-dynamic-page-num></div>
+            </div>
+          </div>
+        `;
+        container.insertBefore(pageEl, page3);
+      }
+
+      // Aplicar clase passport si es inmigrante
+      if (document.body.classList.contains('theme-inmigrante') ||
+          document.querySelector('.book.passport')) {
+        document.querySelectorAll('.page-notas-dinamica').forEach(el => {
+          // Los estilos de passport se aplican via CSS automáticamente porque
+          // el .book tiene la clase .passport
+        });
+      }
+
+      actualizarNumeracionPaginas();
+    }
+
+    function actualizarNumeracionPaginas() {
+      const pages = document.querySelectorAll('.page');
+      const total = pages.length;
+      pages.forEach((page, index) => {
+        // La numeración empieza en 1 después de la portada (índice 0)
+        const num = index; // portada = 0, primera hoja = 1, etc.
+        const numEls = page.querySelectorAll('.page-number');
+        numEls.forEach(el => {
+          if (num === 0) el.textContent = '';
+          else el.textContent = `- ${num} -`;
+        });
+      });
+      // Actualizar también el último page-number específico
+      const lastPageNum = document.getElementById('lastPageNumber');
+      if (lastPageNum) {
+        const lastPage = document.querySelector('.page:last-child');
+        if (lastPage) {
+          const idx = Array.from(document.querySelectorAll('.page')).indexOf(lastPage);
+          lastPageNum.textContent = `- ${idx} -`;
+        }
+      }
+    }
+
+    function escapeHtml(str) {
+      if (str === undefined || str === null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ============================================================
+    // ACTUALIZAR UI
+    // ============================================================
     function actualizarUI(data) {
       const name = data.name || 'SIN REGISTRO';
       const alias = data.alias || '—';
@@ -2580,6 +2780,7 @@
       const clanRaw = data.clan || '';
       const stats = data.stats || {};
       const competencies = data.competencies || {};
+      const antecedentes = (data.antecedentes && String(data.antecedentes).trim()) || '';
 
       const inmigrante = esInmigrante(data);
 
@@ -2631,10 +2832,44 @@
       document.getElementById('bookGender').textContent = gender;
       document.getElementById('bookSpecies').textContent = species;
       document.getElementById('bookDescription').textContent = description;
-      document.getElementById('bookObservations').textContent = 'Sin observaciones.';
       document.getElementById('bookFileNumber').textContent = fileNumber;
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
+
+      // ============================================================
+      // 📌 ANTECEDENTES
+      // ============================================================
+      const bookObservations = document.getElementById('bookObservations');
+      const bookStatusBadge = document.getElementById('bookStatusBadge');
+      const bookAuditJudicial = document.getElementById('bookAuditJudicial');
+
+      if (antecedentes) {
+        // El primer chunk va en la página 2 (back)
+        const paginas = dividirTextoEnPaginas(antecedentes, MAX_CHARS_PER_NOTES_PAGE);
+        const primeraPagina = paginas[0] || antecedentes;
+
+        bookObservations.textContent = primeraPagina;
+        bookObservations.classList.remove('empty');
+
+        // Cambiar badge a "CON ANTECEDENTES" en color de advertencia
+        if (bookStatusBadge) {
+          bookStatusBadge.classList.add('warn');
+          bookStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CON ANTECEDENTES REGISTRADOS';
+        }
+        if (bookAuditJudicial) {
+          bookAuditJudicial.textContent = 'Se registran observaciones.';
+        }
+      } else {
+        bookObservations.textContent = 'Sin observaciones.';
+        bookObservations.classList.add('empty');
+        if (bookStatusBadge) {
+          bookStatusBadge.classList.remove('warn');
+          bookStatusBadge.innerHTML = '<i class="fas fa-check-circle"></i> SIN ANTECEDENTES';
+        }
+        if (bookAuditJudicial) {
+          bookAuditJudicial.textContent = 'No se registran sanciones.';
+        }
+      }
 
       const bookClanEl = document.getElementById('bookClan');
       if (bookClanEl) {
@@ -2678,6 +2913,14 @@
       if (minecraftNick) {
         cargarSkinEnViewers(minecraftNick);
       }
+
+      // ============================================================
+      // 📌 Construir páginas dinámicas de antecedentes si hace falta
+      // ============================================================
+      construirPaginasAntecedentes(antecedentes);
+
+      // Re-inicializar el estado del libro tras agregar/quitar páginas
+      initBookPagination();
     }
 
     async function cargarExpediente(id) {
@@ -2724,10 +2967,49 @@
       }
     }
 
+    // ============================================================
+    // PAGINACIÓN DEL LIBRO
+    // ============================================================
     let currentStep = 1;
-    const pages = document.querySelectorAll('.page');
-    const book = document.getElementById('book');
-    const totalPages = pages.length;
+    let pages = [];
+    let book = null;
+    let totalPages = 0;
+
+    function initBookPagination() {
+      pages = document.querySelectorAll('.page');
+      book = document.getElementById('book');
+      totalPages = pages.length;
+
+      // Clamp currentStep si quedó fuera de rango
+      if (currentStep > totalPages - 1) currentStep = totalPages - 1;
+      if (currentStep < 0) currentStep = 0;
+
+      // Re-bind click listeners (los nuevos pages no lo tienen)
+      pages.forEach((page, index) => {
+        if (index < totalPages - 1) {
+          if (!page.dataset.clickBound) {
+            page.dataset.clickBound = '1';
+            page.addEventListener('click', (e) => {
+              if (e.target.closest('.book-controls')) return;
+              const rect = page.getBoundingClientRect();
+              const clickX = e.clientX - rect.left;
+              const mitad = rect.width / 2;
+              if (clickX > mitad) {
+                if (currentStep === index) {
+                  window.nextPage();
+                }
+              } else {
+                if (currentStep === index + 1) {
+                  window.prevPage();
+                }
+              }
+            });
+          }
+        }
+      });
+
+      updateBookState();
+    }
 
     function updateBookState() {
       requestAnimationFrame(() => {
@@ -2764,33 +3046,9 @@
       }
     };
 
-    setTimeout(() => {
-      pages.forEach((page, index) => {
-        if (index < totalPages - 1) {
-          page.addEventListener('click', (e) => {
-            if (e.target.closest('.book-controls')) return;
-            const rect = page.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const mitad = rect.width / 2;
-            if (clickX > mitad) {
-              if (currentStep === index) {
-                window.nextPage();
-              }
-            } else {
-              if (currentStep === index + 1) {
-                window.prevPage();
-              }
-            }
-          });
-        }
-      });
-      updateBookState();
-    }, 100);
-
     // ============================================================
-    // WATERMARK EN VIVO (vista previa en la página)
+    // WATERMARK EN VIVO
     // ============================================================
-    // Dibujamos la cruz en un canvas que se muestra en el DNI
     function dibujarCruzWatermark(ctx, ancho, alto, color, alpha) {
       ctx.save();
       ctx.globalAlpha = alpha;
@@ -2818,7 +3076,6 @@
     function inicializarWatermarkVista() {
       const wm = document.getElementById('dniWatermark');
       if (!wm) return;
-      // Reemplazamos el div por un canvas
       if (wm.tagName !== 'CANVAS') {
         const canvasWm = document.createElement('canvas');
         canvasWm.id = 'dniWatermark';
@@ -2826,7 +3083,6 @@
         wm.parentNode.replaceChild(canvasWm, wm);
       }
       const canvasWm = document.getElementById('dniWatermark');
-      dibujarCruzWatermark(canvasWm.getContext('2d'), 750, 380, '#500a0e', 0.06);
       canvasWm.width = 750;
       canvasWm.height = 380;
       dibujarCruzWatermark(canvasWm.getContext('2d'), 750, 380, '#500a0e', 0.06);
@@ -2878,11 +3134,9 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
-          // Eliminar el watermark del clon (lo dibujaremos aparte)
           const wmClone = clone.querySelector('.dni-watermark');
           if (wmClone) wmClone.remove();
 
-          // Reemplazar canvas WebGL de la skin por imagen
           const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
           if (dniCanvasClone) {
             if (skinDataURL) {
@@ -2910,7 +3164,6 @@
 
           await new Promise((resolve) => setTimeout(resolve, 150));
 
-          // === PASO 1: capturar SIN fondo (transparente) y SIN watermark ===
           const canvasCaptured = await html2canvas(clone, {
             scale: 3,
             backgroundColor: null,
@@ -2922,7 +3175,6 @@
           });
           document.body.removeChild(clone);
 
-          // === PASO 2: dibujar el watermark sobre el canvas capturado ===
           const ctxFinal = canvasCaptured.getContext('2d');
           dibujarCruzWatermark(
             ctxFinal,
@@ -2932,7 +3184,6 @@
             0.06
           );
 
-          // === PASO 3: descargar con transparencia ===
           const link = document.createElement('a');
           link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
           link.href = canvasCaptured.toDataURL('image/png');
@@ -2973,6 +3224,8 @@
       renderNav(user);
       const id = getExpedienteId();
       await cargarExpediente(id);
+      // Inicializar paginación DESPUÉS de que actualizarUI() haya corrido
+      initBookPagination();
       console.log(`📄 Expediente - Usuario: ${user.email}`);
     });
 
