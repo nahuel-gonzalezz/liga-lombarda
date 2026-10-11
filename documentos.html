@@ -1182,6 +1182,14 @@
                 bottom: -11px;
             }
         }
+
+        /* =========================================================
+           CLASE PARA OCULTAR EL LINK ADMIN INICIALMENTE
+        ========================================================= */
+        .nav-admin-link { display: none; }
+        .nav-admin-link.visible { display: inline-block; }
+        .side-menu-admin-link { display: none; }
+        .side-menu-admin-link.visible { display: flex; }
     </style>
 </head>
 
@@ -1204,6 +1212,10 @@
                 <a href="./index.html">INICIO</a>
                 <a href="./documentos.html" class="active">DOCUMENTOS</a>
                 <a href="./formulario.html">FORMULARIO</a>
+                <!-- Link ADMIN solo para admins -->
+                <a href="./admin.html" id="navAdminLink" class="nav-admin-link">
+                    <i class="fas fa-shield-halved" style="margin-right:4px;"></i>ADMIN
+                </a>
                 <div id="userNav" style="display: none;"></div>
             </nav>
 
@@ -1222,6 +1234,10 @@
             <a href="./index.html"><i class="fa-solid fa-house"></i> INICIO</a>
             <a href="./documentos.html" class="active"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
             <a href="./formulario.html"><i class="fa-solid fa-pen-to-square"></i> FORMULARIO</a>
+            <!-- Link ADMIN solo para admins (menú lateral) -->
+            <a href="./admin.html" id="sideAdminLink" class="side-menu-admin-link">
+                <i class="fas fa-shield-halved"></i> ADMIN
+            </a>
             <div class="side-menu-user" id="sideMenuUser" style="display:none;"></div>
             <div class="side-menu-footer">
                 SISTEMA OFICIAL · ARCHIVO CENTRAL
@@ -1341,6 +1357,10 @@
         const visibleCount = document.getElementById('visibleCount');
         const totalVisible = document.getElementById('totalVisible');
 
+        // ⬇️ Links admin (inicialmente ocultos)
+        const navAdminLink = document.getElementById('navAdminLink');
+        const sideAdminLink = document.getElementById('sideAdminLink');
+
         // =========================================================
         // MENÚ LATERAL
         // =========================================================
@@ -1424,9 +1444,9 @@
         window.moverDerecha = moverDerecha;
 
         // =========================================================
-        // RENDER NAV
+        // RENDER NAV (sin 👑, y con admin link solo si es admin)
         // =========================================================
-        function renderNav(user, isAdmin = false) {
+        function renderNav(user) {
             if (user) {
                 // Nav desktop
                 userNav.style.display = 'flex';
@@ -1434,7 +1454,6 @@
                     <span class="user-info" style="display:flex;align-items:center;gap:12px;">
                         <span class="email" style="color:#b7a98f;font-size:10px;font-family:'Montserrat',sans-serif;">
                             <i class="fas fa-user-circle" style="color:var(--gold-bright);margin-right:4px;"></i> ${user.email}
-                            ${isAdmin ? '<span style="color:var(--gold-bright);margin-left:4px;">👑</span>' : ''}
                         </span>
                         <button class="logout-btn" id="logoutBtnNav" style="background:transparent;border:1px solid #4a3d2e;color:#b7a98f;padding:5px 12px;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:9px;letter-spacing:1px;">
                             <i class="fas fa-sign-out-alt"></i> SALIR
@@ -1448,7 +1467,6 @@
                 sideMenuUser.innerHTML = `
                     <span class="email">
                         <i class="fas fa-user-circle"></i> ${user.email}
-                        ${isAdmin ? '<span style="color:var(--gold-bright);margin-left:4px;">👑</span>' : ''}
                     </span>
                     <button class="logout-btn" id="logoutBtnSide">
                         <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
@@ -1472,6 +1490,19 @@
                 return snapshot.val() === true;
             } catch (error) {
                 return false;
+            }
+        }
+
+        // =========================================================
+        // MOSTRAR / OCULTAR LINK ADMIN
+        // =========================================================
+        function mostrarLinkAdmin(visible) {
+            if (visible) {
+                navAdminLink.classList.add('visible');
+                sideAdminLink.classList.add('visible');
+            } else {
+                navAdminLink.classList.remove('visible');
+                sideAdminLink.classList.remove('visible');
             }
         }
 
@@ -1909,7 +1940,11 @@
 
             const isAdmin = await checkIsAdmin(user);
             mainContent.classList.add('visible');
-            renderNav(user, isAdmin);
+            renderNav(user);
+
+            // ✅ Mostrar link ADMIN solo si es admin
+            mostrarLinkAdmin(isAdmin);
+
             cargarDocumentos();
             showToast(`✅ Bienvenido, ${user.email}`, 'success', 2000);
 
