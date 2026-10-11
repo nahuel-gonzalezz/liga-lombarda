@@ -48,9 +48,6 @@
             padding-top: var(--header-height);
         }
 
-        /* =========================================================
-           AUTH OVERLAY
-        ========================================================= */
         .auth-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -87,9 +84,6 @@
         #mainContent { display: none; }
         #mainContent.visible { display: block; }
 
-        /* =========================================================
-           HEADER
-        ========================================================= */
         header {
             position: fixed;
             top: 0; left: 0;
@@ -188,9 +182,6 @@
         }
         .menu-toggle:hover { background: rgba(255,255,255,0.08); }
 
-        /* =========================================================
-           MENÚ LATERAL
-        ========================================================= */
         .side-menu {
             position: fixed;
             top: 0; right: 0;
@@ -322,9 +313,6 @@
             pointer-events: auto;
         }
 
-        /* =========================================================
-           TOAST
-        ========================================================= */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -348,9 +336,6 @@
         .toast.error { background: #4a1a1a; color: #e0b8b8; border: 2px solid #6a2a2a; }
         .toast.info { background: #1a2a4a; color: #b8c8e0; border: 2px solid #2a3a6a; }
 
-        /* =========================================================
-           LAYOUT
-        ========================================================= */
         .admin-wrapper {
             width: min(1500px, 94%);
             margin: 30px auto 60px;
@@ -382,9 +367,6 @@
             margin-top: 6px;
         }
 
-        /* =========================================================
-           STATS
-        ========================================================= */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -439,9 +421,6 @@
             margin-top: 4px;
         }
 
-        /* =========================================================
-           TOOLBAR
-        ========================================================= */
         .toolbar {
             background: var(--bg-card);
             border: 2px solid var(--border-soft);
@@ -520,9 +499,6 @@
         .refresh-btn i { font-size: 13px; }
         .refresh-btn.spinning i { animation: spin 1s linear infinite; }
 
-        /* =========================================================
-           LISTA DE EXPEDIENTES
-        ========================================================= */
         .expedientes-container {
             background: var(--bg-card);
             border: 2px solid var(--border-soft);
@@ -713,9 +689,6 @@
             font-weight: 600;
         }
 
-        /* =========================================================
-           MODALES
-        ========================================================= */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -996,9 +969,6 @@
             color: var(--text-soft);
         }
 
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
         @media (max-width: 1100px) {
             .expedientes-header { display: none; }
             .expediente-row {
@@ -1071,17 +1041,11 @@
 
 <body>
 
-    <!-- =========================================================
-         AUTH OVERLAY
-    ========================================================= -->
     <div class="auth-overlay" id="authOverlay">
         <div class="spinner"></div>
         <p>VERIFICANDO ACCESO...</p>
     </div>
 
-    <!-- =========================================================
-         CONTENIDO PRINCIPAL
-    ========================================================= -->
     <div id="mainContent">
 
         <header>
@@ -1103,7 +1067,6 @@
             </button>
         </header>
 
-        <!-- MENÚ LATERAL -->
         <div class="menu-overlay" id="menuOverlay"></div>
         <aside class="side-menu" id="sideMenu">
             <div class="side-menu-header">
@@ -1120,9 +1083,6 @@
             </div>
         </aside>
 
-        <!-- =========================================================
-             CONTENIDO ADMIN
-        ========================================================= -->
         <div class="admin-wrapper">
 
             <div class="admin-header">
@@ -1131,7 +1091,6 @@
                 <p>Visualizá, editá y eliminá expedientes del archivo central. Agregá antecedentes y notas internas.</p>
             </div>
 
-            <!-- STATS -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
@@ -1163,7 +1122,6 @@
                 </div>
             </div>
 
-            <!-- TOOLBAR -->
             <div class="toolbar">
                 <div class="search-box">
                     <i class="fas fa-search"></i>
@@ -1174,18 +1132,15 @@
                     <option value="ciudadano">Ciudadanos</option>
                     <option value="inmigrante">Inmigrantes</option>
                 </select>
-                <select class="filter-select" id="filterEstado">
-                    <option value="">Todos los estados</option>
-                    <option value="ACTIVO">Activos</option>
-                    <option value="INACTIVO">Inactivos</option>
-                    <option value="RETIRADO">Retirados</option>
+                <!-- ⬇️ Filtro por RANGO / CLAN (reemplaza al de estado) -->
+                <select class="filter-select" id="filterRango">
+                    <option value="">Todos los rangos / clanes</option>
                 </select>
                 <button class="refresh-btn" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i> RECARGAR
                 </button>
             </div>
 
-            <!-- LISTA DE EXPEDIENTES -->
             <div class="expedientes-container" id="expedientesContainer">
                 <div class="loading-state">
                     <div class="spinner"></div>
@@ -1198,9 +1153,6 @@
         <div id="toast" class="toast"></div>
     </div>
 
-    <!-- =========================================================
-         MODAL: VER DETALLE
-    ========================================================= -->
     <div class="modal-overlay" id="viewModal">
         <div class="modal">
             <div class="modal-header">
@@ -1222,9 +1174,6 @@
         </div>
     </div>
 
-    <!-- =========================================================
-         MODAL: EDITAR
-    ========================================================= -->
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <div class="modal-header">
@@ -1243,9 +1192,6 @@
         </div>
     </div>
 
-    <!-- =========================================================
-         MODAL: ANTECEDENTES / NOTAS
-    ========================================================= -->
     <div class="modal-overlay" id="notesModal">
         <div class="modal modal-md">
             <div class="modal-header">
@@ -1277,9 +1223,6 @@
         </div>
     </div>
 
-    <!-- =========================================================
-         MODAL: ELIMINAR
-    ========================================================= -->
     <div class="modal-overlay" id="deleteModal">
         <div class="modal modal-sm">
             <div class="modal-body">
@@ -1335,7 +1278,7 @@
 
         const searchInput = document.getElementById('searchInput');
         const filterTipo = document.getElementById('filterTipo');
-        const filterEstado = document.getElementById('filterEstado');
+        const filterRango = document.getElementById('filterRango'); // ⬅️ NUEVO
         const refreshBtn = document.getElementById('refreshBtn');
 
         const viewModal = document.getElementById('viewModal');
@@ -1409,19 +1352,6 @@
             'Comprometido/a',
             'Viudo/a',
             'Divorciado/a',
-            'Otro'
-        ];
-
-        const ESPECIES_COMUNES = [
-            'Humano',
-            'Enderman',
-            'Slime',
-            'Zombie',
-            'Esqueleto',
-            'Villager',
-            'Iron Golem',
-            'Blaze',
-            'Witch',
             'Otro'
         ];
 
@@ -1573,6 +1503,13 @@
             return 'badge-inactivo';
         }
 
+        // 🔑 Obtiene el "rango o clan" efectivo de un expediente
+        function getRangoOClan(data) {
+            if (!data) return '';
+            if (esInmigrante(data)) return data.clan || '';
+            return data.rank || '';
+        }
+
         function escapeHtml(str) {
             if (str === undefined || str === null) return '';
             return String(str)
@@ -1603,8 +1540,6 @@
             if (includeEmpty) {
                 html += `<option value="">Seleccionar...</option>`;
             }
-            // Si el valor actual no está en la lista, lo agrego al principio
-            // (para no perder datos viejos)
             const valueStr = currentValue != null ? String(currentValue) : '';
             const hasValue = options.some(o => String(o) === valueStr);
             if (valueStr && !hasValue) {
@@ -1615,6 +1550,29 @@
                 html += `<option value="${escapeHtml(opt)}" ${selected}>${escapeHtml(opt)}</option>`;
             });
             return html;
+        }
+
+        // =========================================================
+        // POBLAR FILTRO DE RANGOS/CLANES
+        // =========================================================
+        function poblarFiltroRango() {
+            const valorActual = filterRango.value;
+
+            // Recolectar todos los rangos y clanes únicos
+            const setRangos = new Set();
+            expedientesData.forEach(({ data }) => {
+                const r = getRangoOClan(data);
+                if (r && String(r).trim()) setRangos.add(String(r).trim());
+            });
+
+            const valores = Array.from(setRangos).sort((a, b) => a.localeCompare(b, 'es'));
+
+            let html = `<option value="">Todos los rangos / clanes</option>`;
+            valores.forEach(v => {
+                const sel = (v === valorActual) ? 'selected' : '';
+                html += `<option value="${escapeHtml(v)}" ${sel}>${escapeHtml(v)}</option>`;
+            });
+            filterRango.innerHTML = html;
         }
 
         // =========================================================
@@ -1637,6 +1595,7 @@
                     });
                 }
                 actualizarStats();
+                poblarFiltroRango();
                 renderExpedientes();
             }, (error) => {
                 console.error('Error al cargar expedientes:', error);
@@ -1678,15 +1637,16 @@
         function getExpedientesFiltrados() {
             const q = searchInput.value.trim().toLowerCase();
             const tipo = filterTipo.value;
-            const estado = filterEstado.value;
+            const rangoFiltro = filterRango.value;
 
             return expedientesData.filter(({ data }) => {
                 if (tipo === 'ciudadano' && esInmigrante(data)) return false;
                 if (tipo === 'inmigrante' && !esInmigrante(data)) return false;
 
-                if (estado) {
-                    const k = getEstadoKey(data.status);
-                    if (k !== estado) return false;
+                // ⬇️ Filtro por rango / clan
+                if (rangoFiltro) {
+                    const r = getRangoOClan(data);
+                    if (String(r).trim() !== rangoFiltro) return false;
                 }
 
                 if (q) {
@@ -1977,7 +1937,6 @@
             const stats = data.stats || {};
             const comps = data.competencies || {};
 
-            // Opciones dinámicas para el campo rango/clan según tipo
             const rankOrClanOptions = esInm ? CLANES_INMIGRANTES : RANGOS_LIGA;
             const rankOrClanValue = esInm ? (data.clan || '') : (data.rank || 'Ciudadano');
             const rankOrClanLabel = esInm ? 'Clan' : 'Rango';
@@ -2028,11 +1987,10 @@
                         </select>
                     </div>
 
+                    <!-- ⬇️ ESPECIE: vuelve a ser input de texto -->
                     <div class="form-field">
                         <label><i class="fas fa-dragon"></i> Especie</label>
-                        <select id="editSpecies">
-                            ${buildOptions(ESPECIES_COMUNES, data.species || '', true)}
-                        </select>
+                        <input type="text" id="editSpecies" value="${escapeHtml(data.species || '')}" maxlength="50" placeholder="Ej: Humano, Enderman, Slime..." />
                     </div>
                     <div class="form-field">
                         <label><i class="fas fa-heart"></i> Estado civil</label>
@@ -2129,7 +2087,7 @@
                     status: document.getElementById('editStatus').value || '☑ ACTIVO',
                     birthDate: document.getElementById('editBirthday').value.trim() || '—',
                     gender: document.getElementById('editGender').value || '—',
-                    species: document.getElementById('editSpecies').value || '—',
+                    species: document.getElementById('editSpecies').value.trim() || '—',
                     marital: document.getElementById('editMarital').value || '—',
                     minecraftNick: document.getElementById('editMinecraftNick').value.trim() || '',
                     description: document.getElementById('editDescription').value.trim() || 'Sin descripción registrada.',
@@ -2143,7 +2101,6 @@
                     camposActualizar.rank = document.getElementById('editRankOrClan').value || 'Ciudadano';
                 }
 
-                // Usar update() en vez de set() para modificar solo los campos
                 await update(ref(database, `expedientes/${currentEditId}`), camposActualizar);
 
                 showToast('✅ Expediente actualizado correctamente', 'success', 3000);
@@ -2219,7 +2176,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
 
             try {
-                // Usar update() en vez de set() para modificar solo los campos de notas
                 await update(ref(database, `expedientes/${currentNotesId}`), {
                     antecedentes: texto.trim(),
                     antecedentesUpdatedAt: new Date().toISOString()
@@ -2284,7 +2240,7 @@
         // =========================================================
         searchInput.addEventListener('input', renderExpedientes);
         filterTipo.addEventListener('change', renderExpedientes);
-        filterEstado.addEventListener('change', renderExpedientes);
+        filterRango.addEventListener('change', renderExpedientes); // ⬅️ nuevo
 
         refreshBtn.addEventListener('click', () => {
             refreshBtn.classList.add('spinning');
