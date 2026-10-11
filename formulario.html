@@ -144,6 +144,25 @@
         .nav-desktop a.active { color: #ffffff; }
         .nav-desktop a.active::after { width: 100%; background-color: #ffffff; box-shadow: 0 0 10px rgba(255, 255, 255, 0.8); }
 
+        /* =========================================================
+           LINK ADMIN (solo visible si es admin)
+        ========================================================= */
+        .nav-admin-link {
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-admin-link.visible {
+            display: inline-flex;
+        }
+        .nav-admin-link i {
+            color: #a4864a;
+            font-size: 11px;
+        }
+        .nav-admin-link:hover i {
+            color: #d4b76c;
+        }
+
         .user-info {
             display: flex;
             align-items: center;
@@ -157,53 +176,6 @@
             font-weight: 600;
         }
         .user-info .email i { color: #a4864a; margin-right: 4px; }
-
-        /* =========================================================
-           EMAIL CLICKEABLE PARA ADMIN
-        ========================================================= */
-        .user-info .email.email-admin {
-            cursor: pointer;
-            transition: all 0.25s ease;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid transparent;
-        }
-        .user-info .email.email-admin:hover {
-            background: rgba(164, 134, 74, 0.12);
-            border-color: rgba(164, 134, 74, 0.4);
-            color: #d4b76c;
-        }
-        .user-info .email.email-admin:hover i {
-            color: #d4b76c;
-        }
-        .user-info .email.email-admin::after {
-            content: ' ⚙️';
-            font-size: 9px;
-            opacity: 0.6;
-            margin-left: 4px;
-        }
-
-        .side-menu-user .email.email-admin {
-            cursor: pointer;
-            transition: all 0.25s ease;
-            padding: 4px 8px;
-            border-radius: 6px;
-            border: 1px solid transparent;
-        }
-        .side-menu-user .email.email-admin:hover {
-            background: rgba(164, 134, 74, 0.12);
-            border-color: rgba(164, 134, 74, 0.4);
-            color: #d4b76c;
-        }
-        .side-menu-user .email.email-admin:hover i {
-            color: #d4b76c;
-        }
-        .side-menu-user .email.email-admin::after {
-            content: ' ⚙️';
-            font-size: 9px;
-            opacity: 0.6;
-            margin-left: 4px;
-        }
 
         .logout-btn {
             background: transparent;
@@ -308,6 +280,14 @@
             border-color: #333;
         }
         .side-menu a.active i { color: #ffffff; }
+
+        /* Link ADMIN en side menu (oculto por defecto) */
+        .side-menu .side-admin-link {
+            display: none;
+        }
+        .side-menu .side-admin-link.visible {
+            display: flex;
+        }
 
         .side-menu-user {
             margin-top: 16px;
@@ -1394,6 +1374,10 @@
                 <a href="./index.html">INICIO</a>
                 <a href="./documentos.html">DOCUMENTOS</a>
                 <a href="./formulario.html" class="active">FORMULARIO</a>
+                <!-- Link ADMIN - solo visible si es admin -->
+                <a href="./admin.html" id="navAdminLink" class="nav-admin-link">
+                    <i class="fas fa-shield-halved"></i> ADMIN
+                </a>
                 <div id="userNav" style="display: none;"></div>
             </nav>
 
@@ -1411,6 +1395,10 @@
             <a href="./index.html"><i class="fa-solid fa-house"></i> INICIO</a>
             <a href="./documentos.html"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
             <a href="./formulario.html" class="active"><i class="fa-solid fa-pen-to-square"></i> FORMULARIO</a>
+            <!-- Link ADMIN en side menu - solo visible si es admin -->
+            <a href="./admin.html" id="sideAdminLink" class="side-admin-link">
+                <i class="fas fa-shield-halved"></i> ADMIN
+            </a>
             <div class="side-menu-user" id="sideMenuUser" style="display:none;"></div>
             <div class="side-menu-footer">
                 SISTEMA OFICIAL · ARCHIVO CENTRAL
@@ -2040,6 +2028,10 @@
         const menuOverlay = document.getElementById('menuOverlay');
         const sideMenuUser = document.getElementById('sideMenuUser');
 
+        // ⬇️ Links ADMIN
+        const navAdminLink = document.getElementById('navAdminLink');
+        const sideAdminLink = document.getElementById('sideAdminLink');
+
         function openMenu() {
             sideMenu.classList.add('open');
             menuOverlay.classList.add('open');
@@ -2074,19 +2066,15 @@
         window.showToast = showToast;
 
         // =========================================================
-        // RENDER NAV (con email clickeable para admin)
+        // RENDER NAV (sin email clickeable, sin 👑)
         // =========================================================
-        function renderNav(user, isAdmin = false) {
+        function renderNav(user) {
             if (user) {
-                const adminClass = isAdmin ? 'email-admin' : '';
-                const adminTitle = isAdmin ? 'title="Ir al panel de administración"' : '';
-
                 userNav.style.display = 'flex';
                 userNav.innerHTML = `
                     <span class="user-info">
-                        <span class="email ${adminClass}" ${adminTitle} id="emailNav">
+                        <span class="email">
                             <i class="fas fa-user-circle"></i> ${user.email}
-                            ${isAdmin ? '<span style="color:#a4864a;margin-left:4px;">👑</span>' : ''}
                         </span>
                         <button class="logout-btn" id="logoutBtnNav">
                             <i class="fas fa-sign-out-alt"></i> SALIR
@@ -2096,35 +2084,29 @@
 
                 document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
 
-                if (isAdmin) {
-                    const emailNav = document.getElementById('emailNav');
-                    if (emailNav) {
-                        emailNav.addEventListener('click', () => {
-                            window.location.href = 'admin.html';
-                        });
-                    }
-                }
-
                 sideMenuUser.style.display = 'flex';
                 sideMenuUser.innerHTML = `
-                    <span class="email ${adminClass}" ${adminTitle} id="emailSide">
+                    <span class="email">
                         <i class="fas fa-user-circle"></i> ${user.email}
-                        ${isAdmin ? '<span style="color:#a4864a;margin-left:4px;">👑</span>' : ''}
                     </span>
                     <button class="logout-btn" id="logoutBtnSide">
                         <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
                     </button>
                 `;
                 document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
+            }
+        }
 
-                if (isAdmin) {
-                    const emailSide = document.getElementById('emailSide');
-                    if (emailSide) {
-                        emailSide.addEventListener('click', () => {
-                            window.location.href = 'admin.html';
-                        });
-                    }
-                }
+        // =========================================================
+        // MOSTRAR / OCULTAR LINKS ADMIN
+        // =========================================================
+        function mostrarLinkAdmin(visible) {
+            if (visible) {
+                navAdminLink.classList.add('visible');
+                sideAdminLink.classList.add('visible');
+            } else {
+                navAdminLink.classList.remove('visible');
+                sideAdminLink.classList.remove('visible');
             }
         }
 
@@ -2167,7 +2149,8 @@
             const isAdmin = await checkIsAdmin(user);
 
             mainContent.classList.add('visible');
-            renderNav(user, isAdmin);
+            renderNav(user);
+            mostrarLinkAdmin(isAdmin);   // ⬅️ Mostrar/ocultar link ADMIN
             generateBtn.disabled = false;
 
             if (isAdmin) {
@@ -2580,7 +2563,7 @@
             const alias = document.getElementById('alias').value.trim() || '—';
             const nationality = document.getElementById('nationality').value.trim() || '—';
             const occupation = document.getElementById('occupation').value.trim() || '—';
-            const status = document.getElementById('status').value || '☑ ACTIVO';
+            const status = document.getElementById('status').value || 'ACTIVO';
             const birthday = document.getElementById('birthday').value;
             const gender = document.getElementById('gender').value || '—';
             const species = document.getElementById('species').value.trim() || '—';
