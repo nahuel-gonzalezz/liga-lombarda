@@ -871,6 +871,10 @@
                     <div class="character-actor" id="actorA">
                         <img src="img/personaje-a.png" alt="Personaje A" class="jelly" onerror="this.style.display='none'">
                     </div>
+                    <!-- ⬇️ NUEVO PERSONAJE L -->
+                    <div class="character-actor" id="actorL">
+                        <img src="img/personaje-l.png" alt="Personaje L" class="jelly" onerror="this.style.display='none'">
+                    </div>
                 </div>
 
                 <div class="character-bubble" id="bubbleC">
@@ -888,6 +892,11 @@
                 <div class="character-bubble" id="bubbleA">
                     Bienvenido a la Liga
                     <span class="bubble-name">-Aliotti</span>
+                </div>
+                <!-- ⬇️ BURBUJA DEL NUEVO PERSONAJE L -->
+                <div class="character-bubble" id="bubbleL">
+                    Es hora de proyectarse
+                    <span class="bubble-name">-HumoMega</span>
                 </div>
             </div>
         </section>
@@ -982,7 +991,9 @@
                 { actor: document.getElementById('actorC'), bubble: document.getElementById('bubbleC') },
                 { actor: document.getElementById('actorE'), bubble: document.getElementById('bubbleE') },
                 { actor: document.getElementById('actorT'), bubble: document.getElementById('bubbleT') },
-                { actor: document.getElementById('actorA'), bubble: document.getElementById('bubbleA') }
+                { actor: document.getElementById('actorA'), bubble: document.getElementById('bubbleA') },
+                // ⬇️ NUEVO PERSONAJE L
+                { actor: document.getElementById('actorL'), bubble: document.getElementById('bubbleL') }
             ];
 
             const DURACION_APARICION = 10000;
