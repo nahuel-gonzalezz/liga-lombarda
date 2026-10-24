@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <!-- 🔄 CAMBIO: evita que el navegador sirva una copia vieja de la página -->
+  <!-- 🔄 NUEVO: refuerzo anti-caché (algunos navegadores ignoran estos, pero ayudan) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -2058,7 +2058,7 @@
   <div id="toast" class="toast"></div>
 
   <script type="module">
-    // 🔄 CAMBIO: se importa onValue (ya lo exporta firebase-init.js, lo usa admin.html)
+    // 🔄 NUEVO: onValue ahora con reintento y detección de cambios reales
     import {
       auth,
       onAuthStateChanged,
@@ -2099,10 +2099,20 @@
       if (e.key === 'Escape') closeMenu();
     });
 
-    // 🔄 CAMBIO: si el navegador restaura la página desde su caché (botón "atrás"),
-    // se recarga para traer los datos actuales.
+    // 🔄 NUEVO: recarga forzada si el navegador restaura desde bfcache
     window.addEventListener('pageshow', (e) => {
       if (e.persisted) window.location.reload();
+    });
+
+    // 🔄 NUEVO: si la página viene de caché normal (performance.navigation),
+    // también recargamos para asegurar datos frescos.
+    window.addEventListener('load', () => {
+      try {
+        const navEntries = performance.getEntriesByType('navigation');
+        if (navEntries.length && navEntries[0].type === 'back_forward') {
+          window.location.reload();
+        }
+      } catch (e) {}
     });
 
     const RANK_ORDER = [
@@ -2119,7 +2129,6 @@
     function esInmigrante(item) {
       if (item.categoriaManual === 'inmigrante') return true;
       if (item.categoriaManual === 'lombardo') return false;
-      // 🔄 CAMBIO: se respeta el campo "type" (el mismo que usa admin.html)
       if (item.type === 'inmigrante') return true;
       if (item.type === 'ciudadano') return false;
       if (item.categoria) {
@@ -2219,7 +2228,7 @@
 
     function getExpedienteId() {
       const params = new URLSearchParams(window.location.search);
-      return params.get('id');
+      return params.get('id') || params.get('key');
     }
 
     function compartirURL() {
@@ -2623,9 +2632,6 @@
       document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
     }
 
-    // ============================================================
-    // 📌 PAGINACIÓN DE ANTECEDENTES
-    // ============================================================
     const MAX_CHARS_PER_NOTES_PAGE = 700;
 
     function dividirTextoEnPaginas(texto, maxChars) {
@@ -2749,9 +2755,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    // ============================================================
-    // ACTUALIZAR UI
-    // ============================================================
     function actualizarUI(data) {
       const name = data.name || 'SIN REGISTRO';
       const alias = data.alias || '—';
@@ -2824,9 +2827,6 @@
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
 
-      // ============================================================
-      // 📌 ANTECEDENTES
-      // ============================================================
       const bookObservations = document.getElementById('bookObservations');
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
@@ -2908,11 +2908,10 @@
     // ============================================================
     // 🔄 CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
     // ============================================================
-    // Antes se usaba get() una sola vez. Ahora se usa onValue():
-    // trae los datos actuales del servidor al abrir/recargar la página
-    // y además se actualiza sola si alguien edita el expediente desde admin.
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
+    let ultimoHashData = null;       // 🔄 NUEVO: para detectar cambios reales
+    let reintentoSinExpediente = 0;  // 🔄 NUEVO: reintento si aún no sincronizó
 
     function mostrarError(icono, titulo, mensaje) {
       mainContent.innerHTML = `
@@ -2935,19 +2934,42 @@
       if (unsubscribeExpediente) unsubscribeExpediente();
 
       const expedienteRef = ref(database, `expedientes/${id}`);
+      console.log(`🔄 Escuchando expedientes/${id} en vivo...`);
+
       unsubscribeExpediente = onValue(expedienteRef, (snapshot) => {
         if (!snapshot.exists()) {
+          // 🔄 NUEVO: si aún no existe, puede ser que Firebase no haya sincronizado.
+          // Reintentamos hasta 3 veces con 1.2s de espera antes de mostrar error.
+          if (reintentoSinExpediente < 3) {
+            reintentoSinExpediente++;
+            console.warn(`⏳ Expediente aún no sincronizado, reintento ${reintentoSinExpediente}/3...`);
+            setTimeout(() => {
+              if (unsubscribeExpediente) unsubscribeExpediente();
+              cargarExpediente(id);
+            }, 1200);
+            return;
+          }
           if (unsubscribeExpediente) unsubscribeExpediente();
           mostrarError('fa-file-excel', 'Expediente no encontrado', 'El expediente que buscas no existe o fue eliminado.');
           return;
         }
 
+        reintentoSinExpediente = 0;
         const data = snapshot.val();
         const inm = esInmigrante(data);
 
-        // Si cambió de Ciudadano a Inmigrante (o al revés), se recarga la página
-        // para que el DNI/Pasaporte se arme desde cero.
+        // 🔄 NUEVO: hash para evitar re-render innecesario pero SÍ detectar cambios
+        const hash = JSON.stringify(data);
+        if (hash === ultimoHashData) {
+          console.log('ℹ️ Sin cambios en el expediente, se omite re-render.');
+          return;
+        }
+        ultimoHashData = hash;
+
+        console.log('📥 Datos recibidos de Firebase:', data);
+
         if (ultimoEsInmigrante !== null && ultimoEsInmigrante !== inm) {
+          console.log('🔁 Cambió tipo ciudadano/inmigrante, recargando página...');
           window.location.reload();
           return;
         }
@@ -3218,7 +3240,6 @@
       mainContent.style.display = 'block';
       renderNav(user);
       initBookPagination();
-      // 🔄 CAMBIO: arranca el listener en vivo (ya no hay un get() único)
       cargarExpediente(getExpedienteId());
       console.log(`📄 Expediente - Usuario: ${user.email}`);
     });
