@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- 🔄 CAMBIO: evita que el navegador sirva una copia vieja de la página -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Expediente — Liga Lombarda</title>
   <link rel="icon" type="image/png" href="./logo.png" />
   <link rel="shortcut icon" href="./logo.png" />
@@ -1340,7 +1344,7 @@
       color: #888 !important;
     }
 
-    /* ⬇️ Página de continuación de notas */
+    /* Página de continuación de notas */
     .notes-continuation-title {
       text-align: center;
       border-top: 2px solid #8c2323;
@@ -1959,7 +1963,6 @@
               </div>
 
               <!-- PÁGINA 2: CAPACIDADES + ANTECEDENTES -->
-              <!-- ⚠️ El back de esta página se llena con contenido dinámico de antecedentes -->
               <div class="page" id="page-2">
                 <div class="front">
                   <div class="page-inner">
@@ -2006,8 +2009,7 @@
                 </div>
               </div>
 
-              <!-- PÁGINAS DINÁMICAS DE ANTECEDENTES (se insertan acá por JS) -->
-              <!-- <div id="antecedentes-pages-container"></div> -->
+              <!-- Las páginas dinámicas de antecedentes se insertan acá por JS (antes de page-3) -->
 
               <div class="page" id="page-3">
                 <div class="front">
@@ -2056,13 +2058,15 @@
   <div id="toast" class="toast"></div>
 
   <script type="module">
+    // 🔄 CAMBIO: se importa onValue (ya lo exporta firebase-init.js, lo usa admin.html)
     import {
       auth,
       onAuthStateChanged,
       signOut,
       database,
       ref,
-      get
+      get,
+      onValue
     } from "./firebase-init.js";
 
     const authOverlay = document.getElementById('authOverlay');
@@ -2095,6 +2099,12 @@
       if (e.key === 'Escape') closeMenu();
     });
 
+    // 🔄 CAMBIO: si el navegador restaura la página desde su caché (botón "atrás"),
+    // se recarga para traer los datos actuales.
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) window.location.reload();
+    });
+
     const RANK_ORDER = [
       'Elite Urbana',
       'Caballero Lombardo',
@@ -2109,6 +2119,9 @@
     function esInmigrante(item) {
       if (item.categoriaManual === 'inmigrante') return true;
       if (item.categoriaManual === 'lombardo') return false;
+      // 🔄 CAMBIO: se respeta el campo "type" (el mismo que usa admin.html)
+      if (item.type === 'inmigrante') return true;
+      if (item.type === 'ciudadano') return false;
       if (item.categoria) {
         const cat = String(item.categoria).toLowerCase().trim();
         if (cat === 'inmigrante' || cat === 'inmigrantes' || cat === 'ilegal') return true;
@@ -2613,8 +2626,6 @@
     // ============================================================
     // 📌 PAGINACIÓN DE ANTECEDENTES
     // ============================================================
-    // Divide el texto en chunks según un máximo de caracteres por página.
-    // Aproximación: ~700 caracteres caben cómodos en el área de observaciones.
     const MAX_CHARS_PER_NOTES_PAGE = 700;
 
     function dividirTextoEnPaginas(texto, maxChars) {
@@ -2623,11 +2634,10 @@
       if (textoLimpio.length <= maxChars) return [textoLimpio];
 
       const paginas = [];
-      const parrafos = textoLimpio.split(/\n\s*\n/); // separar por párrafos
+      const parrafos = textoLimpio.split(/\n\s*\n/);
 
       let buffer = '';
       for (const parrafo of parrafos) {
-        // Si el párrafo solo ya entra en una página, sumarlo al buffer
         if (parrafo.length <= maxChars) {
           if ((buffer + (buffer ? '\n\n' : '') + parrafo).length <= maxChars) {
             buffer = buffer ? (buffer + '\n\n' + parrafo) : parrafo;
@@ -2636,11 +2646,9 @@
             buffer = parrafo;
           }
         } else {
-          // Párrafo muy largo: partirlo por oraciones o por corte duro
           if (buffer) { paginas.push(buffer); buffer = ''; }
           let resto = parrafo;
           while (resto.length > maxChars) {
-            // Buscar un punto o salto cercano al límite
             let corte = resto.lastIndexOf('. ', maxChars);
             if (corte < maxChars * 0.5) corte = resto.lastIndexOf(' ', maxChars);
             if (corte < maxChars * 0.5) corte = maxChars;
@@ -2657,27 +2665,19 @@
     function construirPaginasAntecedentes(texto) {
       const container = document.getElementById('book');
 
-      // Eliminar páginas anteriores generadas (si existen)
       document.querySelectorAll('.page-notas-dinamica').forEach(el => el.remove());
 
       const page3 = document.getElementById('page-3');
       if (!page3 || !container) return;
 
       const paginas = dividirTextoEnPaginas(texto, MAX_CHARS_PER_NOTES_PAGE);
-      // Si no hay más de 1 página, no hacemos nada extra
       if (paginas.length <= 1) {
-        // Actualizar numeración de la última página
         actualizarNumeracionPaginas();
         return;
       }
 
-      // Las páginas adicionales van entre page-2 y page-3
-      // paginas[0] ya va en el back de page-2 (lo maneja actualizarUI)
-      // paginas[1..n] son nuevas páginas
-
       for (let i = 1; i < paginas.length; i++) {
         const textoPagina = paginas[i];
-        const esUltima = (i === paginas.length - 1);
 
         const pageEl = document.createElement('div');
         pageEl.className = 'page page-notas-dinamica';
@@ -2716,31 +2716,19 @@
         container.insertBefore(pageEl, page3);
       }
 
-      // Aplicar clase passport si es inmigrante
-      if (document.body.classList.contains('theme-inmigrante') ||
-          document.querySelector('.book.passport')) {
-        document.querySelectorAll('.page-notas-dinamica').forEach(el => {
-          // Los estilos de passport se aplican via CSS automáticamente porque
-          // el .book tiene la clase .passport
-        });
-      }
-
       actualizarNumeracionPaginas();
     }
 
     function actualizarNumeracionPaginas() {
-      const pages = document.querySelectorAll('.page');
-      const total = pages.length;
-      pages.forEach((page, index) => {
-        // La numeración empieza en 1 después de la portada (índice 0)
-        const num = index; // portada = 0, primera hoja = 1, etc.
+      const pagesEls = document.querySelectorAll('.page');
+      pagesEls.forEach((page, index) => {
+        const num = index;
         const numEls = page.querySelectorAll('.page-number');
         numEls.forEach(el => {
           if (num === 0) el.textContent = '';
           else el.textContent = `- ${num} -`;
         });
       });
-      // Actualizar también el último page-number específico
       const lastPageNum = document.getElementById('lastPageNumber');
       if (lastPageNum) {
         const lastPage = document.querySelector('.page:last-child');
@@ -2795,7 +2783,7 @@
       document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
 
       const clanEl = document.getElementById('displayClan');
-      clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${clanDisplay}`;
+      clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${escapeHtml(clanDisplay)}`;
 
       document.getElementById('displayRank').textContent = rank;
       document.getElementById('displayNationality').textContent = nationality;
@@ -2844,14 +2832,12 @@
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
 
       if (antecedentes) {
-        // El primer chunk va en la página 2 (back)
         const paginas = dividirTextoEnPaginas(antecedentes, MAX_CHARS_PER_NOTES_PAGE);
         const primeraPagina = paginas[0] || antecedentes;
 
         bookObservations.textContent = primeraPagina;
         bookObservations.classList.remove('empty');
 
-        // Cambiar badge a "CON ANTECEDENTES" en color de advertencia
         if (bookStatusBadge) {
           bookStatusBadge.classList.add('warn');
           bookStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CON ANTECEDENTES REGISTRADOS';
@@ -2914,57 +2900,68 @@
         cargarSkinEnViewers(minecraftNick);
       }
 
-      // ============================================================
-      // 📌 Construir páginas dinámicas de antecedentes si hace falta
-      // ============================================================
       construirPaginasAntecedentes(antecedentes);
 
-      // Re-inicializar el estado del libro tras agregar/quitar páginas
       initBookPagination();
     }
 
-    async function cargarExpediente(id) {
+    // ============================================================
+    // 🔄 CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
+    // ============================================================
+    // Antes se usaba get() una sola vez. Ahora se usa onValue():
+    // trae los datos actuales del servidor al abrir/recargar la página
+    // y además se actualiza sola si alguien edita el expediente desde admin.
+    let unsubscribeExpediente = null;
+    let ultimoEsInmigrante = null;
+
+    function mostrarError(icono, titulo, mensaje) {
+      mainContent.innerHTML = `
+        <div class="error-state">
+          <i class="fas ${icono}"></i>
+          <h3>${titulo}</h3>
+          <p>${mensaje}</p>
+          <a href="./documentos.html">Volver al registro</a>
+        </div>
+      `;
+      mainContent.style.display = 'block';
+    }
+
+    function cargarExpediente(id) {
       if (!id) {
-        mainContent.innerHTML = `
-          <div class="error-state">
-            <i class="fas fa-exclamation-circle"></i>
-            <h3>ID no especificado</h3>
-            <p>No se proporcionó un ID de expediente válido.</p>
-            <a href="./documentos.html">Volver al registro</a>
-          </div>
-        `;
-        mainContent.style.display = 'block';
+        mostrarError('fa-exclamation-circle', 'ID no especificado', 'No se proporcionó un ID de expediente válido.');
         return;
       }
-      try {
-        const expedienteRef = ref(database, `expedientes/${id}`);
-        const snapshot = await get(expedienteRef);
+
+      if (unsubscribeExpediente) unsubscribeExpediente();
+
+      const expedienteRef = ref(database, `expedientes/${id}`);
+      unsubscribeExpediente = onValue(expedienteRef, (snapshot) => {
         if (!snapshot.exists()) {
-          mainContent.innerHTML = `
-            <div class="error-state">
-              <i class="fas fa-file-excel"></i>
-              <h3>Expediente no encontrado</h3>
-              <p>El expediente que buscas no existe o fue eliminado.</p>
-              <a href="./documentos.html">Volver al registro</a>
-            </div>
-          `;
-          mainContent.style.display = 'block';
+          if (unsubscribeExpediente) unsubscribeExpediente();
+          mostrarError('fa-file-excel', 'Expediente no encontrado', 'El expediente que buscas no existe o fue eliminado.');
           return;
         }
+
         const data = snapshot.val();
-        actualizarUI(data);
-      } catch (error) {
+        const inm = esInmigrante(data);
+
+        // Si cambió de Ciudadano a Inmigrante (o al revés), se recarga la página
+        // para que el DNI/Pasaporte se arme desde cero.
+        if (ultimoEsInmigrante !== null && ultimoEsInmigrante !== inm) {
+          window.location.reload();
+          return;
+        }
+        ultimoEsInmigrante = inm;
+
+        try {
+          actualizarUI(data);
+        } catch (e) {
+          console.error('Error al mostrar el expediente:', e);
+        }
+      }, (error) => {
         console.error('Error al cargar expediente:', error);
-        mainContent.innerHTML = `
-          <div class="error-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Error al cargar</h3>
-            <p>No se pudo cargar el expediente. Intenta de nuevo.</p>
-            <a href="./documentos.html">Volver al registro</a>
-          </div>
-        `;
-        mainContent.style.display = 'block';
-      }
+        mostrarError('fa-exclamation-triangle', 'Error al cargar', 'No se pudo cargar el expediente. Intenta de nuevo.');
+      });
     }
 
     // ============================================================
@@ -2980,11 +2977,9 @@
       book = document.getElementById('book');
       totalPages = pages.length;
 
-      // Clamp currentStep si quedó fuera de rango
       if (currentStep > totalPages - 1) currentStep = totalPages - 1;
       if (currentStep < 0) currentStep = 0;
 
-      // Re-bind click listeners (los nuevos pages no lo tienen)
       pages.forEach((page, index) => {
         if (index < totalPages - 1) {
           if (!page.dataset.clickBound) {
@@ -3222,10 +3217,9 @@
       }
       mainContent.style.display = 'block';
       renderNav(user);
-      const id = getExpedienteId();
-      await cargarExpediente(id);
-      // Inicializar paginación DESPUÉS de que actualizarUI() haya corrido
       initBookPagination();
+      // 🔄 CAMBIO: arranca el listener en vivo (ya no hay un get() único)
+      cargarExpediente(getExpedienteId());
       console.log(`📄 Expediente - Usuario: ${user.email}`);
     });
 
