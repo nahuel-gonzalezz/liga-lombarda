@@ -1332,7 +1332,7 @@
         let unsubscribeExpedientes = null;
 
         const MAX_NOTES_LENGTH = 2000;
-        const MAX_DESCRIPTION_LENGTH = 800;
+        const MAX_DESCRIPTION_LENGTH = 600;
 
         // =========================================================
         // CONSTANTES DE OPCIONES (para selects)
