@@ -621,6 +621,21 @@
         }
         textarea { resize: vertical; }
 
+        /* Contador de caracteres de la descripción */
+        .desc-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+            color: var(--text-soft);
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .desc-counter { font-weight: 700; white-space: nowrap; transition: color 0.2s ease; }
+        .desc-counter.warn { color: #c77800; }
+        .desc-counter.limit { color: #b3002a; }
+
         .secondary-btn {
             border: 2px solid var(--accent-dark);
             background: var(--accent);
@@ -943,15 +958,14 @@
             letter-spacing: 1px;
             margin-bottom: 2px;
         }
+        /* Se muestra la descripción completa (hasta 800 caracteres), sin recortar */
         .description-box p {
             font-size: 10px;
             line-height: 1.4;
             color: #1a1a1a;
-            max-height: 42px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
 
         .tables-section {
@@ -1690,10 +1704,11 @@
                             </div>
                             <div class="field full">
                                 <label><i class="fas fa-align-left"></i> DESCRIPCIÓN DEL CIUDADANO</label>
-                                <textarea id="description" rows="3" maxlength="300" placeholder="Breve descripción de tu personaje..."></textarea>
-                                <small style="display:block;margin-top:4px;color:var(--text-soft);font-size:9px;font-weight:600;">
-                                    <i class="fas fa-info-circle"></i> Máximo 3 líneas de texto.
-                                </small>
+                                <textarea id="description" rows="6" maxlength="800" placeholder="Breve descripción de tu personaje..."></textarea>
+                                <div class="desc-meta">
+                                    <span><i class="fas fa-info-circle"></i> Máximo 800 caracteres.</span>
+                                    <span class="desc-counter" id="descCounter">0 / 800</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2169,6 +2184,7 @@
     <script>
         const CAMERA_ZOOM_FIXED = 0.90;
         const CAMERA_YAW_FIXED = 0.00;
+        const DESCRIPTION_MAX = 800;
 
         let skinViewer = null;
         let currentSkinURL = null;
@@ -2556,6 +2572,22 @@
             document.getElementById('previewCertDate').textContent = day + ' / ' + month + ' / ' + year;
         }
 
+        // Contador de caracteres de la descripción
+        function updateDescriptionCounter() {
+            const textarea = document.getElementById('description');
+            const counter = document.getElementById('descCounter');
+            if (!textarea || !counter) return;
+
+            const len = textarea.value.length;
+            counter.textContent = len + ' / ' + DESCRIPTION_MAX;
+            counter.classList.remove('warn', 'limit');
+            if (len >= DESCRIPTION_MAX) {
+                counter.classList.add('limit');
+            } else if (len >= DESCRIPTION_MAX * 0.9) {
+                counter.classList.add('warn');
+            }
+        }
+
         function getFormData() {
             const isInmigrante = document.body.classList.contains('theme-purple');
 
@@ -2568,7 +2600,7 @@
             const gender = document.getElementById('gender').value || '—';
             const species = document.getElementById('species').value.trim() || '—';
             const marital = document.getElementById('marital').value || '—';
-            const description = document.getElementById('description').value.trim() || 'Sin descripción registrada.';
+            const description = document.getElementById('description').value.trim().slice(0, DESCRIPTION_MAX) || 'Sin descripción registrada.';
             const minecraftNick = document.getElementById('minecraftNick').value.trim() || '';
 
             let rank = '';
@@ -2875,6 +2907,8 @@
                     window.showToast('⚠️ Usando almacenamiento local (Firebase no disponible)', 'info', 4000);
                 }
             }, 1500);
+
+            updateDescriptionCounter();
         });
 
         function updateAllData() {
@@ -2892,6 +2926,8 @@
             document.getElementById('previewSpecies').textContent = data.species;
             document.getElementById('previewMarital').textContent = data.marital;
             document.getElementById('previewDescription').textContent = data.description;
+
+            updateDescriptionCounter();
 
             Object.keys(data.stats).forEach(stat => {
                 const val = data.stats[stat];
