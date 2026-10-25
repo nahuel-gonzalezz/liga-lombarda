@@ -769,6 +769,7 @@
             font-weight: 600;
             margin-top: 2px;
             word-break: break-word;
+            white-space: pre-wrap;
         }
         .detail-item .detail-value.highlight {
             color: var(--accent);
@@ -869,6 +870,20 @@
             box-shadow: 0 0 0 3px var(--accent-bg);
         }
         .form-field textarea { resize: vertical; min-height: 70px; }
+
+        .desc-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+            color: var(--text-soft);
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .desc-counter { font-weight: 700; white-space: nowrap; transition: color 0.2s ease; }
+        .desc-counter.warn { color: #c77800; font-weight: 800; }
+        .desc-counter.limit { color: #8b1a1a; font-weight: 800; }
 
         .stat-range-row {
             display: grid;
@@ -1317,6 +1332,7 @@
         let unsubscribeExpedientes = null;
 
         const MAX_NOTES_LENGTH = 2000;
+        const MAX_DESCRIPTION_LENGTH = 800;
 
         // =========================================================
         // CONSTANTES DE OPCIONES (para selects)
@@ -2005,7 +2021,11 @@
                     </div>
                     <div class="form-field full">
                         <label><i class="fas fa-align-left"></i> Descripción</label>
-                        <textarea id="editDescription" maxlength="300">${escapeHtml(data.description || '')}</textarea>
+                        <textarea id="editDescription" maxlength="${MAX_DESCRIPTION_LENGTH}" rows="6" style="min-height:140px;">${escapeHtml(data.description || '')}</textarea>
+                        <div class="desc-meta">
+                            <span><i class="fas fa-info-circle"></i> Máximo ${MAX_DESCRIPTION_LENGTH} caracteres.</span>
+                            <span class="desc-counter" id="editDescCounter">0 / ${MAX_DESCRIPTION_LENGTH}</span>
+                        </div>
                     </div>
 
                     <div class="form-field full" style="margin-top: 8px;">
@@ -2042,6 +2062,22 @@
                     if (output) output.textContent = input.value;
                 });
             });
+
+            // Contador de caracteres de la descripción
+            const editDesc = document.getElementById('editDescription');
+            const editDescCounter = document.getElementById('editDescCounter');
+            const actualizarEditDescCounter = () => {
+                const len = editDesc.value.length;
+                editDescCounter.textContent = `${len} / ${MAX_DESCRIPTION_LENGTH}`;
+                editDescCounter.classList.remove('warn', 'limit');
+                if (len >= MAX_DESCRIPTION_LENGTH) {
+                    editDescCounter.classList.add('limit');
+                } else if (len >= MAX_DESCRIPTION_LENGTH * 0.9) {
+                    editDescCounter.classList.add('warn');
+                }
+            };
+            editDesc.addEventListener('input', actualizarEditDescCounter);
+            actualizarEditDescCounter();
 
             editModal.classList.add('visible');
         }
@@ -2090,7 +2126,7 @@
                     species: document.getElementById('editSpecies').value.trim() || '—',
                     marital: document.getElementById('editMarital').value || '—',
                     minecraftNick: document.getElementById('editMinecraftNick').value.trim() || '',
-                    description: document.getElementById('editDescription').value.trim() || 'Sin descripción registrada.',
+                    description: document.getElementById('editDescription').value.trim().slice(0, MAX_DESCRIPTION_LENGTH) || 'Sin descripción registrada.',
                     stats: nuevosStats,
                     competencies: nuevasComps
                 };
