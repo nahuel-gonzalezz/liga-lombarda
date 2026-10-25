@@ -1184,12 +1184,16 @@
         }
 
         /* =========================================================
-           CLASE PARA OCULTAR EL LINK ADMIN INICIALMENTE
+           LINK ADMIN (oculto por defecto, visible solo para admins)
+           IMPORTANTE: los selectores llevan el prefijo del contenedor
+           (.nav-desktop / .side-menu) para ganarle en especificidad a
+           ".nav-desktop a" y ".side-menu a", que fuerzan display:flex.
         ========================================================= */
-        .nav-admin-link { display: none; }
-        .nav-admin-link.visible { display: inline-block; }
-        .side-menu-admin-link { display: none; }
-        .side-menu-admin-link.visible { display: flex; }
+        .nav-desktop .nav-admin-link { display: none; }
+        .nav-desktop .nav-admin-link.visible { display: inline-block; }
+
+        .side-menu .side-menu-admin-link { display: none; }
+        .side-menu .side-menu-admin-link.visible { display: flex; }
     </style>
 </head>
 
