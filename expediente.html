@@ -1358,12 +1358,6 @@
     .antecedente-bloque:last-child {
       border-bottom: none;
     }
-    .antecedente-bloque.antecedente-cortado {
-      border-bottom-style: dashed;
-    }
-    .antecedente-bloque.antecedente-cont {
-      border-top: 1px dashed #bbb;
-    }
     .antecedente-head {
       display: flex;
       justify-content: space-between;
@@ -1998,8 +1992,8 @@
                           <div class="field-row"><label><i class="fas fa-users"></i> CLAN:</label><span class="line-fill" id="bookClan">—</span></div>
                           <div class="field-row"><label><i class="fas fa-shield-halved"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
                           <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
-                          <!-- NUEVO: ESTADO en el front para que se vea sin hojear -->
-                          <div class="field-row"><label><i class="fas fa-circle-dot"></i> ESTADO:</label><span class="line-fill" id="bookStatusFront">—</span></div>
+                          <!-- NUEVO: ESTADO CIVIL en el front de page-1 -->
+                          <div class="field-row"><label><i class="fas fa-heart"></i> ESTADO CIVIL:</label><span class="line-fill" id="bookMaritalFront">—</span></div>
                         </div>
                       </div>
                     </div>
@@ -2012,7 +2006,8 @@
                     <div class="main-content-area">
                       <div class="info-list">
                         <p><strong><i class="fas fa-briefcase"></i> PROFESIÓN:</strong> <span id="bookOccupation">—</span></p>
-                        <p><strong><i class="fas fa-circle-dot"></i> ESTADO:</strong> <span id="bookStatus">—</span></p>
+                        <!-- CAMBIADO: ESTADO -> ESTADO CIVIL -->
+                        <p><strong><i class="fas fa-heart"></i> ESTADO CIVIL:</strong> <span id="bookMarital">—</span></p>
                         <p><strong><i class="fas fa-calendar-days"></i> FECHA NAC.:</strong> <span id="bookBirthday">—</span></p>
                         <p><strong><i class="fas fa-venus-mars"></i> GÉNERO:</strong> <span id="bookGender">—</span></p>
                         <p><strong><i class="fas fa-dna"></i> ESPECIE:</strong> <span id="bookSpecies">—</span></p>
@@ -2749,6 +2744,9 @@
         .replace(/'/g, '&#039;');
     }
 
+    /**
+     * Construye el HTML de un fragmento de antecedente.
+     */
     function renderFragmento(a, textoTrozo, continuacion, esUltimo) {
       const titulo = escapeHtml(a.titulo || 'Sin título') + (continuacion ? ' (cont.)' : '');
       const fecha  = escapeHtml(a.fecha || '—');
@@ -2768,8 +2766,8 @@
 
     /**
      * Pagina una lista de antecedentes en `contEl` y devuelve los que NO cupieron.
-     * Si un antecedente no cabe entero, se parte por palabras y el resto se
-     * devuelve como un nuevo antecedente "continuación".
+     * Si un antecedente no cabe entero, se parte por palabras y el resto
+     * se devuelve como continuación para la siguiente cara/hoja.
      */
     function paginarAntecedentesEnContenedor(contEl, lista) {
       if (!contEl || !Array.isArray(lista) || lista.length === 0) return [];
@@ -2782,7 +2780,7 @@
       while (idx < lista.length) {
         const a = lista[idx];
 
-        // 1) Intento colocar bloque completo
+        // 1) Intento: colocar el bloque completo
         const wrapperCompleto = document.createElement('div');
         wrapperCompleto.innerHTML = renderFragmento(a, a.texto, false, true);
         const bloqueCompleto = wrapperCompleto.firstElementChild;
@@ -2793,7 +2791,7 @@
           continue;
         }
 
-        // 2) No cupo entero: partir por palabras
+        // 2) No cupo entero: probar partir el texto
         contEl.removeChild(bloqueCompleto);
 
         const palabras = String(a.texto || '').split(/(\s+)/);
@@ -2811,7 +2809,6 @@
 
         const textoEl = bloqueParcial.querySelector('.antecedente-texto');
 
-        // Si ni el encabezado cabe, devolvemos todo lo restante sin tocar.
         if (contEl.scrollHeight > contEl.clientHeight) {
           contEl.removeChild(bloqueParcial);
           break;
@@ -2917,6 +2914,7 @@
       }
 
       bookObservations.offsetHeight;
+
       restantes = paginarAntecedentesEnContenedor(bookObservations, restantes);
 
       if (restantes.length === 0) {
@@ -2951,6 +2949,9 @@
       actualizarNumeracionPaginas();
     }
 
+    /**
+     * Numera CARAS (no hojas).
+     */
     function actualizarNumeracionPaginas() {
       const pagesEls = Array.from(document.querySelectorAll('.page'));
       let faceNum = 0;
@@ -2977,18 +2978,7 @@
       const rank = data.rank || 'Ciudadano';
       const nationality = data.nationality || '—';
       const occupation = data.occupation || '—';
-
-      // ============================================================
-      // ESTADO: lectura defensiva desde múltiples claves posibles
-      // ============================================================
-      const status =
-        (data.status && String(data.status).trim()) ||
-        (data.stats && data.stats.status && String(data.stats.status).trim()) ||
-        (data.estadoCivil && String(data.estadoCivil).trim()) ||
-        (data.estado && String(data.estado).trim()) ||
-        (data.civilStatus && String(data.civilStatus).trim()) ||
-        '☑ ACTIVO';
-
+      const status = data.status || '☑ ACTIVO';
       const birthday = data.birthDate || '—';
       const gender = data.gender || '—';
       const species = data.species || '—';
@@ -2998,6 +2988,15 @@
       const clanRaw = data.clan || '';
       const stats = data.stats || {};
       const competencies = data.competencies || {};
+
+      // ====== ESTADO CIVIL (marital) ======
+      // El expediente guarda el estado civil bajo `marital` (u otras claves posibles)
+      const estadoCivil =
+        (data.marital && String(data.marital).trim()) ||
+        (data.estadoCivil && String(data.estadoCivil).trim()) ||
+        (data.civilStatus && String(data.civilStatus).trim()) ||
+        (data.maritalStatus && String(data.maritalStatus).trim()) ||
+        '—';
 
       const listaAntecedentes = normalizarAntecedentes(data.antecedentes);
 
@@ -3046,7 +3045,6 @@
       document.getElementById('bookRank').textContent = rank;
       document.getElementById('bookNationality').textContent = nationality;
       document.getElementById('bookOccupation').textContent = occupation;
-      document.getElementById('bookStatus').textContent = status;
       document.getElementById('bookBirthday').textContent = birthday;
       document.getElementById('bookGender').textContent = gender;
       document.getElementById('bookSpecies').textContent = species;
@@ -3055,9 +3053,12 @@
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
 
-      // Asignar también al front de page-1
-      const bookStatusFrontEl = document.getElementById('bookStatusFront');
-      if (bookStatusFrontEl) bookStatusFrontEl.textContent = status;
+      // ====== ESTADO CIVIL en el librito ======
+      const bookMaritalFrontEl = document.getElementById('bookMaritalFront');
+      if (bookMaritalFrontEl) bookMaritalFrontEl.textContent = estadoCivil;
+
+      const bookMaritalEl = document.getElementById('bookMarital');
+      if (bookMaritalEl) bookMaritalEl.textContent = estadoCivil;
 
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
@@ -3129,7 +3130,7 @@
     }
 
     // ============================================================
-    // CARGA DEL EXPEDIENTE
+    // CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
     // ============================================================
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
