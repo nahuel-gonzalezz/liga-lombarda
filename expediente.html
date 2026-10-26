@@ -818,7 +818,7 @@
       display: flex;
       flex-direction: column;
       color: #222 !important;
-      overflow: hidden; /* CORREGIDO: era auto */
+      overflow: hidden;
       border-radius: 4px;
     }
     .front {
@@ -1338,7 +1338,7 @@
       line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
-      overflow: hidden; /* CORREGIDO: era auto */
+      overflow: hidden;
     }
     .obs-lines.empty {
       font-style: italic;
@@ -2764,44 +2764,35 @@
         return;
       }
 
+      // 1) Insertar el primer bloque directamente y medir el contenedor real
       let cabenPrimera = 0;
-      const anchoPrimera = bookObservations.clientWidth;
-      const altoPrimera = bookObservations.clientHeight;
-
-      if (altoPrimera > 0 && anchoPrimera > 0) {
-        const tester = bookObservations.cloneNode(false);
-        tester.style.position = 'absolute';
-        tester.style.visibility = 'hidden';
-        tester.style.left = '-99999px';
-        tester.style.top = '0';
-        tester.style.height = altoPrimera + 'px';
-        tester.style.width = anchoPrimera + 'px';
-        tester.style.overflow = 'hidden';
-        tester.style.whiteSpace = 'normal';
-        document.body.appendChild(tester);
-
-        for (let i = 0; i < lista.length; i++) {
-          const wrapper = document.createElement('div');
-          wrapper.innerHTML = renderAntecedenteBloque(lista[i]);
-          tester.appendChild(wrapper.firstElementChild);
-          
-          if (tester.scrollHeight <= altoPrimera) {
-            cabenPrimera = i + 1;
-          } else {
-            tester.removeChild(tester.lastElementChild);
-            break;
-          }
+      
+      // Limpiamos e insertamos uno a uno
+      bookObservations.innerHTML = '';
+      for (let i = 0; i < lista.length; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = renderAntecedenteBloque(lista[i]);
+        bookObservations.appendChild(wrapper.firstElementChild);
+        
+        // Si el scrollHeight del contenedor excede su clientHeight, significa que el texto no cabe
+        if (bookObservations.scrollHeight > bookObservations.clientHeight) {
+          // Lo quitamos porque no cabe
+          bookObservations.removeChild(bookObservations.lastElementChild);
+          break;
+        } else {
+          cabenPrimera = i + 1;
         }
-        document.body.removeChild(tester);
       }
 
-      if (cabenPrimera === 0) cabenPrimera = 1;
-
-      const primeros = lista.slice(0, cabenPrimera);
-      bookObservations.innerHTML = primeros.map(renderAntecedenteBloque).join('');
+      // Fallback para evitar bucles infinitos si la hoja no tiene altura definida aún
+      if (cabenPrimera === 0 && lista.length > 0) {
+        cabenPrimera = 1;
+        bookObservations.innerHTML = renderAntecedenteBloque(lista[0]);
+      }
 
       let restantes = lista.slice(cabenPrimera);
 
+      // 2) Crear hojas dinámicas si quedan antecedentes
       if (restantes.length > 0) {
         let hojaIdx = 0;
 
@@ -2846,42 +2837,33 @@
           container.insertBefore(pageEl, page3);
 
           const obsLines = pageEl.querySelector('.front .obs-lines');
-          const altoNueva = obsLines.clientHeight;
-          const anchoNueva = obsLines.clientWidth;
-
+          
+          // Insertamos y medimos en la hoja real
           let cabenAqui = 0;
-          if (altoNueva > 0 && anchoNueva > 0) {
-            const tester = obsLines.cloneNode(false);
-            tester.style.position = 'absolute';
-            tester.style.visibility = 'hidden';
-            tester.style.left = '-99999px';
-            tester.style.top = '0';
-            tester.style.height = altoNueva + 'px';
-            tester.style.width = anchoNueva + 'px';
-            tester.style.overflow = 'hidden';
-            tester.style.whiteSpace = 'normal';
-            document.body.appendChild(tester);
-
-            for (let i = 0; i < restantes.length; i++) {
-              const wrapper = document.createElement('div');
-              wrapper.innerHTML = renderAntecedenteBloque(restantes[i]);
-              tester.appendChild(wrapper.firstElementChild);
-
-              if (tester.scrollHeight <= altoNueva) {
-                cabenAqui = i + 1;
-              } else {
-                tester.removeChild(tester.lastElementChild);
-                break;
-              }
+          obsLines.innerHTML = '';
+          
+          for (let i = 0; i < restantes.length; i++) {
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = renderAntecedenteBloque(restantes[i]);
+            obsLines.appendChild(wrapper.firstElementChild);
+            
+            if (obsLines.scrollHeight > obsLines.clientHeight) {
+              obsLines.removeChild(obsLines.lastElementChild);
+              break;
+            } else {
+              cabenAqui = i + 1;
             }
-            document.body.removeChild(tester);
           }
 
-          if (cabenAqui === 0) cabenAqui = 1;
+          if (cabenAqui === 0) {
+            cabenAqui = 1;
+            obsLines.innerHTML = renderAntecedenteBloque(restantes[0]);
+          }
 
           const bloque = restantes.slice(0, cabenAqui);
           const htmlBloques = bloque.map(renderAntecedenteBloque).join('');
 
+          // Rellenar front y back con el mismo contenido
           pageEl.querySelectorAll('.obs-lines').forEach(el => {
             el.innerHTML = htmlBloques;
           });
