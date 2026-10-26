@@ -1306,17 +1306,13 @@
 
     /* ============================================================
        OBSERVACIONES / ANTECEDENTES
-       Ajustes clave para que el desborde sea medible:
-       - min-height: 0 permite que flex no expanda el contenedor.
-       - overflow: hidden recorta el contenido sobrante y permite
-         detectar scrollHeight > clientHeight.
        ============================================================ */
     .obs-section {
       border: 1px solid #bbb;
       background: rgba(255,255,240,0.15);
       padding: 8px 12px;
       flex: 1 1 0;
-      min-height: 0;         /* clave: no expandir con flex */
+      min-height: 0;
       display: flex;
       flex-direction: column;
       border-radius: 4px;
@@ -1337,7 +1333,7 @@
     .obs-section label i { margin-right: 4px; }
     .obs-lines {
       flex: 1 1 0;
-      min-height: 0;         /* clave: permite overflow real */
+      min-height: 0;
       font-size: 0.7rem;
       color: #222 !important;
       font-family: "Libre Baskerville", serif;
@@ -2735,21 +2731,6 @@
       return [];
     }
 
-    function renderAntecedenteBloque(a) {
-      const titulo = escapeHtml(a.titulo || 'Sin título');
-      const fecha = escapeHtml(a.fecha || '—');
-      const texto = escapeHtml(a.texto || '');
-      return `
-        <div class="antecedente-bloque">
-          <div class="antecedente-head">
-            <span class="antecedente-titulo">${titulo}</span>
-            <span class="antecedente-fecha">${fecha}</span>
-          </div>
-          <div class="antecedente-texto">${texto}</div>
-        </div>
-      `;
-    }
-
     function escapeHtml(str) {
       if (str === undefined || str === null) return '';
       return String(str)
@@ -2761,25 +2742,176 @@
     }
 
     /**
-     * Mide cuántos elementos de `lista` caben en `contEl`.
-     * Requiere que `contEl` tenga altura fija y `overflow: hidden`.
-     * Devuelve el número de elementos que caben (mínimo 0).
+     * Construye el HTML de un fragmento de antecedente.
+     * @param {object} a           Antecedente original
+     * @param {string} textoTrozo  Texto que va en este fragmento
+     * @param {boolean} continuacion  true si es una continuación (no muestra título/fecha, agrega "(cont.)")
+     * @param {boolean} esUltimo   true si este fragmento es el último del antecedente
      */
-    function medirCuantosCaben(contEl, lista) {
-      if (!contEl) return 0;
+    function renderFragmento(a, textoTrozo, continuacion, esUltimo) {
+      const titulo = escapeHtml(a.titulo || 'Sin título') + (continuacion ? ' (cont.)' : '');
+      const fecha  = escapeHtml(a.fecha || '—');
+      const texto  = escapeHtml(textoTrozo || '');
+      const claseExtra = continuacion ? ' antecedente-cont' : '';
+      const claseFin   = esUltimo ? '' : ' antecedente-cortado';
+      return `
+        <div class="antecedente-bloque${claseExtra}${claseFin}">
+          <div class="antecedente-head">
+            <span class="antecedente-titulo">${titulo}</span>
+            <span class="antecedente-fecha">${fecha}</span>
+          </div>
+          <div class="antecedente-texto">${texto}</div>
+        </div>
+      `;
+    }
+
+    /**
+     * Pagina una lista de antecedentes en `contEl` y devuelve los que NO cupieron.
+     * - Si un antecedente cabe entero, se coloca completo.
+     * - Si no cabe entero, se parte por palabras: lo que cabe se queda aquí,
+     *   y el resto se devuelve como un antecedente "continuación" para la siguiente cara/hoja.
+     * - Si ni el título cabe, se devuelve todo sin modificar.
+     *
+     * @param {HTMLElement} contEl   Contenedor .obs-lines con altura fija y overflow hidden
+     * @param {Array}       lista    Lista de antecedentes a colocar
+     * @returns {Array}              Antecedentes/fragmentos que no cupieron
+     */
+    function paginarAntecedentesEnContenedor(contEl, lista) {
+      if (!contEl || !Array.isArray(lista) || lista.length === 0) return [];
+
       contEl.innerHTML = '';
-      let caben = 0;
-      for (let i = 0; i < lista.length; i++) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = renderAntecedenteBloque(lista[i]);
-        contEl.appendChild(tmp.firstElementChild);
+      contEl.classList.remove('empty');
+
+      let idx = 0;
+
+      while (idx < lista.length) {
+        const a = lista[idx];
+
+        // 1) Intento: colocar el bloque completo
+        const wrapperCompleto = document.createElement('div');
+        wrapperCompleto.innerHTML = renderFragmento(a, a.texto, false, true);
+        const bloqueCompleto = wrapperCompleto.firstElementChild;
+        contEl.appendChild(bloqueCompleto);
+
+        if (contEl.scrollHeight <= contEl.clientHeight) {
+          // Cupo entero → siguiente antecedente
+          idx++;
+          continue;
+        }
+
+        // 2) No cupo entero: probar partir el texto
+        //    Primero comprobamos si al menos el título + algo cabe.
+        contEl.removeChild(bloqueCompleto);
+
+        // Separar por palabras (preservando el texto original para unir luego)
+        const palabras = String(a.texto || '').split(/(\s+)/); // conserva espacios
+        // Array de "tokens" que son palabras + espacios intercalados
+
+        // Probar insertando palabra a palabra hasta que desborde
+        const wrapperParcial = document.createElement('div');
+        const bloqueParcial = document.createElement('div');
+        bloqueParcial.className = 'antecedente-bloque antecedente-cortado';
+        bloqueParcial.innerHTML = `
+          <div class="antecedente-head">
+            <span class="antecedente-titulo">${escapeHtml(a.titulo || 'Sin título')}</span>
+            <span class="antecedente-fecha">${escapeHtml(a.fecha || '—')}</span>
+          </div>
+          <div class="antecedente-texto"></div>
+        `;
+        wrapperParcial.appendChild(bloqueParcial);
+        contEl.appendChild(bloqueParcial);
+
+        const textoEl = bloqueParcial.querySelector('.antecedente-texto');
+
+        // Si ya con el título (sin texto) desborda, no cabe ni el encabezado:
+        // devolvemos todo lo restante sin tocar.
         if (contEl.scrollHeight > contEl.clientHeight) {
-          contEl.removeChild(contEl.lastElementChild);
+          contEl.removeChild(bloqueParcial);
           break;
         }
-        caben = i + 1;
+
+        let corteIdx = 0;      // índice en `palabras` hasta donde cabe
+        let mejorCorte = 0;    // último corte válido
+        for (let i = 0; i < palabras.length; i++) {
+          textoEl.textContent = palabras.slice(0, i + 1).join('');
+          if (contEl.scrollHeight > contEl.clientHeight) {
+            corteIdx = i;
+            break;
+          }
+          mejorCorte = i + 1;
+        }
+
+        // Si no cupo ni una palabra, no cabe nada de este antecedente aquí
+        if (mejorCorte === 0) {
+          contEl.removeChild(bloqueParcial);
+          break;
+        }
+
+        // Reconstruir texto que cabe y texto que sobra
+        const textoCabe = palabras.slice(0, mejorCorte).join('').replace(/\s+$/, '');
+        const textoResto = palabras.slice(mejorCorte).join('').replace(/^\s+/, '');
+
+        textoEl.textContent = textoCabe;
+
+        // Si el textoResto está vacío, en realidad cupo todo → siguiente
+        if (!textoResto || textoResto.trim() === '') {
+          // Quitar la marca de "cortado" porque cupo entero
+          bloqueParcial.classList.remove('antecedente-cortado');
+          idx++;
+          continue;
+        }
+
+        // 3) Devolver el resto como antecedente "continuación"
+        const continuacion = {
+          id: a.id + '_cont_' + Date.now() + '_' + idx,
+          titulo: a.titulo || 'Sin título',
+          fecha: a.fecha || '',
+          texto: textoResto,
+          esContinuacion: true
+        };
+
+        return [continuacion].concat(lista.slice(idx + 1));
       }
-      return caben;
+
+      return lista.slice(idx);
+    }
+
+    function crearHojaAntecedentes(hojaIdx) {
+      const pageEl = document.createElement('div');
+      pageEl.className = 'page page-notas-dinamica';
+      pageEl.innerHTML = `
+        <div class="front">
+          <div class="page-inner">
+            <div class="notes-continuation-title">
+              <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+            </div>
+            <div class="notes-page-info">
+              Hoja ${hojaIdx} · Anverso
+            </div>
+            <div class="obs-section" style="flex:1 1 0; min-height:0; overflow:hidden;">
+              <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
+              <div class="obs-lines" style="flex:1 1 0; min-height:0; overflow:hidden;"></div>
+            </div>
+            <div class="page-number"></div>
+          </div>
+        </div>
+        <div class="back">
+          <div class="page-inner">
+            <div class="notes-continuation-title">
+              <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+            </div>
+            <div class="notes-page-info">
+              Hoja ${hojaIdx} · Reverso
+            </div>
+            <div class="obs-section" style="flex:1 1 0; min-height:0; overflow:hidden;">
+              <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
+              <div class="obs-lines" style="flex:1 1 0; min-height:0; overflow:hidden;"></div>
+            </div>
+            <div class="page-number"></div>
+          </div>
+        </div>
+      `;
+      return pageEl;
     }
 
     function construirPaginasAntecedentes(listaAntecedentes) {
@@ -2795,105 +2927,52 @@
       bookObservations.innerHTML = '';
       bookObservations.classList.remove('empty');
 
-      const lista = Array.isArray(listaAntecedentes) ? listaAntecedentes : [];
+      let restantes = Array.isArray(listaAntecedentes) ? listaAntecedentes.slice() : [];
 
-      if (lista.length === 0) {
+      if (restantes.length === 0) {
         bookObservations.textContent = 'Sin observaciones.';
         bookObservations.classList.add('empty');
         actualizarNumeracionPaginas();
         return;
       }
 
-      // 1) Llenar la primera hoja (back de page-2, el contenedor #bookObservations)
-      //    Nota: la sección ya tiene altura fija por CSS (flex: 1 1 0; min-height: 0).
-      //    Forzamos reflow para asegurar medición correcta.
+      // Forzar reflow para asegurar medición correcta
       bookObservations.offsetHeight;
 
-      let cabenPrimera = medirCuantosCaben(bookObservations, lista);
+      // 1) Llenar la primera hoja (back de page-2) partiendo si es necesario
+      restantes = paginarAntecedentesEnContenedor(bookObservations, restantes);
 
-      // Fallback: si aún no hay layout (p.ej. página aún invisible), forzamos 1
-      if (cabenPrimera <= 0) {
-        cabenPrimera = 1;
-        bookObservations.innerHTML = renderAntecedenteBloque(lista[0]);
-      } else {
-        bookObservations.innerHTML = lista.slice(0, cabenPrimera).map(renderAntecedenteBloque).join('');
+      // Si tras paginar la primera hoja ya no queda nada, terminamos
+      if (restantes.length === 0) {
+        actualizarNumeracionPaginas();
+        return;
       }
 
-      let restantes = lista.slice(cabenPrimera);
+      // 2) Crear hojas dinámicas hasta consumir todo
+      let hojaIdx = 0;
+      let guard = 0;
 
-      // 2) Crear hojas dinámicas si quedan antecedentes
-      if (restantes.length > 0) {
-        let hojaIdx = 0;
+      while (restantes.length > 0 && guard < 50) {
+        guard++;
+        hojaIdx++;
 
-        while (restantes.length > 0) {
-          hojaIdx++;
+        const pageEl = crearHojaAntecedentes(hojaIdx);
+        container.insertBefore(pageEl, page3);
 
-          const pageEl = document.createElement('div');
-          pageEl.className = 'page page-notas-dinamica';
-          pageEl.innerHTML = `
-            <div class="front">
-              <div class="page-inner">
-                <div class="notes-continuation-title">
-                  <i class="fas fa-history"></i> ANTECEDENTES (continuación)
-                </div>
-                <div class="notes-page-info">
-                  Hoja ${hojaIdx} · Anverso
-                </div>
-                <div class="obs-section" style="flex:1 1 0; min-height:0; overflow:hidden;">
-                  <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
-                  <div class="obs-lines" style="flex:1 1 0; min-height:0; overflow:hidden;"></div>
-                </div>
-                <div class="page-number"></div>
-              </div>
-            </div>
-            <div class="back">
-              <div class="page-inner">
-                <div class="notes-continuation-title">
-                  <i class="fas fa-history"></i> ANTECEDENTES (continuación)
-                </div>
-                <div class="notes-page-info">
-                  Hoja ${hojaIdx} · Reverso
-                </div>
-                <div class="obs-section" style="flex:1 1 0; min-height:0; overflow:hidden;">
-                  <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
-                  <div class="obs-lines" style="flex:1 1 0; min-height:0; overflow:hidden;"></div>
-                </div>
-                <div class="page-number"></div>
-              </div>
-            </div>
-          `;
+        // Forzar reflow para que el contenedor tenga altura real
+        pageEl.offsetHeight;
 
-          container.insertBefore(pageEl, page3);
+        // FRONT
+        const frontLines = pageEl.querySelector('.front .obs-lines');
+        restantes = paginarAntecedentesEnContenedor(frontLines, restantes);
 
-          // Forzar reflow para que las alturas reales estén calculadas
-          pageEl.offsetHeight;
-
-          // Medir FRONT
-          const frontLines = pageEl.querySelector('.front .obs-lines');
-          let cabenFront = medirCuantosCaben(frontLines, restantes);
-          if (cabenFront <= 0) {
-            // fallback: al menos 1 para no quedar en bucle infinito
-            cabenFront = 1;
-            frontLines.innerHTML = renderAntecedenteBloque(restantes[0]);
-          } else {
-            frontLines.innerHTML = restantes.slice(0, cabenFront).map(renderAntecedenteBloque).join('');
-          }
-          restantes = restantes.slice(cabenFront);
-
-          // Medir BACK con lo que queda
+        // BACK (si aún queda)
+        if (restantes.length > 0) {
           const backLines = pageEl.querySelector('.back .obs-lines');
-          if (restantes.length > 0) {
-            let cabenBack = medirCuantosCaben(backLines, restantes);
-            if (cabenBack <= 0) {
-              cabenBack = 1;
-              backLines.innerHTML = renderAntecedenteBloque(restantes[0]);
-            } else {
-              backLines.innerHTML = restantes.slice(0, cabenBack).map(renderAntecedenteBloque).join('');
-            }
-            restantes = restantes.slice(cabenBack);
-          } else {
-            backLines.innerHTML = '<div class="obs-lines empty">— Sin más observaciones —</div>';
-          }
+          restantes = paginarAntecedentesEnContenedor(backLines, restantes);
+        } else {
+          const backLines = pageEl.querySelector('.back .obs-lines');
+          backLines.innerHTML = '<div class="obs-lines empty">— Sin más observaciones —</div>';
         }
       }
 
@@ -2914,7 +2993,6 @@
         const backs  = page.querySelectorAll(':scope > .back  .page-number');
 
         if (hojaIdx === 0) {
-          // Portada: sin numeración
           fronts.forEach(el => el.textContent = '');
           backs.forEach(el  => el.textContent = '');
         } else {
@@ -2999,7 +3077,6 @@
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
 
-      // ====== ANTECEDENTES (badge + audit) ======
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
 
@@ -3064,7 +3141,6 @@
         cargarSkinEnViewers(minecraftNick);
       }
 
-      // Construye hojas dinámicas según espacio real disponible
       construirPaginasAntecedentes(listaAntecedentes);
 
       initBookPagination();
