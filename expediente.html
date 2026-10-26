@@ -1358,6 +1358,12 @@
     .antecedente-bloque:last-child {
       border-bottom: none;
     }
+    .antecedente-bloque.antecedente-cortado {
+      border-bottom-style: dashed;
+    }
+    .antecedente-bloque.antecedente-cont {
+      border-top: 1px dashed #bbb;
+    }
     .antecedente-head {
       display: flex;
       justify-content: space-between;
@@ -1854,7 +1860,7 @@
     </div>
     <a href="./index.html"><i class="fa-solid fa-house"></i> INICIO</a>
     <a href="./documentos.html" class="active"><i class="fa-solid fa-folder-open"></i> DOCUMENTOS</a>
-    <a href="./formulario.html"><i class="fa-solid fa-pen-to-square"></i> FORMULARIO</a>
+    <a href="./formulario.html"><i class="fas fa-pen-to-square"></i> FORMULARIO</a>
     <div class="side-menu-user" id="sideMenuUser" style="display:none;"></div>
     <div class="side-menu-footer">
       SISTEMA OFICIAL · ARCHIVO CENTRAL
@@ -1992,6 +1998,8 @@
                           <div class="field-row"><label><i class="fas fa-users"></i> CLAN:</label><span class="line-fill" id="bookClan">—</span></div>
                           <div class="field-row"><label><i class="fas fa-shield-halved"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
                           <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
+                          <!-- NUEVO: ESTADO en el front para que se vea sin hojear -->
+                          <div class="field-row"><label><i class="fas fa-circle-dot"></i> ESTADO:</label><span class="line-fill" id="bookStatusFront">—</span></div>
                         </div>
                       </div>
                     </div>
@@ -2741,13 +2749,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    /**
-     * Construye el HTML de un fragmento de antecedente.
-     * @param {object} a           Antecedente original
-     * @param {string} textoTrozo  Texto que va en este fragmento
-     * @param {boolean} continuacion  true si es una continuación (no muestra título/fecha, agrega "(cont.)")
-     * @param {boolean} esUltimo   true si este fragmento es el último del antecedente
-     */
     function renderFragmento(a, textoTrozo, continuacion, esUltimo) {
       const titulo = escapeHtml(a.titulo || 'Sin título') + (continuacion ? ' (cont.)' : '');
       const fecha  = escapeHtml(a.fecha || '—');
@@ -2767,14 +2768,8 @@
 
     /**
      * Pagina una lista de antecedentes en `contEl` y devuelve los que NO cupieron.
-     * - Si un antecedente cabe entero, se coloca completo.
-     * - Si no cabe entero, se parte por palabras: lo que cabe se queda aquí,
-     *   y el resto se devuelve como un antecedente "continuación" para la siguiente cara/hoja.
-     * - Si ni el título cabe, se devuelve todo sin modificar.
-     *
-     * @param {HTMLElement} contEl   Contenedor .obs-lines con altura fija y overflow hidden
-     * @param {Array}       lista    Lista de antecedentes a colocar
-     * @returns {Array}              Antecedentes/fragmentos que no cupieron
+     * Si un antecedente no cabe entero, se parte por palabras y el resto se
+     * devuelve como un nuevo antecedente "continuación".
      */
     function paginarAntecedentesEnContenedor(contEl, lista) {
       if (!contEl || !Array.isArray(lista) || lista.length === 0) return [];
@@ -2787,28 +2782,22 @@
       while (idx < lista.length) {
         const a = lista[idx];
 
-        // 1) Intento: colocar el bloque completo
+        // 1) Intento colocar bloque completo
         const wrapperCompleto = document.createElement('div');
         wrapperCompleto.innerHTML = renderFragmento(a, a.texto, false, true);
         const bloqueCompleto = wrapperCompleto.firstElementChild;
         contEl.appendChild(bloqueCompleto);
 
         if (contEl.scrollHeight <= contEl.clientHeight) {
-          // Cupo entero → siguiente antecedente
           idx++;
           continue;
         }
 
-        // 2) No cupo entero: probar partir el texto
-        //    Primero comprobamos si al menos el título + algo cabe.
+        // 2) No cupo entero: partir por palabras
         contEl.removeChild(bloqueCompleto);
 
-        // Separar por palabras (preservando el texto original para unir luego)
-        const palabras = String(a.texto || '').split(/(\s+)/); // conserva espacios
-        // Array de "tokens" que son palabras + espacios intercalados
+        const palabras = String(a.texto || '').split(/(\s+)/);
 
-        // Probar insertando palabra a palabra hasta que desborde
-        const wrapperParcial = document.createElement('div');
         const bloqueParcial = document.createElement('div');
         bloqueParcial.className = 'antecedente-bloque antecedente-cortado';
         bloqueParcial.innerHTML = `
@@ -2818,50 +2807,41 @@
           </div>
           <div class="antecedente-texto"></div>
         `;
-        wrapperParcial.appendChild(bloqueParcial);
         contEl.appendChild(bloqueParcial);
 
         const textoEl = bloqueParcial.querySelector('.antecedente-texto');
 
-        // Si ya con el título (sin texto) desborda, no cabe ni el encabezado:
-        // devolvemos todo lo restante sin tocar.
+        // Si ni el encabezado cabe, devolvemos todo lo restante sin tocar.
         if (contEl.scrollHeight > contEl.clientHeight) {
           contEl.removeChild(bloqueParcial);
           break;
         }
 
-        let corteIdx = 0;      // índice en `palabras` hasta donde cabe
-        let mejorCorte = 0;    // último corte válido
+        let mejorCorte = 0;
         for (let i = 0; i < palabras.length; i++) {
           textoEl.textContent = palabras.slice(0, i + 1).join('');
           if (contEl.scrollHeight > contEl.clientHeight) {
-            corteIdx = i;
             break;
           }
           mejorCorte = i + 1;
         }
 
-        // Si no cupo ni una palabra, no cabe nada de este antecedente aquí
         if (mejorCorte === 0) {
           contEl.removeChild(bloqueParcial);
           break;
         }
 
-        // Reconstruir texto que cabe y texto que sobra
         const textoCabe = palabras.slice(0, mejorCorte).join('').replace(/\s+$/, '');
         const textoResto = palabras.slice(mejorCorte).join('').replace(/^\s+/, '');
 
         textoEl.textContent = textoCabe;
 
-        // Si el textoResto está vacío, en realidad cupo todo → siguiente
         if (!textoResto || textoResto.trim() === '') {
-          // Quitar la marca de "cortado" porque cupo entero
           bloqueParcial.classList.remove('antecedente-cortado');
           idx++;
           continue;
         }
 
-        // 3) Devolver el resto como antecedente "continuación"
         const continuacion = {
           id: a.id + '_cont_' + Date.now() + '_' + idx,
           titulo: a.titulo || 'Sin título',
@@ -2936,19 +2916,14 @@
         return;
       }
 
-      // Forzar reflow para asegurar medición correcta
       bookObservations.offsetHeight;
-
-      // 1) Llenar la primera hoja (back de page-2) partiendo si es necesario
       restantes = paginarAntecedentesEnContenedor(bookObservations, restantes);
 
-      // Si tras paginar la primera hoja ya no queda nada, terminamos
       if (restantes.length === 0) {
         actualizarNumeracionPaginas();
         return;
       }
 
-      // 2) Crear hojas dinámicas hasta consumir todo
       let hojaIdx = 0;
       let guard = 0;
 
@@ -2959,14 +2934,11 @@
         const pageEl = crearHojaAntecedentes(hojaIdx);
         container.insertBefore(pageEl, page3);
 
-        // Forzar reflow para que el contenedor tenga altura real
         pageEl.offsetHeight;
 
-        // FRONT
         const frontLines = pageEl.querySelector('.front .obs-lines');
         restantes = paginarAntecedentesEnContenedor(frontLines, restantes);
 
-        // BACK (si aún queda)
         if (restantes.length > 0) {
           const backLines = pageEl.querySelector('.back .obs-lines');
           restantes = paginarAntecedentesEnContenedor(backLines, restantes);
@@ -2979,11 +2951,6 @@
       actualizarNumeracionPaginas();
     }
 
-    /**
-     * Numera CARAS (no hojas).
-     * - Portada: sin número.
-     * - A partir de la hoja 1: front = impar, back = par.
-     */
     function actualizarNumeracionPaginas() {
       const pagesEls = Array.from(document.querySelectorAll('.page'));
       let faceNum = 0;
@@ -3010,7 +2977,18 @@
       const rank = data.rank || 'Ciudadano';
       const nationality = data.nationality || '—';
       const occupation = data.occupation || '—';
-      const status = data.status || '☑ ACTIVO';
+
+      // ============================================================
+      // ESTADO: lectura defensiva desde múltiples claves posibles
+      // ============================================================
+      const status =
+        (data.status && String(data.status).trim()) ||
+        (data.stats && data.stats.status && String(data.stats.status).trim()) ||
+        (data.estadoCivil && String(data.estadoCivil).trim()) ||
+        (data.estado && String(data.estado).trim()) ||
+        (data.civilStatus && String(data.civilStatus).trim()) ||
+        '☑ ACTIVO';
+
       const birthday = data.birthDate || '—';
       const gender = data.gender || '—';
       const species = data.species || '—';
@@ -3076,6 +3054,10 @@
       document.getElementById('bookFileNumber').textContent = fileNumber;
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
+
+      // Asignar también al front de page-1
+      const bookStatusFrontEl = document.getElementById('bookStatusFront');
+      if (bookStatusFrontEl) bookStatusFrontEl.textContent = status;
 
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
@@ -3147,7 +3129,7 @@
     }
 
     // ============================================================
-    // CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
+    // CARGA DEL EXPEDIENTE
     // ============================================================
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
