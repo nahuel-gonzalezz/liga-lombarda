@@ -894,24 +894,30 @@
       font-family: "Montserrat", sans-serif;
     }
 
-    .passport .front {
+    /* ============================================================
+       PASAPORTE (inmigrante)
+       La carátula (.cover) queda IDÉNTICA a la de los lombardos
+       comunes: se la excluye de los overrides de las hojas interiores.
+       ============================================================ */
+    .passport .page.cover .front {
       background: linear-gradient(145deg, #2a0808, #3d0e0e, #2a0808) !important;
       color: #d4af37 !important;
-      border: 3px solid #4a1010;
+      border: 3px solid #4a1010 !important;
     }
-    .passport .front * { color: #d4af37 !important; }
+    .passport .page.cover .front * { color: #d4af37 !important; }
     .passport .cover-border {
       border-color: #d4af37;
       background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
     }
     .passport .cover-border::before,
     .passport .cover-border::after { color: #d4af37; }
-    .passport .cover h1 { color: #d4af37 !important; text-shadow: none; }
-    .passport .subtitle { color: #d4b87a !important; text-shadow: none; }
+    .passport .cover h1 { color: #d4af37 !important; text-shadow: 0 2px 15px rgba(0,0,0,0.6); }
+    .passport .subtitle { color: #d4b87a !important; }
     .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25)); }
 
-    .passport .page .front,
-    .passport .page .back,
+    /* Hojas interiores del pasaporte (todo menos la carátula) */
+    .passport .page:not(.cover) .front,
+    .passport .page:not(.cover) .back,
     .passport #page-1 .front,
     .passport #page-1 .back,
     .passport #page-2 .front,
