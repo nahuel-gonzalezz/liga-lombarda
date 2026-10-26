@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <!-- 🔄 NUEVO: refuerzo anti-caché (algunos navegadores ignoran estos, pero ayudan) -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
@@ -1338,13 +1337,59 @@
       line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
+      max-height: 100%;
+      overflow-y: auto;
     }
     .obs-lines.empty {
       font-style: italic;
       color: #888 !important;
     }
 
-    /* Página de continuación de notas */
+    /* ======= ANTECEDENTES ESTRUCTURADOS ======= */
+    .antecedente-bloque {
+      padding: 6px 0 8px 0;
+      border-bottom: 1px solid #bbb;
+      font-family: "Libre Baskerville", serif;
+    }
+    .antecedente-bloque:last-child {
+      border-bottom: none;
+    }
+    .antecedente-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 3px;
+    }
+    .antecedente-titulo {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: #8c2323 !important;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .antecedente-fecha {
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      font-size: 0.62rem;
+      color: #555 !important;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .antecedente-texto {
+      font-size: 0.7rem;
+      line-height: 1.4;
+      color: #222 !important;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
     .notes-continuation-title {
       text-align: center;
       border-top: 2px solid #8c2323;
@@ -1641,6 +1686,10 @@
       .obs-section label { font-size: 0.5rem; }
       .obs-lines { font-size: 0.6rem; min-height: 45px; }
 
+      .antecedente-titulo { font-size: 0.6rem; }
+      .antecedente-fecha { font-size: 0.52rem; }
+      .antecedente-texto { font-size: 0.6rem; }
+
       .cert-text { font-size: 0.7rem; padding: 10px; }
       .cert-date { font-size: 0.7rem; }
       .cert-date strong { font-size: 0.85rem; }
@@ -1729,6 +1778,10 @@
       .audit-info p span { font-size: 0.55rem; }
       .obs-section label { font-size: 0.45rem; }
       .obs-lines { font-size: 0.5rem; min-height: 35px; line-height: 1.5; }
+
+      .antecedente-titulo { font-size: 0.5rem; }
+      .antecedente-fecha { font-size: 0.45rem; }
+      .antecedente-texto { font-size: 0.52rem; line-height: 1.35; }
 
       .cert-text { font-size: 0.55rem; padding: 8px; }
       .cert-date { font-size: 0.55rem; margin-top: 8px; }
@@ -2058,7 +2111,6 @@
   <div id="toast" class="toast"></div>
 
   <script type="module">
-    // 🔄 NUEVO: onValue ahora con reintento y detección de cambios reales
     import {
       auth,
       onAuthStateChanged,
@@ -2099,13 +2151,10 @@
       if (e.key === 'Escape') closeMenu();
     });
 
-    // 🔄 NUEVO: recarga forzada si el navegador restaura desde bfcache
     window.addEventListener('pageshow', (e) => {
       if (e.persisted) window.location.reload();
     });
 
-    // 🔄 NUEVO: si la página viene de caché normal (performance.navigation),
-    // también recargamos para asegurar datos frescos.
     window.addEventListener('load', () => {
       try {
         const navEntries = performance.getEntriesByType('navigation');
@@ -2632,58 +2681,117 @@
       document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
     }
 
-    const MAX_CHARS_PER_NOTES_PAGE = 700;
+    // ============================================================
+    // ANTECEDENTES — NORMALIZACIÓN Y RENDER ESTRUCTURADO
+    // ============================================================
 
-    function dividirTextoEnPaginas(texto, maxChars) {
-      if (!texto || !texto.trim()) return [];
-      const textoLimpio = texto.trim();
-      if (textoLimpio.length <= maxChars) return [textoLimpio];
+    // Cuántos antecedentes entran en la hoja original (page-2 .back)
+    const CAPACIDAD_PRIMERA_HOJA = 2;
+    // Cuántos antecedentes entran por hoja dinámica
+    const ANTECEDENTES_POR_HOJA = 4;
 
-      const paginas = [];
-      const parrafos = textoLimpio.split(/\n\s*\n/);
+    /**
+     * Convierte cualquier formato de antecedentes en un array uniforme:
+     * [{ id, titulo, fecha, texto }, ...]
+     * - Si es string (formato viejo): un único bloque.
+     * - Si es objeto con registros {id: {titulo, fecha, texto}}: un bloque por registro.
+     * - Si es array: se respeta.
+     */
+    function normalizarAntecedentes(raw) {
+      if (!raw) return [];
 
-      let buffer = '';
-      for (const parrafo of parrafos) {
-        if (parrafo.length <= maxChars) {
-          if ((buffer + (buffer ? '\n\n' : '') + parrafo).length <= maxChars) {
-            buffer = buffer ? (buffer + '\n\n' + parrafo) : parrafo;
-          } else {
-            if (buffer) paginas.push(buffer);
-            buffer = parrafo;
-          }
-        } else {
-          if (buffer) { paginas.push(buffer); buffer = ''; }
-          let resto = parrafo;
-          while (resto.length > maxChars) {
-            let corte = resto.lastIndexOf('. ', maxChars);
-            if (corte < maxChars * 0.5) corte = resto.lastIndexOf(' ', maxChars);
-            if (corte < maxChars * 0.5) corte = maxChars;
-            paginas.push(resto.slice(0, corte + 1).trim());
-            resto = resto.slice(corte + 1).trim();
-          }
-          if (resto) buffer = resto;
-        }
+      // Formato viejo: string plano
+      if (typeof raw === 'string') {
+        const t = raw.trim();
+        return t ? [{ id: 'legacy', titulo: 'Observación', fecha: '', texto: t }] : [];
       }
-      if (buffer) paginas.push(buffer);
-      return paginas;
+
+      // Array
+      if (Array.isArray(raw)) {
+        return raw
+          .map((item, i) => {
+            if (typeof item === 'string') {
+              return { id: 'arr_' + i, titulo: 'Observación', fecha: '', texto: item.trim() };
+            }
+            if (!item || typeof item !== 'object') return null;
+            return {
+              id: item.id || ('arr_' + i),
+              titulo: item.titulo || item.title || 'Sin título',
+              fecha: item.fecha || (item.createdAt ? (formatearFechaEmision(item.createdAt) || '') : ''),
+              texto: (item.texto || item.descripcion || item.description || '').trim()
+            };
+          })
+          .filter(Boolean);
+      }
+
+      // Objeto con registros {id: {titulo, fecha, texto, ...}}
+      if (typeof raw === 'object') {
+        return Object.entries(raw)
+          .map(([id, item]) => {
+            if (typeof item === 'string') {
+              return { id, titulo: 'Observación', fecha: '', texto: item.trim() };
+            }
+            if (!item || typeof item !== 'object') return null;
+            return {
+              id,
+              titulo: item.titulo || item.title || 'Sin título',
+              fecha: item.fecha || (item.createdAt ? (formatearFechaEmision(item.createdAt) || '') : ''),
+              texto: (item.texto || item.descripcion || item.description || '').trim()
+            };
+          })
+          .filter(Boolean)
+          // Ordenar por fecha ascendente (los más viejos primero)
+          .sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
+      }
+
+      return [];
     }
 
-    function construirPaginasAntecedentes(texto) {
-      const container = document.getElementById('book');
+    function renderAntecedenteBloque(a) {
+      const titulo = escapeHtml(a.titulo || 'Sin título');
+      const fecha = escapeHtml(a.fecha || '—');
+      const texto = escapeHtml(a.texto || '');
+      return `
+        <div class="antecedente-bloque">
+          <div class="antecedente-head">
+            <span class="antecedente-titulo">${titulo}</span>
+            <span class="antecedente-fecha">${fecha}</span>
+          </div>
+          <div class="antecedente-texto">${texto}</div>
+        </div>
+      `;
+    }
 
+    /**
+     * Construye las hojas dinámicas de continuación de antecedentes.
+     * La primera hoja (page-2 .back) muestra CAPACIDAD_PRIMERA_HOJA.
+     * El resto se distribuye en hojas de ANTECEDENTES_POR_HOJA cada una.
+     */
+    function construirPaginasAntecedentes(listaAntecedentes) {
+      const container = document.getElementById('book');
+      if (!container) return;
+
+      // Limpiar hojas dinámicas previas
       document.querySelectorAll('.page-notas-dinamica').forEach(el => el.remove());
 
       const page3 = document.getElementById('page-3');
-      if (!page3 || !container) return;
+      if (!page3) return;
 
-      const paginas = dividirTextoEnPaginas(texto, MAX_CHARS_PER_NOTES_PAGE);
-      if (paginas.length <= 1) {
+      const total = listaAntecedentes.length;
+      if (total <= CAPACIDAD_PRIMERA_HOJA) {
         actualizarNumeracionPaginas();
         return;
       }
 
-      for (let i = 1; i < paginas.length; i++) {
-        const textoPagina = paginas[i];
+      const restantes = listaAntecedentes.slice(CAPACIDAD_PRIMERA_HOJA);
+      const totalHojas = Math.ceil(restantes.length / ANTECEDENTES_POR_HOJA);
+
+      let cursor = 0;
+      for (let h = 0; h < totalHojas; h++) {
+        const bloque = restantes.slice(cursor, cursor + ANTECEDENTES_POR_HOJA);
+        cursor += ANTECEDENTES_POR_HOJA;
+
+        const htmlBloques = bloque.map(renderAntecedenteBloque).join('');
 
         const pageEl = document.createElement('div');
         pageEl.className = 'page page-notas-dinamica';
@@ -2694,11 +2802,11 @@
                 <i class="fas fa-history"></i> ANTECEDENTES (continuación)
               </div>
               <div class="notes-page-info">
-                Página ${i + 1} de ${paginas.length}
+                Hoja ${h + 1} de ${totalHojas}
               </div>
-              <div class="obs-section" style="flex:1;">
+              <div class="obs-section" style="flex:1; overflow:hidden;">
                 <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
-                <div class="obs-lines">${escapeHtml(textoPagina)}</div>
+                <div class="obs-lines" style="overflow:hidden;">${htmlBloques}</div>
               </div>
               <div class="page-number" data-dynamic-page-num></div>
             </div>
@@ -2709,11 +2817,11 @@
                 <i class="fas fa-history"></i> ANTECEDENTES (continuación)
               </div>
               <div class="notes-page-info">
-                Página ${i + 1} de ${paginas.length}
+                Hoja ${h + 1} de ${totalHojas}
               </div>
-              <div class="obs-section" style="flex:1;">
+              <div class="obs-section" style="flex:1; overflow:hidden;">
                 <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
-                <div class="obs-lines">${escapeHtml(textoPagina)}</div>
+                <div class="obs-lines" style="overflow:hidden;">${htmlBloques}</div>
               </div>
               <div class="page-number" data-dynamic-page-num></div>
             </div>
@@ -2771,7 +2879,9 @@
       const clanRaw = data.clan || '';
       const stats = data.stats || {};
       const competencies = data.competencies || {};
-      const antecedentes = (data.antecedentes && String(data.antecedentes).trim()) || '';
+
+      // 🔄 Normalizamos antecedentes a array estructurado
+      const listaAntecedentes = normalizarAntecedentes(data.antecedentes);
 
       const inmigrante = esInmigrante(data);
 
@@ -2827,15 +2937,15 @@
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
 
+      // ====== ANTECEDENTES ======
       const bookObservations = document.getElementById('bookObservations');
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
 
-      if (antecedentes) {
-        const paginas = dividirTextoEnPaginas(antecedentes, MAX_CHARS_PER_NOTES_PAGE);
-        const primeraPagina = paginas[0] || antecedentes;
-
-        bookObservations.textContent = primeraPagina;
+      if (listaAntecedentes.length > 0) {
+        // Mostrar los primeros CAPACIDAD_PRIMERA_HOJA en la hoja original
+        const primeros = listaAntecedentes.slice(0, CAPACIDAD_PRIMERA_HOJA);
+        bookObservations.innerHTML = primeros.map(renderAntecedenteBloque).join('');
         bookObservations.classList.remove('empty');
 
         if (bookStatusBadge) {
@@ -2843,7 +2953,7 @@
           bookStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CON ANTECEDENTES REGISTRADOS';
         }
         if (bookAuditJudicial) {
-          bookAuditJudicial.textContent = 'Se registran observaciones.';
+          bookAuditJudicial.textContent = `Se registran ${listaAntecedentes.length} antecedente(s).`;
         }
       } else {
         bookObservations.textContent = 'Sin observaciones.';
@@ -2900,7 +3010,8 @@
         cargarSkinEnViewers(minecraftNick);
       }
 
-      construirPaginasAntecedentes(antecedentes);
+      // 🔄 Construye hojas dinámicas si hay más antecedentes que la capacidad de la primera hoja
+      construirPaginasAntecedentes(listaAntecedentes);
 
       initBookPagination();
     }
@@ -2910,8 +3021,8 @@
     // ============================================================
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
-    let ultimoHashData = null;       // 🔄 NUEVO: para detectar cambios reales
-    let reintentoSinExpediente = 0;  // 🔄 NUEVO: reintento si aún no sincronizó
+    let ultimoHashData = null;
+    let reintentoSinExpediente = 0;
 
     function mostrarError(icono, titulo, mensaje) {
       mainContent.innerHTML = `
@@ -2938,8 +3049,6 @@
 
       unsubscribeExpediente = onValue(expedienteRef, (snapshot) => {
         if (!snapshot.exists()) {
-          // 🔄 NUEVO: si aún no existe, puede ser que Firebase no haya sincronizado.
-          // Reintentamos hasta 3 veces con 1.2s de espera antes de mostrar error.
           if (reintentoSinExpediente < 3) {
             reintentoSinExpediente++;
             console.warn(`⏳ Expediente aún no sincronizado, reintento ${reintentoSinExpediente}/3...`);
@@ -2958,7 +3067,6 @@
         const data = snapshot.val();
         const inm = esInmigrante(data);
 
-        // 🔄 NUEVO: hash para evitar re-render innecesario pero SÍ detectar cambios
         const hash = JSON.stringify(data);
         if (hash === ultimoHashData) {
           console.log('ℹ️ Sin cambios en el expediente, se omite re-render.');
