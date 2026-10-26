@@ -1564,16 +1564,31 @@
         ];
 
         // =========================================================
-        // CARGAR SKIN
+        // SKIN SOURCES (3 APIs en cascada)
         // =========================================================
-        function cargarSkinEnCanvas(canvas, skinURL, poseIndex = 0) {
+        function obtenerFuentesSkin(nick) {
+            const n = encodeURIComponent(nick);
+            return [
+                `https://crafatar.com/skins/${n}`,
+                `https://minotar.net/skin/${n}`,
+                `https://mc-heads.net/skin/${n}`
+            ];
+        }
+
+        const SKIN_FALLBACK = 'https://crafatar.com/skins/steve';
+
+        // =========================================================
+        // CARGAR SKIN CON FALLBACK EN CASCADA
+        // =========================================================
+        function cargarSkinEnCanvas(canvas, nick, poseIndex = 0, onAllFailed) {
             if (typeof skinview3d === 'undefined') {
-                setTimeout(() => cargarSkinEnCanvas(canvas, skinURL, poseIndex), 300);
+                setTimeout(() => cargarSkinEnCanvas(canvas, nick, poseIndex, onAllFailed), 300);
                 return;
             }
 
+            let viewer;
             try {
-                const viewer = new skinview3d.SkinViewer({
+                viewer = new skinview3d.SkinViewer({
                     canvas: canvas,
                     width: 300,
                     height: 270
@@ -1588,22 +1603,39 @@
                 viewer.cameraLight.intensity = 1.2;
 
                 const pose = POSES[poseIndex % POSES.length];
-
                 viewer.zoom = pose.zoom;
                 viewer.camera.rotation.y = pose.rotY;
                 viewer.camera.rotation.x = pose.rotX;
                 viewer.camera.position.x = pose.offsetX * 10;
                 viewer.camera.position.y = pose.offsetY * 10;
-
                 viewer.controls.target.set(0, 0, 0);
-
-                viewer.loadSkin(skinURL).catch(() => {
-                    console.warn('Error cargando skin para:', skinURL);
-                });
-
             } catch (error) {
-                console.warn('Error al renderizar skin:', error);
+                console.warn('Error al crear viewer:', error);
+                if (onAllFailed) onAllFailed();
+                return;
             }
+
+            const fuentes = obtenerFuentesSkin(nick);
+            let intento = 0;
+
+            function intentar() {
+                if (intento >= fuentes.length) {
+                    // Todas fallaron → Steve
+                    viewer.loadSkin(SKIN_FALLBACK).catch(() => {
+                        console.warn('Fallback Steve también falló para', nick);
+                        if (onAllFailed) onAllFailed();
+                    });
+                    return;
+                }
+                const url = fuentes[intento];
+                viewer.loadSkin(url).then(() => {
+                    // Éxito
+                }).catch(() => {
+                    intento++;
+                    intentar();
+                });
+            }
+            intentar();
         }
 
         // =========================================================
@@ -1741,7 +1773,6 @@
                     const alias = item.alias || 'Sin alias';
                     const nick = item.minecraftNick || '';
 
-                    const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
                     const currentPose = poseCounter % POSES.length;
                     poseCounter++;
 
@@ -1755,8 +1786,8 @@
                             <span class="corner bl"></span>
                             <span class="corner br"></span>
                             <div class="card-skin">
-                                ${skinURL ?
-                                    `<canvas id="skinCanvas_${item.id}" data-skin="${skinURL}" data-pose="${currentPose}"></canvas>` :
+                                ${nick ?
+                                    `<canvas data-nick="${nick}" data-pose="${currentPose}"></canvas>` :
                                     `<div class="no-skin"><i class="fas fa-user"></i></div>`
                                 }
                             </div>
@@ -1782,11 +1813,11 @@
             documentsContainer.innerHTML = html;
 
             setTimeout(() => {
-                document.querySelectorAll('.card-skin canvas').forEach(canvas => {
-                    const skinURL = canvas.dataset.skin;
+                documentsContainer.querySelectorAll('.card-skin canvas').forEach(canvas => {
+                    const nick = canvas.dataset.nick;
                     const poseIndex = parseInt(canvas.dataset.pose || '0', 10);
-                    if (skinURL) {
-                        cargarSkinEnCanvas(canvas, skinURL, poseIndex);
+                    if (nick) {
+                        cargarSkinEnCanvas(canvas, nick, poseIndex);
                     }
                 });
                 ajustarAlturaViewport();
@@ -1842,7 +1873,6 @@
                 const nick = item.minecraftNick || '';
                 const rank = item.rank || 'Inmigrante';
 
-                const skinURL = nick ? `https://mc-heads.net/skin/${encodeURIComponent(nick)}.png` : null;
                 const delay = (cardIndex * 0.04).toFixed(2);
                 cardIndex++;
 
@@ -1853,8 +1883,8 @@
                         <span class="corner bl"></span>
                         <span class="corner br"></span>
                         <div class="card-skin">
-                            ${skinURL ?
-                                `<canvas data-skin="${skinURL}"></canvas>` :
+                            ${nick ?
+                                `<canvas data-nick="${nick}" data-pose="0"></canvas>` :
                                 `<div class="no-skin"><i class="fas fa-user"></i></div>`
                             }
                         </div>
@@ -1879,9 +1909,9 @@
 
             setTimeout(() => {
                 inmigrantesContainer.querySelectorAll('.card-skin canvas').forEach(canvas => {
-                    const skinURL = canvas.dataset.skin;
-                    if (skinURL) {
-                        cargarSkinEnCanvas(canvas, skinURL, 0);
+                    const nick = canvas.dataset.nick;
+                    if (nick) {
+                        cargarSkinEnCanvas(canvas, nick, 0);
                     }
                 });
                 ajustarAlturaViewport();
