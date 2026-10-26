@@ -1564,78 +1564,130 @@
         ];
 
         // =========================================================
-        // SKIN SOURCES (3 APIs en cascada)
+        // SKINS: UN SOLO VIEWER WEBGL COMPARTIDO + SNAPSHOT A CANVAS 2D
+        // (evita "Too many active WebGL contexts" / "Context Lost")
         // =========================================================
         function obtenerFuentesSkin(nick) {
             const n = encodeURIComponent(nick);
             return [
-                `https://crafatar.com/skins/${n}`,
+                `https://mc-heads.net/skin/${n}`,
                 `https://minotar.net/skin/${n}`,
-                `https://mc-heads.net/skin/${n}`
+                `https://crafatar.com/skins/${n}`   // última: devuelve 422 con varios nicks
             ];
         }
 
-        const SKIN_FALLBACK = 'https://crafatar.com/skins/steve';
+        const SKIN_FALLBACK = 'https://minotar.net/skin/MHF_Steve';
+        const SNAP_W = 300;
+        const SNAP_H = 270;
 
-        // =========================================================
-        // CARGAR SKIN CON FALLBACK EN CASCADA
-        // =========================================================
-        function cargarSkinEnCanvas(canvas, nick, poseIndex = 0, onAllFailed) {
-            if (typeof skinview3d === 'undefined') {
-                setTimeout(() => cargarSkinEnCanvas(canvas, nick, poseIndex, onAllFailed), 300);
-                return;
+        let sharedViewer = null;
+        const snapshotCache = new Map();   // "nick|pose" -> Promise<canvas | null>
+        const cola = [];
+        let procesando = false;
+
+        function getSharedViewer() {
+            if (sharedViewer) return sharedViewer;
+
+            const c = document.createElement('canvas');   // nunca se agrega al DOM
+            const v = new skinview3d.SkinViewer({
+                canvas: c,
+                width: SNAP_W,
+                height: SNAP_H,
+                preserveDrawingBuffer: true
+            });
+
+            v.renderPaused = true;        // renderizamos a mano, sin loop continuo
+            v.autoRotate = false;
+            v.animation = null;
+            v.fov = 30;
+            v.controls.enableRotate = false;
+            v.controls.enableZoom = false;
+            v.controls.enablePan = false;
+            v.globalLight.intensity = 2.5;
+            v.cameraLight.intensity = 1.2;
+
+            sharedViewer = v;
+            return v;
+        }
+
+        function cargarConTimeout(viewer, url, ms = 8000) {
+            return Promise.race([
+                viewer.loadSkin(url),
+                new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))
+            ]);
+        }
+
+        async function generarSnapshot(nick, poseIndex) {
+            const v = getSharedViewer();
+            const pose = POSES[poseIndex % POSES.length];
+
+            let cargada = false;
+            for (const url of [...obtenerFuentesSkin(nick), SKIN_FALLBACK]) {
+                try {
+                    await cargarConTimeout(v, url);
+                    cargada = true;
+                    break;
+                } catch (e) { /* probar siguiente fuente */ }
             }
+            if (!cargada) return null;
 
-            let viewer;
-            try {
-                viewer = new skinview3d.SkinViewer({
-                    canvas: canvas,
-                    width: 300,
-                    height: 270
-                });
+            v.zoom = pose.zoom;
+            v.playerWrapper.rotation.y = pose.rotY;
+            v.playerWrapper.rotation.x = pose.rotX;
+            v.render();
 
-                viewer.fov = 30;
-                viewer.autoRotate = false;
-                viewer.controls.enableRotate = false;
-                viewer.controls.enableZoom = false;
-                viewer.controls.enablePan = false;
-                viewer.globalLight.intensity = 2.5;
-                viewer.cameraLight.intensity = 1.2;
+            const snap = document.createElement('canvas');
+            snap.width = SNAP_W;
+            snap.height = SNAP_H;
+            snap.getContext('2d').drawImage(v.canvas, 0, 0);
+            return snap;
+        }
 
-                const pose = POSES[poseIndex % POSES.length];
-                viewer.zoom = pose.zoom;
-                viewer.camera.rotation.y = pose.rotY;
-                viewer.camera.rotation.x = pose.rotX;
-                viewer.camera.position.x = pose.offsetX * 10;
-                viewer.camera.position.y = pose.offsetY * 10;
-                viewer.controls.target.set(0, 0, 0);
-            } catch (error) {
-                console.warn('Error al crear viewer:', error);
-                if (onAllFailed) onAllFailed();
-                return;
-            }
-
-            const fuentes = obtenerFuentesSkin(nick);
-            let intento = 0;
-
-            function intentar() {
-                if (intento >= fuentes.length) {
-                    // Todas fallaron → Steve
-                    viewer.loadSkin(SKIN_FALLBACK).catch(() => {
-                        console.warn('Fallback Steve también falló para', nick);
-                        if (onAllFailed) onAllFailed();
-                    });
-                    return;
+        async function drenarCola() {
+            if (procesando) return;
+            procesando = true;
+            while (cola.length) {
+                const t = cola.shift();
+                try {
+                    t.resolve(await generarSnapshot(t.nick, t.poseIndex));
+                } catch (err) {
+                    console.warn('Error generando skin de', t.nick, err);
+                    t.resolve(null);
                 }
-                const url = fuentes[intento];
-                viewer.loadSkin(url).then(() => {
-                    // Éxito
-                }).catch(() => {
-                    intento++;
-                    intentar();
-                });
             }
-            intentar();
+            procesando = false;
+        }
+
+        function aplicarSnapshot(canvas, snap) {
+            if (!canvas.isConnected) return;   // la tarjeta ya se re-renderizó
+            if (!snap) {
+                const cont = canvas.parentElement;
+                if (cont) cont.innerHTML = '<div class="no-skin"><i class="fas fa-user"></i></div>';
+                return;
+            }
+            canvas.width = SNAP_W;
+            canvas.height = SNAP_H;
+            canvas.getContext('2d').drawImage(snap, 0, 0);
+        }
+
+        function cargarSkinEnCanvas(canvas, nick, poseIndex = 0) {
+            if (typeof skinview3d === 'undefined') {
+                setTimeout(() => cargarSkinEnCanvas(canvas, nick, poseIndex), 300);
+                return;
+            }
+
+            const key = `${nick}|${poseIndex}`;
+
+            if (!snapshotCache.has(key)) {
+                const p = new Promise(resolve => {
+                    cola.push({ nick, poseIndex, resolve });
+                    drenarCola();
+                });
+                snapshotCache.set(key, p);
+                p.then(s => { if (!s) snapshotCache.delete(key); });  // permitir reintento si falló
+            }
+
+            snapshotCache.get(key).then(snap => aplicarSnapshot(canvas, snap));
         }
 
         // =========================================================
