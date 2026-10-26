@@ -1551,17 +1551,16 @@
             'Ciudadano': '#888888'
         };
 
-        const POSES = [
-            { rotY: 0.4, rotX: 0.1, zoom: 0.95, offsetX: 0, offsetY: 0 },
-            { rotY: -0.6, rotX: 0.15, zoom: 0.9, offsetX: 0.05, offsetY: 0 },
-            { rotY: 0.8, rotX: -0.1, zoom: 1.0, offsetX: -0.05, offsetY: 0 },
-            { rotY: 0.1, rotX: 0.25, zoom: 0.85, offsetX: 0, offsetY: 0.05 },
-            { rotY: -0.3, rotX: -0.15, zoom: 1.05, offsetX: 0.03, offsetY: -0.03 },
-            { rotY: 0.5, rotX: 0.2, zoom: 0.88, offsetX: -0.04, offsetY: 0.04 },
-            { rotY: -0.8, rotX: 0.0, zoom: 1.0, offsetX: 0.06, offsetY: 0 },
-            { rotY: 0.9, rotX: 0.1, zoom: 0.92, offsetX: -0.06, offsetY: 0 },
-            { rotY: 0.0, rotX: 0.35, zoom: 0.82, offsetX: 0, offsetY: 0.08 }
-        ];
+        // =========================================================
+        // POSES: TODAS IGUALES — rectos, mirando al frente
+        // =========================================================
+        const POSES = Array.from({ length: 9 }, () => ({
+            rotY: 0,
+            rotX: 0,
+            zoom: 1.0,
+            offsetX: 0,
+            offsetY: 0
+        }));
 
         // =========================================================
         // SKINS: UN SOLO VIEWER WEBGL COMPARTIDO + SNAPSHOT A CANVAS 2D
