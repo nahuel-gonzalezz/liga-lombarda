@@ -388,6 +388,17 @@
             box-shadow: 0 0 0 2px #ffffff, 0 0 16px rgba(255, 255, 255, 0.5);
         }
 
+        .theme-btn.locked {
+            opacity: 0.55;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+        .theme-btn.locked:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .theme-btn.locked i { margin-right: 6px; }
+
         .toast {
             position: fixed;
             bottom: 30px;
@@ -2047,6 +2058,9 @@
         const navAdminLink = document.getElementById('navAdminLink');
         const sideAdminLink = document.getElementById('sideAdminLink');
 
+        // ⬇️ UID restringido a solo inmigrantes
+        const UID_SOLO_INMIGRANTES = ['POBK1KyUCzaIRLR78H8HGAnY9RW2']; // masivo@clanes.com
+
         function openMenu() {
             sideMenu.classList.add('open');
             menuOverlay.classList.add('open');
@@ -2163,9 +2177,21 @@
 
             const isAdmin = await checkIsAdmin(user);
 
+            const esRestringido = UID_SOLO_INMIGRANTES.includes(user.uid);
+            window.SOLO_INMIGRANTES = esRestringido;
+
             mainContent.classList.add('visible');
+
+            if (esRestringido) {
+                const btnLiga = document.getElementById('btn-liga');
+                btnLiga.classList.add('locked');
+                btnLiga.setAttribute('aria-disabled', 'true');
+                btnLiga.innerHTML = '<i class="fa-solid fa-lock"></i> Liga Lombarda';
+                window.setTema('inmigrantes');
+            }
+
             renderNav(user);
-            mostrarLinkAdmin(isAdmin);   // ⬅️ Mostrar/ocultar link ADMIN
+            mostrarLinkAdmin(isAdmin);
             generateBtn.disabled = false;
 
             if (isAdmin) {
@@ -2176,6 +2202,7 @@
 
             console.log(`📝 Formulario - Usuario: ${user.email}`);
             console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
+            console.log(`🔒 Restringido a inmigrantes: ${esRestringido}`);
         });
 
         console.log('📝 Formulario con autenticación obligatoria listo');
@@ -2220,6 +2247,10 @@
         }
 
         function setTema(tema) {
+            if (window.SOLO_INMIGRANTES && tema !== 'inmigrantes') {
+                window.showToast('🔒 Tu cuenta solo puede completar el formulario de Inmigrantes', 'error', 3500);
+                return;
+            }
             if (isAnimating) return;
             isAnimating = true;
 
@@ -2904,6 +2935,11 @@
                 if (!window.firebaseAuth || !window.firebaseAuth.currentUser) {
                     window.showToast('🔐 Debes iniciar sesión para generar expedientes', 'error', 3000);
                     window.location.href = 'login.html';
+                    return;
+                }
+
+                if (window.SOLO_INMIGRANTES && !document.body.classList.contains('theme-purple')) {
+                    window.showToast('🔒 Tu cuenta solo puede generar expedientes de Inmigrantes', 'error', 3500);
                     return;
                 }
 
