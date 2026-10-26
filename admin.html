@@ -834,6 +834,39 @@
             letter-spacing: 0.5px;
         }
 
+        /* ===== ANTECEDENTES (bloques) ===== */
+        .antec-form {
+            background: rgba(138, 106, 26, 0.06);
+            border: 2px solid rgba(138, 106, 26, 0.2);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .antec-form.editing { border-color: #7b1fa2; background: rgba(123, 31, 162, 0.05); }
+        .antec-form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px; flex-wrap: wrap; }
+
+        .antec-item {
+            background: #fff;
+            border: 2px solid var(--border-soft);
+            border-left: 4px solid #8a6a1a;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+        .antec-item.editing { border-color: #7b1fa2; border-left-color: #7b1fa2; }
+        .antec-item-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .antec-item-title { font-weight: 800; font-size: 13px; color: var(--text-dark); word-break: break-word; }
+        .antec-item-date { font-size: 10px; font-weight: 700; color: var(--text-soft); letter-spacing: 0.5px; margin-top: 2px; }
+        .antec-item-text {
+            font-family: "Libre Baskerville", Georgia, serif;
+            font-size: 13px; line-height: 1.7;
+            color: var(--text-dark);
+            white-space: pre-wrap; word-break: break-word;
+            margin-top: 8px;
+        }
+        .antec-item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .antec-empty { text-align: center; font-style: italic; color: var(--text-soft); font-size: 12px; padding: 16px 0; }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1207,32 +1240,49 @@
         </div>
     </div>
 
+    <!-- ===== MODAL ANTECEDENTES (bloques) ===== -->
     <div class="modal-overlay" id="notesModal">
-        <div class="modal modal-md">
+        <div class="modal">
             <div class="modal-header">
-                <h2><i class="fas fa-sticky-note"></i> Antecedentes y Notas</h2>
+                <h2><i class="fas fa-sticky-note"></i> Antecedentes</h2>
                 <p id="notesModalSubtitle">—</p>
             </div>
             <div class="modal-body">
-                <div class="form-field full">
-                    <label style="color:#8a6a1a;">✍️ Notas del administrador</label>
-                    <textarea
-                        id="notesTextarea"
-                        placeholder="Escribí acá las notas, antecedentes, sanciones, observaciones judiciales, etc. Este texto queda guardado en el expediente."
-                        style="min-height: 200px; font-family: 'Libre Baskerville', Georgia, serif; font-size: 13px; line-height: 1.6;"
-                    ></textarea>
+                <div class="antec-form" id="antecForm">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Título</label>
+                            <input type="text" id="antecTitulo" maxlength="100" placeholder="Ej: Sanción por grifeo" />
+                        </div>
+                        <div class="form-field">
+                            <label>Fecha</label>
+                            <input type="date" id="antecFecha" />
+                        </div>
+                        <div class="form-field full">
+                            <label>Texto</label>
+                            <textarea id="antecTexto" maxlength="1500" style="min-height:110px;font-family:'Libre Baskerville',Georgia,serif;line-height:1.6;" placeholder="Detalle del antecedente, sanción, observación..."></textarea>
+                            <div class="desc-meta">
+                                <span id="antecFormMode"><i class="fas fa-plus-circle"></i> Nuevo antecedente</span>
+                                <span class="desc-counter" id="antecCounter">0 / 1500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="antec-form-actions">
+                        <button class="modal-btn modal-btn-cancel" id="antecCancelEdit" style="display:none;">
+                            <i class="fas fa-times"></i> CANCELAR EDICIÓN
+                        </button>
+                        <button class="modal-btn modal-btn-notes" id="antecSave">
+                            <i class="fas fa-plus"></i> AGREGAR
+                        </button>
+                    </div>
                 </div>
-                <div style="margin-top: 10px; font-size: 11px; color: var(--text-soft); display: flex; justify-content: space-between;">
-                    <span><i class="fas fa-info-circle"></i> Se guarda como <code>antecedentes</code> en el expediente.</span>
-                    <span id="notesCharCount">0 / 2000</span>
-                </div>
+
+                <div class="detail-section-title" style="margin:0 0 12px;">Antecedentes registrados</div>
+                <div id="antecList"></div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn modal-btn-cancel" id="notesModalCancel">
-                    <i class="fas fa-times"></i> CANCELAR
-                </button>
-                <button class="modal-btn modal-btn-notes" id="notesModalSave">
-                    <i class="fas fa-save"></i> GUARDAR NOTAS
+                <button class="modal-btn modal-btn-cancel" id="notesModalClose">
+                    <i class="fas fa-times"></i> CERRAR
                 </button>
             </div>
         </div>
@@ -1293,7 +1343,7 @@
 
         const searchInput = document.getElementById('searchInput');
         const filterTipo = document.getElementById('filterTipo');
-        const filterRango = document.getElementById('filterRango'); // ⬅️ NUEVO
+        const filterRango = document.getElementById('filterRango');
         const refreshBtn = document.getElementById('refreshBtn');
 
         const viewModal = document.getElementById('viewModal');
@@ -1311,10 +1361,16 @@
 
         const notesModal = document.getElementById('notesModal');
         const notesModalSubtitle = document.getElementById('notesModalSubtitle');
-        const notesTextarea = document.getElementById('notesTextarea');
-        const notesCharCount = document.getElementById('notesCharCount');
-        const notesModalCancel = document.getElementById('notesModalCancel');
-        const notesModalSave = document.getElementById('notesModalSave');
+        const notesModalClose = document.getElementById('notesModalClose');
+        const antecForm = document.getElementById('antecForm');
+        const antecTitulo = document.getElementById('antecTitulo');
+        const antecFecha = document.getElementById('antecFecha');
+        const antecTexto = document.getElementById('antecTexto');
+        const antecCounter = document.getElementById('antecCounter');
+        const antecFormMode = document.getElementById('antecFormMode');
+        const antecSave = document.getElementById('antecSave');
+        const antecCancelEdit = document.getElementById('antecCancelEdit');
+        const antecList = document.getElementById('antecList');
 
         const deleteModal = document.getElementById('deleteModal');
         const deleteTargetName = document.getElementById('deleteTargetName');
@@ -1330,8 +1386,9 @@
         let currentNotesId = null;
         let currentDeleteId = null;
         let unsubscribeExpedientes = null;
+        let editingAntecId = null;
 
-        const MAX_NOTES_LENGTH = 2000;
+        const MAX_ANTEC_TEXT = 1500;
         const MAX_DESCRIPTION_LENGTH = 600;
 
         // =========================================================
@@ -1544,8 +1601,41 @@
             return `https://mc-heads.net/avatar/${clean}/64`;
         }
 
+        // =========================================================
+        // ANTECEDENTES: helpers (bloques)
+        // =========================================================
+        // Devuelve siempre un array de bloques (compatible con el formato viejo en texto)
+        function getAntecedentes(data) {
+            const raw = data?.antecedentes;
+            if (!raw) return [];
+            if (typeof raw === 'string') {
+                return raw.trim() ? [{
+                    id: 'legacy',
+                    titulo: 'Antecedente anterior',
+                    fecha: data.antecedentesUpdatedAt ? String(data.antecedentesUpdatedAt).slice(0, 10) : '',
+                    texto: raw.trim()
+                }] : [];
+            }
+            return Object.entries(raw)
+                .map(([id, b]) => ({ id, ...b }))
+                .sort((a, b) =>
+                    (b.fecha || '').localeCompare(a.fecha || '') ||
+                    (b.createdAt || '').localeCompare(a.createdAt || '')
+                );
+        }
+
         function tieneNotas(data) {
-            return data && data.antecedentes && String(data.antecedentes).trim().length > 0;
+            return getAntecedentes(data).length > 0;
+        }
+
+        function generarId() {
+            return 'a' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+        }
+
+        function hoyLocalISO() {
+            const d = new Date();
+            const p = n => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
         }
 
         // =========================================================
@@ -1613,6 +1703,7 @@
                 actualizarStats();
                 poblarFiltroRango();
                 renderExpedientes();
+                if (currentNotesId && notesModal.classList.contains('visible')) renderAntecList();
             }, (error) => {
                 console.error('Error al cargar expedientes:', error);
                 expedientesContainer.innerHTML = `
@@ -1670,7 +1761,7 @@
                         data?.name, data?.alias, data?.minecraftNick,
                         data?.fileNumber, data?.rank, data?.clan,
                         data?.nationality, data?.occupation,
-                        data?.antecedentes
+                        ...getAntecedentes(data).flatMap(b => [b.titulo, b.texto])
                     ].filter(Boolean).map(v => String(v).toLowerCase());
                     const match = campos.some(v => v.includes(q));
                     if (!match) return false;
@@ -1710,9 +1801,9 @@
                 const rango = esInm ? (data?.clan || '—') : (data?.rank || '—');
                 const nick = data?.minecraftNick || '';
                 const faceUrl = getSkinFaceUrl(nick);
-                const notas = tieneNotas(data);
-                const notasPreview = notas
-                    ? `<small class="has-notes" title="${escapeHtml(String(data.antecedentes).slice(0, 200))}"><i class="fas fa-sticky-note"></i> Con antecedentes</small>`
+                const antecs = getAntecedentes(data);
+                const notasPreview = antecs.length
+                    ? `<small class="has-notes" title="${escapeHtml(antecs.map(b => b.titulo).join(' · ').slice(0, 200))}"><i class="fas fa-sticky-note"></i> ${antecs.length} antecedente${antecs.length > 1 ? 's' : ''}</small>`
                     : '';
 
                 return `
@@ -1817,21 +1908,16 @@
 
             const nick = data.minecraftNick || '';
             const faceUrl = getSkinFaceUrl(nick);
-            const notasTexto = (data.antecedentes && String(data.antecedentes).trim()) || '';
-            const notasHtml = notasTexto
-                ? `<div class="notes-box">
-                        <div class="notes-header">
-                            <i class="fas fa-sticky-note"></i> Antecedentes y Notas
-                        </div>
-                        <div class="notes-content">${escapeHtml(notasTexto)}</div>
-                        ${data.antecedentesUpdatedAt ? `<div class="notes-date"><i class="fas fa-clock"></i> Última actualización: ${formatFechaHora(data.antecedentesUpdatedAt)}</div>` : ''}
-                   </div>`
-                : `<div class="notes-box">
-                        <div class="notes-header">
-                            <i class="fas fa-sticky-note"></i> Antecedentes y Notas
-                        </div>
-                        <div class="notes-content notes-empty">Sin antecedentes registrados.</div>
-                   </div>`;
+
+            const antecs = getAntecedentes(data);
+            const notasHtml = antecs.length
+                ? antecs.map(b => `
+                    <div class="antec-item" style="grid-column:1 / -1;">
+                        <div class="antec-item-title">${escapeHtml(b.titulo || 'Sin título')}</div>
+                        <div class="antec-item-date"><i class="fas fa-calendar"></i> ${formatFecha(b.fecha)}</div>
+                        <div class="antec-item-text">${escapeHtml(b.texto || '')}</div>
+                    </div>`).join('')
+                : `<div class="antec-empty" style="grid-column:1 / -1;">Sin antecedentes registrados.</div>`;
 
             viewModalBody.innerHTML = `
                 <div style="display:flex;align-items:center;gap:16px;margin-bottom:18px;padding-bottom:16px;border-bottom:2px solid var(--border-soft);">
@@ -2152,80 +2238,168 @@
         });
 
         // =========================================================
-        // MODAL ANTECEDENTES / NOTAS
+        // MODAL ANTECEDENTES (bloques)
         // =========================================================
+        function actualizarAntecCounter() {
+            const len = antecTexto.value.length;
+            antecCounter.textContent = `${len} / ${MAX_ANTEC_TEXT}`;
+            antecCounter.classList.remove('warn', 'limit');
+            if (len >= MAX_ANTEC_TEXT) antecCounter.classList.add('limit');
+            else if (len >= MAX_ANTEC_TEXT * 0.9) antecCounter.classList.add('warn');
+        }
+        antecTexto.addEventListener('input', actualizarAntecCounter);
+
+        function resetAntecForm() {
+            editingAntecId = null;
+            antecTitulo.value = '';
+            antecTexto.value = '';
+            antecFecha.value = hoyLocalISO();
+            antecForm.classList.remove('editing');
+            antecFormMode.innerHTML = '<i class="fas fa-plus-circle"></i> Nuevo antecedente';
+            antecSave.innerHTML = '<i class="fas fa-plus"></i> AGREGAR';
+            antecCancelEdit.style.display = 'none';
+            actualizarAntecCounter();
+        }
+
+        function renderAntecList() {
+            const exp = expedientesData.find(e => e.id === currentNotesId);
+            const bloques = exp ? getAntecedentes(exp.data) : [];
+
+            if (!bloques.length) {
+                antecList.innerHTML = `<div class="antec-empty">Todavía no hay antecedentes registrados.</div>`;
+                return;
+            }
+
+            antecList.innerHTML = bloques.map(b => `
+                <div class="antec-item ${b.id === editingAntecId ? 'editing' : ''}">
+                    <div class="antec-item-head">
+                        <div>
+                            <div class="antec-item-title">${escapeHtml(b.titulo || 'Sin título')}</div>
+                            <div class="antec-item-date"><i class="fas fa-calendar"></i> ${formatFecha(b.fecha)}</div>
+                        </div>
+                        <div class="antec-item-actions">
+                            <button class="action-btn edit" title="Editar" data-antec="edit" data-aid="${escapeHtml(b.id)}"><i class="fas fa-pen"></i></button>
+                            <button class="action-btn delete" title="Eliminar" data-antec="delete" data-aid="${escapeHtml(b.id)}"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="antec-item-text">${escapeHtml(b.texto || '')}</div>
+                </div>
+            `).join('');
+        }
+
         function abrirNotesModal(id) {
             const exp = expedientesData.find(e => e.id === id);
             if (!exp) return;
             currentNotesId = id;
-
-            const data = exp.data;
-            notesModalSubtitle.textContent = `${data.fileNumber || '—'} · ${data.name || 'SIN REGISTRO'}`;
-
-            const texto = (data.antecedentes && String(data.antecedentes)) || '';
-            notesTextarea.value = texto;
-            actualizarCharCount();
-
+            notesModalSubtitle.textContent = `${exp.data.fileNumber || '—'} · ${exp.data.name || 'SIN REGISTRO'}`;
+            resetAntecForm();
+            renderAntecList();
             notesModal.classList.add('visible');
-            setTimeout(() => notesTextarea.focus(), 100);
+            setTimeout(() => antecTitulo.focus(), 100);
         }
 
-        function actualizarCharCount() {
-            const len = notesTextarea.value.length;
-            notesCharCount.textContent = `${len} / ${MAX_NOTES_LENGTH}`;
-            if (len > MAX_NOTES_LENGTH) {
-                notesCharCount.style.color = '#8b1a1a';
-                notesCharCount.style.fontWeight = '800';
-            } else {
-                notesCharCount.style.color = '';
-                notesCharCount.style.fontWeight = '';
-            }
-        }
-
-        notesTextarea.addEventListener('input', actualizarCharCount);
-
-        notesModalCancel.addEventListener('click', () => {
+        function cerrarNotesModal() {
             notesModal.classList.remove('visible');
             currentNotesId = null;
-        });
-        notesModal.addEventListener('click', (e) => {
-            if (e.target === notesModal) {
-                notesModal.classList.remove('visible');
-                currentNotesId = null;
-            }
-        });
+            editingAntecId = null;
+        }
+        notesModalClose.addEventListener('click', cerrarNotesModal);
+        notesModal.addEventListener('click', (e) => { if (e.target === notesModal) cerrarNotesModal(); });
+        antecCancelEdit.addEventListener('click', () => { resetAntecForm(); renderAntecList(); });
 
-        notesModalSave.addEventListener('click', async () => {
+        // Guarda TODOS los bloques del expediente (también migra el formato viejo)
+        async function persistirAntecedentes(expId, bloques) {
+            const obj = {};
+            bloques.forEach(b => {
+                const limpio = { titulo: b.titulo, fecha: b.fecha || '', texto: b.texto };
+                if (b.createdAt) limpio.createdAt = b.createdAt;
+                if (b.updatedAt) limpio.updatedAt = b.updatedAt;
+                obj[b.id] = limpio;
+            });
+            await update(ref(database, `expedientes/${expId}`), {
+                antecedentes: bloques.length ? obj : null,
+                antecedentesUpdatedAt: new Date().toISOString()
+            });
+        }
+
+        antecSave.addEventListener('click', async () => {
             if (!currentNotesId) return;
-
-            const texto = notesTextarea.value;
-            if (texto.length > MAX_NOTES_LENGTH) {
-                showToast(`❌ El texto supera el límite de ${MAX_NOTES_LENGTH} caracteres`, 'error', 4000);
-                return;
-            }
-
             const exp = expedientesData.find(e => e.id === currentNotesId);
             if (!exp) return;
 
-            const btn = notesModalSave;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
+            const titulo = antecTitulo.value.trim();
+            const fecha = antecFecha.value;
+            const texto = antecTexto.value.trim();
+
+            if (!titulo) return showToast('❌ Escribí un título', 'error', 3000);
+            if (!fecha) return showToast('❌ Elegí una fecha', 'error', 3000);
+            if (!texto) return showToast('❌ Escribí el texto del antecedente', 'error', 3000);
+            if (texto.length > MAX_ANTEC_TEXT) return showToast(`❌ El texto supera los ${MAX_ANTEC_TEXT} caracteres`, 'error', 4000);
+
+            const ahora = new Date().toISOString();
+            const bloques = getAntecedentes(exp.data).map(b => ({ ...b }));
+
+            if (editingAntecId) {
+                const b = bloques.find(x => x.id === editingAntecId);
+                if (!b) return showToast('❌ No se encontró el antecedente', 'error', 3000);
+                Object.assign(b, { titulo, fecha, texto, updatedAt: ahora });
+            } else {
+                bloques.push({ id: generarId(), titulo, fecha, texto, createdAt: ahora });
+            }
+
+            const eraEdicion = !!editingAntecId;
+            antecSave.disabled = true;
+            antecSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
 
             try {
-                await update(ref(database, `expedientes/${currentNotesId}`), {
-                    antecedentes: texto.trim(),
-                    antecedentesUpdatedAt: new Date().toISOString()
-                });
-
-                showToast('✅ Antecedentes guardados', 'success', 3000);
-                notesModal.classList.remove('visible');
-                currentNotesId = null;
+                await persistirAntecedentes(currentNotesId, bloques);
+                showToast(eraEdicion ? '✅ Antecedente actualizado' : '✅ Antecedente agregado', 'success', 2500);
+                resetAntecForm();
             } catch (error) {
-                console.error('Error al guardar notas:', error);
-                showToast('❌ Error al guardar los antecedentes', 'error', 4000);
+                console.error('Error al guardar antecedente:', error);
+                showToast('❌ Error al guardar el antecedente', 'error', 4000);
+                antecSave.innerHTML = eraEdicion ? '<i class="fas fa-save"></i> ACTUALIZAR' : '<i class="fas fa-plus"></i> AGREGAR';
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save"></i> GUARDAR NOTAS';
+                antecSave.disabled = false;
+            }
+        });
+
+        antecList.addEventListener('click', async (e) => {
+            const btn = e.target.closest('[data-antec]');
+            if (!btn || !currentNotesId) return;
+            const exp = expedientesData.find(x => x.id === currentNotesId);
+            if (!exp) return;
+            const aid = btn.dataset.aid;
+            const bloques = getAntecedentes(exp.data);
+
+            if (btn.dataset.antec === 'edit') {
+                const b = bloques.find(x => x.id === aid);
+                if (!b) return;
+                editingAntecId = aid;
+                antecTitulo.value = b.titulo || '';
+                antecFecha.value = b.fecha || hoyLocalISO();
+                antecTexto.value = b.texto || '';
+                antecForm.classList.add('editing');
+                antecFormMode.innerHTML = '<i class="fas fa-pen"></i> Editando antecedente';
+                antecSave.innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR';
+                antecCancelEdit.style.display = 'inline-flex';
+                actualizarAntecCounter();
+                renderAntecList();
+                antecForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                antecTitulo.focus();
+            }
+
+            if (btn.dataset.antec === 'delete') {
+                const b = bloques.find(x => x.id === aid);
+                if (!b || !confirm(`¿Eliminar el antecedente "${b.titulo}"?`)) return;
+                try {
+                    await persistirAntecedentes(currentNotesId, bloques.filter(x => x.id !== aid));
+                    if (editingAntecId === aid) resetAntecForm();
+                    showToast('🗑️ Antecedente eliminado', 'success', 2500);
+                } catch (error) {
+                    console.error('Error al eliminar antecedente:', error);
+                    showToast('❌ Error al eliminar el antecedente', 'error', 4000);
+                }
             }
         });
 
@@ -2276,7 +2450,7 @@
         // =========================================================
         searchInput.addEventListener('input', renderExpedientes);
         filterTipo.addEventListener('change', renderExpedientes);
-        filterRango.addEventListener('change', renderExpedientes); // ⬅️ nuevo
+        filterRango.addEventListener('change', renderExpedientes);
 
         refreshBtn.addEventListener('click', () => {
             refreshBtn.classList.add('spinning');
