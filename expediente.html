@@ -818,7 +818,7 @@
       display: flex;
       flex-direction: column;
       color: #222 !important;
-      overflow-y: auto;
+      overflow: hidden; /* CORREGIDO: era auto */
       border-radius: 4px;
     }
     .front {
@@ -1338,7 +1338,7 @@
       line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
-      overflow: hidden;
+      overflow: hidden; /* CORREGIDO: era auto */
     }
     .obs-lines.empty {
       font-style: italic;
@@ -2742,13 +2742,6 @@
       `;
     }
 
-    /**
-     * Reparte los antecedentes en hojas según el espacio REAL disponible.
-     * - La primera hoja es #bookObservations (dentro de page-2 .back).
-     * - Si no entran todos, se crean hojas dinámicas antes de page-3.
-     * - No hay scroll: cada bloque se mide y si no cabe en la hoja actual,
-     *   pasa a la siguiente.
-     */
     function construirPaginasAntecedentes(listaAntecedentes) {
       const container = document.getElementById('book');
       if (!container) return;
@@ -2771,7 +2764,6 @@
         return;
       }
 
-      // ---- 1) Medir cuántos entran en la primera hoja ----
       let cabenPrimera = 0;
       const anchoPrimera = bookObservations.clientWidth;
       const altoPrimera = bookObservations.clientHeight;
@@ -2792,6 +2784,7 @@
           const wrapper = document.createElement('div');
           wrapper.innerHTML = renderAntecedenteBloque(lista[i]);
           tester.appendChild(wrapper.firstElementChild);
+          
           if (tester.scrollHeight <= altoPrimera) {
             cabenPrimera = i + 1;
           } else {
@@ -2804,11 +2797,9 @@
 
       if (cabenPrimera === 0) cabenPrimera = 1;
 
-      // Insertar los que caben en la primera hoja
       const primeros = lista.slice(0, cabenPrimera);
       bookObservations.innerHTML = primeros.map(renderAntecedenteBloque).join('');
 
-      // ---- 2) Crear hojas dinámicas para el resto ----
       let restantes = lista.slice(cabenPrimera);
 
       if (restantes.length > 0) {
@@ -2875,6 +2866,7 @@
               const wrapper = document.createElement('div');
               wrapper.innerHTML = renderAntecedenteBloque(restantes[i]);
               tester.appendChild(wrapper.firstElementChild);
+
               if (tester.scrollHeight <= altoNueva) {
                 cabenAqui = i + 1;
               } else {
