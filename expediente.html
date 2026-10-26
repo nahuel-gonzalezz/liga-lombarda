@@ -1313,6 +1313,7 @@
       display: flex;
       flex-direction: column;
       border-radius: 4px;
+      overflow: hidden;
     }
     .obs-section label {
       font-weight: 700;
@@ -1337,8 +1338,7 @@
       line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
-      max-height: 100%;
-      overflow-y: auto;
+      overflow: hidden;
     }
     .obs-lines.empty {
       font-style: italic;
@@ -2685,28 +2685,12 @@
     // ANTECEDENTES — NORMALIZACIÓN Y RENDER ESTRUCTURADO
     // ============================================================
 
-    // Cuántos antecedentes entran en la hoja original (page-2 .back)
-    const CAPACIDAD_PRIMERA_HOJA = 2;
-    // Cuántos antecedentes entran por hoja dinámica
-    const ANTECEDENTES_POR_HOJA = 4;
-
-    /**
-     * Convierte cualquier formato de antecedentes en un array uniforme:
-     * [{ id, titulo, fecha, texto }, ...]
-     * - Si es string (formato viejo): un único bloque.
-     * - Si es objeto con registros {id: {titulo, fecha, texto}}: un bloque por registro.
-     * - Si es array: se respeta.
-     */
     function normalizarAntecedentes(raw) {
       if (!raw) return [];
-
-      // Formato viejo: string plano
       if (typeof raw === 'string') {
         const t = raw.trim();
         return t ? [{ id: 'legacy', titulo: 'Observación', fecha: '', texto: t }] : [];
       }
-
-      // Array
       if (Array.isArray(raw)) {
         return raw
           .map((item, i) => {
@@ -2723,8 +2707,6 @@
           })
           .filter(Boolean);
       }
-
-      // Objeto con registros {id: {titulo, fecha, texto, ...}}
       if (typeof raw === 'object') {
         return Object.entries(raw)
           .map(([id, item]) => {
@@ -2740,10 +2722,8 @@
             };
           })
           .filter(Boolean)
-          // Ordenar por fecha ascendente (los más viejos primero)
           .sort((a, b) => (a.fecha || '').localeCompare(b.fecha || ''));
       }
-
       return [];
     }
 
@@ -2763,71 +2743,159 @@
     }
 
     /**
-     * Construye las hojas dinámicas de continuación de antecedentes.
-     * La primera hoja (page-2 .back) muestra CAPACIDAD_PRIMERA_HOJA.
-     * El resto se distribuye en hojas de ANTECEDENTES_POR_HOJA cada una.
+     * Reparte los antecedentes en hojas según el espacio REAL disponible.
+     * - La primera hoja es #bookObservations (dentro de page-2 .back).
+     * - Si no entran todos, se crean hojas dinámicas antes de page-3.
+     * - No hay scroll: cada bloque se mide y si no cabe en la hoja actual,
+     *   pasa a la siguiente.
      */
     function construirPaginasAntecedentes(listaAntecedentes) {
       const container = document.getElementById('book');
       if (!container) return;
 
-      // Limpiar hojas dinámicas previas
       document.querySelectorAll('.page-notas-dinamica').forEach(el => el.remove());
 
       const page3 = document.getElementById('page-3');
-      if (!page3) return;
+      const bookObservations = document.getElementById('bookObservations');
+      if (!page3 || !bookObservations) return;
 
-      const total = listaAntecedentes.length;
-      if (total <= CAPACIDAD_PRIMERA_HOJA) {
+      bookObservations.innerHTML = '';
+      bookObservations.classList.remove('empty');
+
+      const lista = Array.isArray(listaAntecedentes) ? listaAntecedentes : [];
+
+      if (lista.length === 0) {
+        bookObservations.textContent = 'Sin observaciones.';
+        bookObservations.classList.add('empty');
         actualizarNumeracionPaginas();
         return;
       }
 
-      const restantes = listaAntecedentes.slice(CAPACIDAD_PRIMERA_HOJA);
-      const totalHojas = Math.ceil(restantes.length / ANTECEDENTES_POR_HOJA);
+      // ---- 1) Medir cuántos entran en la primera hoja ----
+      let cabenPrimera = 0;
+      const anchoPrimera = bookObservations.clientWidth;
+      const altoPrimera = bookObservations.clientHeight;
 
-      let cursor = 0;
-      for (let h = 0; h < totalHojas; h++) {
-        const bloque = restantes.slice(cursor, cursor + ANTECEDENTES_POR_HOJA);
-        cursor += ANTECEDENTES_POR_HOJA;
+      if (altoPrimera > 0 && anchoPrimera > 0) {
+        const tester = bookObservations.cloneNode(false);
+        tester.style.position = 'absolute';
+        tester.style.visibility = 'hidden';
+        tester.style.left = '-99999px';
+        tester.style.top = '0';
+        tester.style.height = altoPrimera + 'px';
+        tester.style.width = anchoPrimera + 'px';
+        tester.style.overflow = 'hidden';
+        tester.style.whiteSpace = 'normal';
+        document.body.appendChild(tester);
 
-        const htmlBloques = bloque.map(renderAntecedenteBloque).join('');
+        for (let i = 0; i < lista.length; i++) {
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = renderAntecedenteBloque(lista[i]);
+          tester.appendChild(wrapper.firstElementChild);
+          if (tester.scrollHeight <= altoPrimera) {
+            cabenPrimera = i + 1;
+          } else {
+            tester.removeChild(tester.lastElementChild);
+            break;
+          }
+        }
+        document.body.removeChild(tester);
+      }
 
-        const pageEl = document.createElement('div');
-        pageEl.className = 'page page-notas-dinamica';
-        pageEl.innerHTML = `
-          <div class="front">
-            <div class="page-inner">
-              <div class="notes-continuation-title">
-                <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+      if (cabenPrimera === 0) cabenPrimera = 1;
+
+      // Insertar los que caben en la primera hoja
+      const primeros = lista.slice(0, cabenPrimera);
+      bookObservations.innerHTML = primeros.map(renderAntecedenteBloque).join('');
+
+      // ---- 2) Crear hojas dinámicas para el resto ----
+      let restantes = lista.slice(cabenPrimera);
+
+      if (restantes.length > 0) {
+        let hojaIdx = 0;
+
+        while (restantes.length > 0) {
+          hojaIdx++;
+
+          const pageEl = document.createElement('div');
+          pageEl.className = 'page page-notas-dinamica';
+          pageEl.innerHTML = `
+            <div class="front">
+              <div class="page-inner">
+                <div class="notes-continuation-title">
+                  <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+                </div>
+                <div class="notes-page-info">
+                  Hoja ${hojaIdx}
+                </div>
+                <div class="obs-section" style="flex:1; overflow:hidden;">
+                  <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
+                  <div class="obs-lines" style="overflow:hidden;"></div>
+                </div>
+                <div class="page-number" data-dynamic-page-num></div>
               </div>
-              <div class="notes-page-info">
-                Hoja ${h + 1} de ${totalHojas}
-              </div>
-              <div class="obs-section" style="flex:1; overflow:hidden;">
-                <label><i class="fas fa-sticky-note"></i> OBSERVACIONES (cont.):</label>
-                <div class="obs-lines" style="overflow:hidden;">${htmlBloques}</div>
-              </div>
-              <div class="page-number" data-dynamic-page-num></div>
             </div>
-          </div>
-          <div class="back">
-            <div class="page-inner">
-              <div class="notes-continuation-title">
-                <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+            <div class="back">
+              <div class="page-inner">
+                <div class="notes-continuation-title">
+                  <i class="fas fa-history"></i> ANTECEDENTES (continuación)
+                </div>
+                <div class="notes-page-info">
+                  Hoja ${hojaIdx}
+                </div>
+                <div class="obs-section" style="flex:1; overflow:hidden;">
+                  <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
+                  <div class="obs-lines" style="overflow:hidden;"></div>
+                </div>
+                <div class="page-number" data-dynamic-page-num></div>
               </div>
-              <div class="notes-page-info">
-                Hoja ${h + 1} de ${totalHojas}
-              </div>
-              <div class="obs-section" style="flex:1; overflow:hidden;">
-                <label><i class="fas fa-sticky-note"></i> NOTAS ADICIONALES:</label>
-                <div class="obs-lines" style="overflow:hidden;">${htmlBloques}</div>
-              </div>
-              <div class="page-number" data-dynamic-page-num></div>
             </div>
-          </div>
-        `;
-        container.insertBefore(pageEl, page3);
+          `;
+
+          container.insertBefore(pageEl, page3);
+
+          const obsLines = pageEl.querySelector('.front .obs-lines');
+          const altoNueva = obsLines.clientHeight;
+          const anchoNueva = obsLines.clientWidth;
+
+          let cabenAqui = 0;
+          if (altoNueva > 0 && anchoNueva > 0) {
+            const tester = obsLines.cloneNode(false);
+            tester.style.position = 'absolute';
+            tester.style.visibility = 'hidden';
+            tester.style.left = '-99999px';
+            tester.style.top = '0';
+            tester.style.height = altoNueva + 'px';
+            tester.style.width = anchoNueva + 'px';
+            tester.style.overflow = 'hidden';
+            tester.style.whiteSpace = 'normal';
+            document.body.appendChild(tester);
+
+            for (let i = 0; i < restantes.length; i++) {
+              const wrapper = document.createElement('div');
+              wrapper.innerHTML = renderAntecedenteBloque(restantes[i]);
+              tester.appendChild(wrapper.firstElementChild);
+              if (tester.scrollHeight <= altoNueva) {
+                cabenAqui = i + 1;
+              } else {
+                tester.removeChild(tester.lastElementChild);
+                break;
+              }
+            }
+            document.body.removeChild(tester);
+          }
+
+          if (cabenAqui === 0) cabenAqui = 1;
+
+          const bloque = restantes.slice(0, cabenAqui);
+          const htmlBloques = bloque.map(renderAntecedenteBloque).join('');
+
+          pageEl.querySelectorAll('.obs-lines').forEach(el => {
+            el.innerHTML = htmlBloques;
+          });
+
+          restantes = restantes.slice(cabenAqui);
+        }
       }
 
       actualizarNumeracionPaginas();
@@ -2880,7 +2948,6 @@
       const stats = data.stats || {};
       const competencies = data.competencies || {};
 
-      // 🔄 Normalizamos antecedentes a array estructurado
       const listaAntecedentes = normalizarAntecedentes(data.antecedentes);
 
       const inmigrante = esInmigrante(data);
@@ -2937,17 +3004,11 @@
       document.getElementById('bookCertDate').textContent = fechaFinal;
       document.getElementById('bookLastVerification').textContent = fechaFinal;
 
-      // ====== ANTECEDENTES ======
-      const bookObservations = document.getElementById('bookObservations');
+      // ====== ANTECEDENTES (badge + audit) ======
       const bookStatusBadge = document.getElementById('bookStatusBadge');
       const bookAuditJudicial = document.getElementById('bookAuditJudicial');
 
       if (listaAntecedentes.length > 0) {
-        // Mostrar los primeros CAPACIDAD_PRIMERA_HOJA en la hoja original
-        const primeros = listaAntecedentes.slice(0, CAPACIDAD_PRIMERA_HOJA);
-        bookObservations.innerHTML = primeros.map(renderAntecedenteBloque).join('');
-        bookObservations.classList.remove('empty');
-
         if (bookStatusBadge) {
           bookStatusBadge.classList.add('warn');
           bookStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CON ANTECEDENTES REGISTRADOS';
@@ -2956,8 +3017,6 @@
           bookAuditJudicial.textContent = `Se registran ${listaAntecedentes.length} antecedente(s).`;
         }
       } else {
-        bookObservations.textContent = 'Sin observaciones.';
-        bookObservations.classList.add('empty');
         if (bookStatusBadge) {
           bookStatusBadge.classList.remove('warn');
           bookStatusBadge.innerHTML = '<i class="fas fa-check-circle"></i> SIN ANTECEDENTES';
@@ -3010,14 +3069,14 @@
         cargarSkinEnViewers(minecraftNick);
       }
 
-      // 🔄 Construye hojas dinámicas si hay más antecedentes que la capacidad de la primera hoja
+      // Construye hojas dinámicas según espacio real disponible
       construirPaginasAntecedentes(listaAntecedentes);
 
       initBookPagination();
     }
 
     // ============================================================
-    // 🔄 CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
+    // CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
     // ============================================================
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
