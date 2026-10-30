@@ -712,6 +712,63 @@
         }
 
         /* =========================================================
+           CLANES DE INMIGRANTES
+        ========================================================= */
+        .clan-section {
+            margin-bottom: 48px;
+            animation: fadeInUp 0.5s ease both;
+        }
+        .clan-section:last-child { margin-bottom: 0; }
+        .clan-section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding: 0 4px 12px;
+            border-bottom: 1px solid rgba(255,255,255,.25);
+            position: relative;
+        }
+        .clan-section-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; left: 0;
+            width: 150px; height: 2px;
+            background: linear-gradient(90deg, var(--clan-color, #ce93d8), transparent);
+        }
+        .clan-section-header .clan-icon {
+            width: 34px; height: 34px;
+            display: grid; place-items: center;
+            border-radius: 9px;
+            color: white;
+            background: var(--clan-color, #7b1fa2);
+            box-shadow: 0 0 16px color-mix(in srgb, var(--clan-color, #7b1fa2) 45%, transparent);
+            flex-shrink: 0;
+        }
+        .clan-section-header .clan-label {
+            color: white;
+            font: 800 16px 'Montserrat', sans-serif;
+            letter-spacing: 1.5px;
+            text-shadow: 0 1px 6px rgba(0,0,0,.3);
+        }
+        .clan-section-header .clan-count {
+            margin-left: auto;
+            padding: 5px 14px;
+            border-radius: 50px;
+            color: rgba(255,255,255,.85);
+            background: rgba(0,0,0,.25);
+            border: 1px solid rgba(255,255,255,.15);
+            font: 600 10px 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+        @media (max-width: 480px) {
+            .clan-section { margin-bottom: 26px; }
+            .clan-section-header .clan-label { font-size: 12px; }
+            .clan-section-header .clan-count { font-size: 8px; padding: 4px 10px; }
+            .clan-section-header .clan-icon { width: 28px; height: 28px; }
+        }
+
+        /* =========================================================
            GRID DE TARJETAS
         ========================================================= */
         .rank-grid {
@@ -1792,6 +1849,92 @@
         }
 
         // =========================================================
+        // CLASIFICAR Y ORDENAR CLANES DE INMIGRANTES
+        // Prioridad: Goatania -> Gremio Redstone -> otros clanes -> sin clan.
+        // Se admiten distintos nombres de campo para no depender de una
+        // única versión del formulario o de la estructura guardada en Firebase.
+        // =========================================================
+        function obtenerClanInmigrante(item) {
+            const posiblesCampos = [
+                item.clan,
+                item.clanName,
+                item.nombreClan,
+                item.grupo,
+                item.grupoName,
+                item.faccion,
+                item.facción,
+                item.faction,
+                item.guild,
+                item.gremio,
+                item.organizacion,
+                item.organización,
+                item.procedencia,
+                item.origen
+            ];
+
+            const valor = posiblesCampos.find(v =>
+                v !== undefined && v !== null && String(v).trim() !== ''
+            );
+
+            return valor ? String(valor).trim() : '';
+        }
+
+        function normalizarTextoGrupo(valor) {
+            return String(valor || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function obtenerClaveClan(item) {
+            const clan = obtenerClanInmigrante(item);
+            const normalizado = normalizarTextoGrupo(clan);
+
+            if (normalizado.includes('goatania')) {
+                return {
+                    key: 'goatania',
+                    label: 'GOATANIA',
+                    color: '#d4af37',
+                    icon: 'fa-crown',
+                    order: 0
+                };
+            }
+
+            if (
+                normalizado.includes('redstone') ||
+                normalizado.includes('gremio red')
+            ) {
+                return {
+                    key: 'redstone',
+                    label: 'GREMIO REDSTONE',
+                    color: '#c0392b',
+                    icon: 'fa-hammer',
+                    order: 1
+                };
+            }
+
+            if (!clan) {
+                return {
+                    key: 'sin-clan',
+                    label: 'SIN CLAN / OTROS',
+                    color: '#8e8e9a',
+                    icon: 'fa-users',
+                    order: 9999
+                };
+            }
+
+            return {
+                key: `otro-${normalizado}`,
+                label: clan.toUpperCase(),
+                color: '#9c6bc5',
+                icon: 'fa-people-group',
+                order: 2,
+                sortName: normalizado
+            };
+        }
+
+        // =========================================================
         // RENDER INMIGRANTES
         // =========================================================
         function renderizarInmigrantes(expedientes, searchTerm = '') {
@@ -1811,11 +1954,14 @@
                     const nick = (item.minecraftNick || '').toLowerCase();
                     const rank = (item.rank || '').toLowerCase();
                     const fileNumber = (item.fileNumber || '').toLowerCase();
+                    const clan = obtenerClanInmigrante(item).toLowerCase();
+
                     return name.includes(searchLower) ||
                         alias.includes(searchLower) ||
                         nick.includes(searchLower) ||
                         rank.includes(searchLower) ||
-                        fileNumber.includes(searchLower);
+                        fileNumber.includes(searchLower) ||
+                        clan.includes(searchLower);
                 });
             }
 
@@ -1831,47 +1977,88 @@
                 return;
             }
 
-            let html = `<div class="rank-grid">`;
-            let cardIndex = 0;
+            // Agrupar por clan manteniendo un orden jerárquico fijo.
+            const grupos = new Map();
 
             items.forEach(item => {
-                const name = item.name || 'Sin nombre';
-                const alias = item.alias || 'Sin alias';
-                const nick = item.minecraftNick || '';
-                const rank = item.rank || 'Inmigrante';
+                const clanInfo = obtenerClaveClan(item);
 
-                const delay = (cardIndex * 0.04).toFixed(2);
-                cardIndex++;
+                if (!grupos.has(clanInfo.key)) {
+                    grupos.set(clanInfo.key, {
+                        ...clanInfo,
+                        items: []
+                    });
+                }
+
+                grupos.get(clanInfo.key).items.push(item);
+            });
+
+            const gruposOrdenados = Array.from(grupos.values()).sort((a, b) => {
+                if (a.order !== b.order) return a.order - b.order;
+                return (a.sortName || a.label).localeCompare(b.sortName || b.label, 'es');
+            });
+
+            let html = '';
+            let cardIndex = 0;
+
+            gruposOrdenados.forEach(grupo => {
+                html += `
+                    <section class="clan-section" style="--clan-color:${grupo.color};">
+                        <div class="clan-section-header">
+                            <span class="clan-icon">
+                                <i class="fas ${grupo.icon}"></i>
+                            </span>
+                            <span class="clan-label">${grupo.label}</span>
+                            <span class="clan-count">
+                                ${grupo.items.length} ${grupo.items.length === 1 ? 'INMIGRANTE' : 'INMIGRANTES'}
+                            </span>
+                        </div>
+                        <div class="rank-grid">
+                `;
+
+                grupo.items.forEach(item => {
+                    const name = item.name || 'Sin nombre';
+                    const alias = item.alias || 'Sin alias';
+                    const nick = item.minecraftNick || '';
+                    const rank = item.rank || 'Inmigrante';
+
+                    const delay = (cardIndex * 0.04).toFixed(2);
+                    cardIndex++;
+
+                    html += `
+                        <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
+                            <span class="corner tl"></span>
+                            <span class="corner tr"></span>
+                            <span class="corner bl"></span>
+                            <span class="corner br"></span>
+                            <div class="card-skin">
+                                ${nick ?
+                                    `<canvas data-nick="${nick}"></canvas>` :
+                                    `<div class="no-skin"><i class="fas fa-user"></i></div>`
+                                }
+                            </div>
+                            <div class="card-info">
+                                <div class="card-name">${name}</div>
+                                <div class="card-alias">"${alias}"</div>
+                                <div class="card-rank">
+                                    <span class="rank-badge" style="background:#7b1fa2;color:white;">${rank}</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-view" onclick="verExpediente('${item.id}')">
+                                        <i class="fas fa-eye"></i> VER
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
 
                 html += `
-                    <div class="document-card" data-rank="${rank}" data-id="${item.id}" style="animation-delay:${delay}s;">
-                        <span class="corner tl"></span>
-                        <span class="corner tr"></span>
-                        <span class="corner bl"></span>
-                        <span class="corner br"></span>
-                        <div class="card-skin">
-                            ${nick ?
-                                `<canvas data-nick="${nick}"></canvas>` :
-                                `<div class="no-skin"><i class="fas fa-user"></i></div>`
-                            }
                         </div>
-                        <div class="card-info">
-                            <div class="card-name">${name}</div>
-                            <div class="card-alias">"${alias}"</div>
-                            <div class="card-rank">
-                                <span class="rank-badge" style="background:#7b1fa2;color:white;">${rank}</span>
-                            </div>
-                            <div class="card-actions">
-                                <button class="btn-view" onclick="verExpediente('${item.id}')">
-                                    <i class="fas fa-eye"></i> VER
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    </section>
                 `;
             });
 
-            html += `</div>`;
             inmigrantesContainer.innerHTML = html;
 
             setTimeout(() => {
