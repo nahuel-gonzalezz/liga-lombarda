@@ -735,15 +735,6 @@
             width: 150px; height: 2px;
             background: linear-gradient(90deg, var(--clan-color, #ce93d8), transparent);
         }
-        .clan-section-header .clan-icon {
-            width: 34px; height: 34px;
-            display: grid; place-items: center;
-            border-radius: 9px;
-            color: white;
-            background: var(--clan-color, #7b1fa2);
-            box-shadow: 0 0 16px color-mix(in srgb, var(--clan-color, #7b1fa2) 45%, transparent);
-            flex-shrink: 0;
-        }
         .clan-section-header .clan-label {
             color: white;
             font: 800 16px 'Montserrat', sans-serif;
@@ -2005,9 +1996,6 @@
                 html += `
                     <section class="clan-section" style="--clan-color:${grupo.color};">
                         <div class="clan-section-header">
-                            <span class="clan-icon">
-                                <i class="fas ${grupo.icon}"></i>
-                            </span>
                             <span class="clan-label">${grupo.label}</span>
                             <span class="clan-count">
                                 ${grupo.items.length} ${grupo.items.length === 1 ? 'INMIGRANTE' : 'INMIGRANTES'}
