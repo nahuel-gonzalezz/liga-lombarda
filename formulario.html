@@ -1671,7 +1671,7 @@
                                 </select>
                                 <input type="text" id="clanCustom" placeholder="Escribí el nombre del clan" maxlength="30" style="margin-top: 8px; display: none;" />
                                 <small class="clan-hint" id="clanHint">
-                                    <i class="fas fa-info-circle"></i> ¿Tu clan no está? Elegí "Otro" y escribilo: le va a aparecer a los próximos.
+                                    <i class="fas fa-info-circle"></i> ¿Tu clan no está? Elegí "Otro".
                                 </small>
                             </div>
 
@@ -2317,7 +2317,7 @@
 
             const optOtro = document.createElement('option');
             optOtro.value = CLAN_OTRO;
-            optOtro.textContent = '➕ Otro (escribir un clan nuevo)...';
+            optOtro.textContent = 'Otro...';
             sel.appendChild(optOtro);
 
             const visibles = clanesLista.filter(c => !f || normalizarClan(c).includes(f));
