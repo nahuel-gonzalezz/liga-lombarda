@@ -647,6 +647,19 @@
         .desc-counter.warn { color: #c77800; }
         .desc-counter.limit { color: #b3002a; }
 
+        /* Selector de clan (buscador + lista + "Otro" fijo arriba) */
+        .clan-hint {
+            display: block;
+            margin-top: 6px;
+            color: var(--text-soft);
+            font-size: 9px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        .clan-hint i { margin-right: 4px; color: var(--accent); }
+        #clanSearch { margin-bottom: 8px; }
+        #clan option[value="Otro"] { font-weight: 800; }
+
         .secondary-btn {
             border: 2px solid var(--accent-dark);
             background: var(--accent);
@@ -969,7 +982,6 @@
             letter-spacing: 1px;
             margin-bottom: 2px;
         }
-        /* Se muestra la descripción completa (hasta 800 caracteres), sin recortar */
         .description-box p {
             font-size: 10px;
             line-height: 1.4;
@@ -1648,14 +1660,19 @@
                                 </select>
                             </div>
 
+                            <!-- CLAN: lista dinámica (Firebase) + buscador + "Otro" siempre arriba -->
                             <div class="field field-clan-extra">
-                                <label><i class="fas fa-people-group"></i> CLAN</label>
+                                <label for="clan"><i class="fas fa-people-group"></i> CLAN</label>
+                                <input type="text" id="clanSearch" placeholder="🔎 Buscar clan..." autocomplete="off" style="display: none;" />
                                 <select id="clan">
+                                    <option value="Otro">➕ Otro (escribir un clan nuevo)...</option>
                                     <option value="Gremios Redstone">Gremios Redstone</option>
                                     <option value="Goatania">Goatania</option>
-                                    <option value="Otro">Otro...</option>
                                 </select>
-                                <input type="text" id="clanCustom" placeholder="Escribí el nombre del clan" style="margin-top: 8px; display: none;" />
+                                <input type="text" id="clanCustom" placeholder="Escribí el nombre del clan" maxlength="30" style="margin-top: 8px; display: none;" />
+                                <small class="clan-hint" id="clanHint">
+                                    <i class="fas fa-info-circle"></i> ¿Tu clan no está? Elegí "Otro" y escribilo: le va a aparecer a los próximos.
+                                </small>
                             </div>
 
                             <div class="field">
@@ -2194,6 +2211,11 @@
             mostrarLinkAdmin(isAdmin);
             generateBtn.disabled = false;
 
+            // ⬇️ Cargar la lista de clanes guardados en Firebase
+            if (typeof window.cargarClanes === 'function') {
+                window.cargarClanes();
+            }
+
             if (isAdmin) {
                 showToast('👑 Bienvenido Administrador', 'success', 2000);
             } else {
@@ -2211,13 +2233,169 @@
     <script>
         const CAMERA_ZOOM_FIXED = 0.90;
         const CAMERA_YAW_FIXED = 0.00;
-        const DESCRIPTION_MAX = 800;
+        const DESCRIPTION_MAX = 600; // igual que el maxlength del textarea
 
         let skinViewer = null;
         let currentSkinURL = null;
         let viewerReady = false;
         let currentPose = 'normal';
         let isAnimating = false;
+
+        // =========================================================
+        // CLANES DINÁMICOS
+        // - Se guardan en Firebase: /clanes/{clave} = { nombre, creadoPor, creadoEn }
+        // - "Otro" SIEMPRE es la primera opción de la lista.
+        // - Si hay más de CLAN_MIN_PARA_BUSCADOR clanes aparece un buscador.
+        // =========================================================
+        const CLANES_BASE = ['Gremios Redstone', 'Goatania'];
+        const CLAN_OTRO = 'Otro';
+        const CLAN_MAX_LEN = 30;
+        const CLAN_MIN_PARA_BUSCADOR = 6;
+
+        let clanesLista = [...CLANES_BASE];
+
+        function normalizarClan(texto) {
+            return String(texto || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // Clave válida para Firebase (sin . # $ / [ ])
+        function claveClan(nombre) {
+            return normalizarClan(nombre)
+                .replace(/[^a-z0-9]+/g, '_')
+                .replace(/^_+|_+$/g, '');
+        }
+
+        function limpiarNombreClan(nombre) {
+            return String(nombre || '').replace(/\s+/g, ' ').trim().slice(0, CLAN_MAX_LEN);
+        }
+
+        function buscarClanExistente(nombre) {
+            const n = normalizarClan(nombre);
+            if (!n) return null;
+            return clanesLista.find(c => normalizarClan(c) === n) || null;
+        }
+
+        function agregarClanALista(nombre) {
+            if (!nombre || buscarClanExistente(nombre)) return false;
+            clanesLista.push(nombre);
+            clanesLista.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+            return true;
+        }
+
+        function sincronizarClanCustom() {
+            const sel = document.getElementById('clan');
+            const custom = document.getElementById('clanCustom');
+            if (!sel || !custom) return;
+            if (sel.value === CLAN_OTRO) {
+                custom.style.display = 'block';
+            } else {
+                custom.style.display = 'none';
+                custom.value = '';
+            }
+        }
+
+        // Reconstruye el <select>. "Otro" va siempre primero.
+        function renderClanSelect(filtro = '') {
+            const sel = document.getElementById('clan');
+            const buscador = document.getElementById('clanSearch');
+            if (!sel) return;
+
+            const previo = sel.value;
+            const f = normalizarClan(filtro);
+
+            // Mostrar el buscador solo si hay muchos clanes
+            if (buscador) {
+                buscador.style.display = clanesLista.length > CLAN_MIN_PARA_BUSCADOR ? 'block' : 'none';
+            }
+
+            sel.innerHTML = '';
+
+            const optOtro = document.createElement('option');
+            optOtro.value = CLAN_OTRO;
+            optOtro.textContent = '➕ Otro (escribir un clan nuevo)...';
+            sel.appendChild(optOtro);
+
+            const visibles = clanesLista.filter(c => !f || normalizarClan(c).includes(f));
+            visibles.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                sel.appendChild(opt);
+            });
+
+            // Restaurar selección
+            const existe = Array.from(sel.options).some(o => o.value === previo);
+            if (previo && existe) {
+                sel.value = previo;
+            } else if (visibles.length > 0 && (!previo || f)) {
+                sel.value = visibles[0];
+            } else {
+                sel.value = CLAN_OTRO;
+            }
+
+            sincronizarClanCustom();
+            if (typeof updateAllData === 'function') updateAllData();
+        }
+
+        // Lee los clanes guardados en Firebase y los junta con los base
+        async function cargarClanes() {
+            try {
+                if (!window.firebaseDB) throw new Error('Firebase no disponible');
+                const snap = await window.firebaseGet(window.firebaseRef(window.firebaseDB, 'clanes'));
+                const val = snap.val() || {};
+                Object.values(val).forEach(v => {
+                    const nombre = typeof v === 'string' ? v : (v && v.nombre);
+                    if (nombre) agregarClanALista(limpiarNombreClan(nombre));
+                });
+            } catch (e) {
+                console.warn('⚠️ No se pudieron cargar los clanes de Firebase:', e);
+            }
+            clanesLista.sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+            renderClanSelect(document.getElementById('clanSearch')?.value || '');
+        }
+        window.cargarClanes = cargarClanes;
+
+        // Guarda un clan nuevo en Firebase para que lo vean los próximos
+        async function registrarClanNuevo(nombre) {
+            const limpio = limpiarNombreClan(nombre);
+            const clave = claveClan(limpio);
+            if (!limpio || !clave) return;
+
+            const yaExistia = !!buscarClanExistente(limpio);
+            if (yaExistia) return;
+
+            try {
+                if (!window.firebaseDB) return;
+                const user = window.firebaseAuth && window.firebaseAuth.currentUser;
+                await window.firebaseSet(
+                    window.firebaseRef(window.firebaseDB, 'clanes/' + clave),
+                    {
+                        nombre: limpio,
+                        creadoPor: user ? user.uid : null,
+                        creadoEn: new Date().toISOString()
+                    }
+                );
+                console.log('✅ Clan nuevo registrado:', limpio);
+            } catch (e) {
+                console.warn('⚠️ No se pudo registrar el clan nuevo:', e);
+            }
+
+            agregarClanALista(limpio);
+            const buscador = document.getElementById('clanSearch');
+            if (buscador) buscador.value = '';
+            renderClanSelect('');
+            const sel = document.getElementById('clan');
+            if (sel) {
+                sel.value = limpio;
+                sincronizarClanCustom();
+                updateAllData();
+            }
+        }
 
         // =========================================================
         // FUENTES DE SKIN (3 APIs en cascada)
@@ -2700,8 +2878,10 @@
 
             if (isInmigrante) {
                 const clanSelect = document.getElementById('clan');
-                if (clanSelect.value === 'Otro') {
-                    clan = document.getElementById('clanCustom').value.trim() || 'Otro';
+                if (clanSelect.value === CLAN_OTRO) {
+                    const escrito = limpiarNombreClan(document.getElementById('clanCustom').value);
+                    // Si escribió uno que ya existe (ej: "eternals" vs "Eternals"), usamos el existente
+                    clan = escrito ? (buscarClanExistente(escrito) || escrito) : CLAN_OTRO;
                 } else {
                     clan = clanSelect.value || '';
                 }
@@ -2859,22 +3039,27 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initSkinViewer, 300);
 
+            // ---- Clan: select + buscador + campo "Otro" ----
             const clanSelect = document.getElementById('clan');
             const clanCustom = document.getElementById('clanCustom');
+            const clanSearch = document.getElementById('clanSearch');
+
+            renderClanSelect();
+
             if (clanSelect) {
                 clanSelect.addEventListener('change', function() {
-                    if (this.value === 'Otro') {
-                        clanCustom.style.display = 'block';
-                        clanCustom.focus();
-                    } else {
-                        clanCustom.style.display = 'none';
-                        clanCustom.value = '';
-                    }
+                    sincronizarClanCustom();
+                    if (this.value === CLAN_OTRO && clanCustom) clanCustom.focus();
                     updateAllData();
                 });
             }
             if (clanCustom) {
                 clanCustom.addEventListener('input', updateAllData);
+            }
+            if (clanSearch) {
+                clanSearch.addEventListener('input', function() {
+                    renderClanSelect(this.value);
+                });
             }
 
             document.getElementById('loadSkinBtn').addEventListener('click', loadMinecraftSkin);
@@ -2925,7 +3110,7 @@
                 });
             });
 
-            const formInputs = document.querySelectorAll('#name, #alias, #rank, #nationality, #occupation, #status, #birthday, #gender, #species, #marital, #description, #minecraftNick, #clan');
+            const formInputs = document.querySelectorAll('#name, #alias, #rank, #nationality, #occupation, #status, #birthday, #gender, #species, #marital, #description, #minecraftNick');
             formInputs.forEach(el => {
                 el.addEventListener('input', updateAllData);
                 el.addEventListener('change', updateAllData);
@@ -2941,6 +3126,17 @@
                 if (window.SOLO_INMIGRANTES && !document.body.classList.contains('theme-purple')) {
                     window.showToast('🔒 Tu cuenta solo puede generar expedientes de Inmigrantes', 'error', 3500);
                     return;
+                }
+
+                // Validar clan si es inmigrante y eligió "Otro"
+                if (document.body.classList.contains('theme-purple')) {
+                    const sel = document.getElementById('clan');
+                    const escrito = limpiarNombreClan(document.getElementById('clanCustom').value);
+                    if (sel.value === CLAN_OTRO && (!escrito || !claveClan(escrito))) {
+                        window.showToast('✍️ Escribí el nombre de tu clan (o elegí uno de la lista)', 'error', 3500);
+                        document.getElementById('clanCustom').focus();
+                        return;
+                    }
                 }
 
                 generateFileNumber();
@@ -2974,6 +3170,11 @@
                     const result = await saveToFirebase(data);
 
                     if (result.success) {
+                        // Si es inmigrante con un clan nuevo, lo registramos para los próximos
+                        if (data.type === 'inmigrante' && data.clan && data.clan !== CLAN_OTRO) {
+                            await registrarClanNuevo(data.clan);
+                        }
+
                         const source = result.source === 'firebase' ? 'Firebase' : 'Almacenamiento local';
                         window.showToast(`✅ Expediente ${data.fileNumber} guardado en ${source}`, 'success', 5000);
                         confirmModal.classList.remove('visible');
