@@ -3137,6 +3137,16 @@
       ctx.restore();
     }
 
+    // Genera la cruz como imagen (PNG con transparencia) para insertarla
+    // en el clon del DNI y que html2canvas la renderice en su capa original.
+    function generarWatermarkDataURL(escala = 3) {
+      const c = document.createElement('canvas');
+      c.width = 750 * escala;
+      c.height = 380 * escala;
+      dibujarCruzWatermark(c.getContext('2d'), c.width, c.height, '#500a0e', 0.06);
+      return c.toDataURL('image/png');
+    }
+
     function inicializarWatermarkVista() {
       let wm = $('dniWatermark');
       if (!wm) return;
@@ -3210,8 +3220,19 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
+          // La cruz de fondo: se reemplaza el <canvas> clonado (que queda vacío)
+          // por una imagen con la cruz, en la misma posición y capa que en pantalla.
           const wmClone = clone.querySelector('.dni-watermark');
-          if (wmClone) wmClone.remove();
+          let wmImg = null;
+          if (wmClone) {
+            wmImg = document.createElement('img');
+            wmImg.className = 'dni-watermark';
+            wmImg.src = generarWatermarkDataURL(3);
+            wmImg.style.cssText =
+              'position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;';
+            wmClone.parentNode.replaceChild(wmImg, wmClone);
+            try { await wmImg.decode(); } catch (e) {}
+          }
 
           const dniCanvasClone = clone.querySelector('#dniSkinCanvas');
           if (dniCanvasClone) {
@@ -3243,15 +3264,6 @@
             height: 380,
           });
           document.body.removeChild(clone);
-
-          const ctxFinal = canvasCaptured.getContext('2d');
-          dibujarCruzWatermark(
-            ctxFinal,
-            canvasCaptured.width,
-            canvasCaptured.height,
-            '#500a0e',
-            0.06
-          );
 
           const link = document.createElement('a');
           link.download = `DNI_${$('dniName').textContent || 'expediente'}.png`;
