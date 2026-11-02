@@ -43,7 +43,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://bs-community.github.io/skinview3d/js/skinview3d.bundle.js"></script>
+  <!-- Versión fija desde jsDelivr (verificá que sea la versión que venías usando) -->
+  <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js"></script>
 
   <style>
     :root {
@@ -486,7 +487,14 @@
       flex: 1;
     }
 
-    /* ======= DNI ======= */
+    /* ======= DNI (solo ciudadanos) ======= */
+    .dni-container,
+    #downloadDniWrapper { display: none; }
+    #downloadDniWrapper { justify-content: center; margin-top: 10px; }
+    .is-citizen .dni-container { display: block; }
+    .is-citizen #downloadDniWrapper { display: flex; }
+    .is-passport .book-wrapper { margin-top: 0; }
+
     .dni-container {
       width: 100%;
       max-width: 750px;
@@ -896,40 +904,15 @@
 
     /* ============================================================
        PASAPORTE (inmigrante)
-       La carátula (.cover) queda IDÉNTICA a la de los lombardos
+       La carátula (.cover) queda idéntica a la de los lombardos
        comunes: se la excluye de los overrides de las hojas interiores.
        ============================================================ */
-    .passport .page.cover .front {
-      background: linear-gradient(145deg, #2a0808, #3d0e0e, #2a0808) !important;
-      color: #d4af37 !important;
-      border: 3px solid #4a1010 !important;
-    }
-    .passport .page.cover .front * { color: #d4af37 !important; }
-    .passport .cover-border {
-      border-color: #d4af37;
-      background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
-    }
-    .passport .cover-border::before,
-    .passport .cover-border::after { color: #d4af37; }
-    .passport .cover h1 { color: #d4af37 !important; text-shadow: 0 2px 15px rgba(0,0,0,0.6); }
-    .passport .subtitle { color: #d4b87a !important; }
-    .passport .cover-logo { filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.25)); }
-
-    /* Hojas interiores del pasaporte (todo menos la carátula) */
     .passport .page:not(.cover) .front,
-    .passport .page:not(.cover) .back,
-    .passport #page-1 .front,
-    .passport #page-1 .back,
-    .passport #page-2 .front,
-    .passport #page-2 .back,
-    .passport #page-3 .front,
-    .passport #page-3 .back {
+    .passport .page:not(.cover) .back {
       background: linear-gradient(175deg, #f5efe0 0%, #e8dec9 100%) !important;
       border-color: #b8a98f !important;
     }
-    .passport #page-1 .back,
-    .passport #page-2 .back,
-    .passport #page-3 .back {
+    .passport .page:not(.cover) .back {
       background: linear-gradient(175deg, #ece3d0 0%, #e0d5be 100%) !important;
       border-left-color: #c8b9a5 !important;
     }
@@ -949,15 +932,19 @@
     .passport .obs-section label i,
     .passport .cert-date i,
     .passport .sig-label i,
-    .passport .stat-title,
-    .passport .stat-table td:first-child i,
-    .passport .stat-title i { color: #8c2323 !important; }
+    .passport .stat-table td:first-child i { color: #8c2323 !important; }
     .passport .stat-title { border-bottom-color: #8c2323 !important; color: #8c2323 !important; }
+    .passport .stat-title i { color: #8c2323 !important; }
     .passport .obs-section label { color: #8c2323 !important; border-bottom-color: #8c2323 !important; }
     .passport .status-badge {
       border-color: #2e7d32 !important;
       color: #2e7d32 !important;
       background: rgba(46,125,50,0.06) !important;
+    }
+    .passport .status-badge.warn {
+      border-color: #8a6a1a !important;
+      color: #8a6a1a !important;
+      background: rgba(138,106,26,0.06) !important;
     }
     .passport .motto {
       color: #8c2323 !important;
@@ -972,16 +959,6 @@
     .passport .page:last-child .back h3 { color: #d4af37 !important; }
     .passport .page:last-child .back p { color: #b8964a !important; }
     .passport .page:last-child .back i { color: #d4af37 !important; }
-
-    .passport #page-3 .front,
-    .passport #page-3 .back {
-      background: linear-gradient(175deg, #f5efe0 0%, #e8dec9 100%) !important;
-      border-color: #b8a98f !important;
-    }
-    .passport #page-3 .back {
-      background: linear-gradient(145deg, #1a0505, #2a0808) !important;
-      border: 3px solid #3d0e0e !important;
-    }
 
     .inner-cover {
       display: flex;
@@ -1006,10 +983,6 @@
       margin-top: 8px;
       font-family: "Montserrat", sans-serif;
     }
-    .passport .inner-cover {
-      background: linear-gradient(135deg, #f5efe0, #e8dec9) !important;
-    }
-    .passport .inner-cover h3 { color: #2a0808 !important; }
 
     .page-inner {
       display: flex;
@@ -1255,10 +1228,6 @@
       border-color: #4a0000;
       box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
     }
-    .passport .boxes-container i.fill {
-      background: #7a1515;
-      border-color: #4a0000;
-    }
 
     .status-badge {
       border: 2px solid #2e7d32;
@@ -1281,11 +1250,6 @@
       background: rgba(138,106,26,0.06);
     }
     .status-badge.warn i { color: #8a6a1a; }
-    .passport .status-badge.warn {
-      border-color: #8a6a1a !important;
-      color: #8a6a1a !important;
-      background: rgba(138,106,26,0.06) !important;
-    }
     .audit-info {
       font-size: 0.7rem;
       line-height: 1.6;
@@ -1351,7 +1315,6 @@
       color: #888 !important;
     }
 
-    /* ======= ANTECEDENTES ESTRUCTURADOS ======= */
     .antecedente-bloque {
       padding: 6px 0 8px 0;
       border-bottom: 1px solid #bbb;
@@ -1536,12 +1499,7 @@
       box-shadow: 0 6px 30px rgba(212, 175, 55, 0.2);
     }
     .book-controls button:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-    .passport .book-controls button {
-      color: #d4af37;
-      border-color: #d4af37;
-    }
     .passport .book-controls button:hover:not(:disabled) {
-      background: linear-gradient(145deg, #d4af37, #b8962a);
       color: #1a0505;
       box-shadow: 0 6px 30px rgba(212, 175, 55, 0.3);
     }
@@ -1638,9 +1596,6 @@
         transform: translateX(100%);
         opacity: 0;
         pointer-events: none;
-      }
-      .page.flipped .back {
-        transform: rotateY(0deg);
       }
       .page .back {
         transform: rotateY(180deg);
@@ -1891,6 +1846,7 @@
 
       <div class="panel-documentos">
 
+        <!-- DNI: oculto por CSS, visible solo con .is-citizen -->
         <div class="dni-container" id="dniContainer">
           <div class="dni-card" id="dniCard">
             <div class="dni-watermark" id="dniWatermark"></div>
@@ -1941,7 +1897,7 @@
           </div>
         </div>
 
-        <div id="downloadDniWrapper" style="display:flex;justify-content:center;margin-top:10px;">
+        <div id="downloadDniWrapper">
           <button class="btn-download-dni" id="downloadDniBtn">
             <i class="fas fa-download"></i> DESCARGAR DNI
           </button>
@@ -1994,7 +1950,6 @@
                           <div class="field-row"><label><i class="fas fa-users"></i> CLAN:</label><span class="line-fill" id="bookClan">—</span></div>
                           <div class="field-row"><label><i class="fas fa-shield-halved"></i> RANGO:</label><span class="line-fill" id="bookRank">—</span></div>
                           <div class="field-row"><label><i class="fas fa-flag"></i> NACIONALIDAD:</label><span class="line-fill" id="bookNationality">—</span></div>
-                          <!-- NUEVO: ESTADO CIVIL en el front de page-1 -->
                           <div class="field-row"><label><i class="fas fa-heart"></i> ESTADO CIVIL:</label><span class="line-fill" id="bookMaritalFront">—</span></div>
                         </div>
                       </div>
@@ -2008,7 +1963,6 @@
                     <div class="main-content-area">
                       <div class="info-list">
                         <p><strong><i class="fas fa-briefcase"></i> PROFESIÓN:</strong> <span id="bookOccupation">—</span></p>
-                        <!-- CAMBIADO: ESTADO -> ESTADO CIVIL -->
                         <p><strong><i class="fas fa-heart"></i> ESTADO CIVIL:</strong> <span id="bookMarital">—</span></p>
                         <p><strong><i class="fas fa-calendar-days"></i> FECHA NAC.:</strong> <span id="bookBirthday">—</span></p>
                         <p><strong><i class="fas fa-venus-mars"></i> GÉNERO:</strong> <span id="bookGender">—</span></p>
@@ -2130,15 +2084,21 @@
       onValue
     } from "./firebase-init.js";
 
-    const authOverlay = document.getElementById('authOverlay');
-    const mainContent = document.getElementById('mainContent');
-    const userNav = document.getElementById('userNav');
-    const toast = document.getElementById('toast');
+    // ============================================================
+    // HELPERS
+    // ============================================================
+    const $ = (id) => document.getElementById(id);
+    const setText = (id, v) => { const el = $(id); if (el) el.textContent = v; };
 
-    const menuToggle = document.getElementById('menuToggle');
-    const sideMenu = document.getElementById('sideMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const sideMenuUser = document.getElementById('sideMenuUser');
+    const authOverlay = $('authOverlay');
+    const mainContent = $('mainContent');
+    const userNav = $('userNav');
+    const toast = $('toast');
+
+    const menuToggle = $('menuToggle');
+    const sideMenu = $('sideMenu');
+    const menuOverlay = $('menuOverlay');
+    const sideMenuUser = $('sideMenuUser');
 
     function openMenu() {
       sideMenu.classList.add('open');
@@ -2160,18 +2120,14 @@
       if (e.key === 'Escape') closeMenu();
     });
 
-    window.addEventListener('pageshow', (e) => {
-      if (e.persisted) window.location.reload();
-    });
+    // Limpieza del listener de Firebase al salir de la página
+    window.addEventListener('pagehide', () => unsubscribeExpediente?.());
 
-    window.addEventListener('load', () => {
-      try {
-        const navEntries = performance.getEntriesByType('navigation');
-        if (navEntries.length && navEntries[0].type === 'back_forward') {
-          window.location.reload();
-        }
-      } catch (e) {}
-    });
+    // Muestra el contenido recién cuando ya se sabe si es ciudadano o inmigrante
+    function revelarContenido() {
+      authOverlay.classList.add('hidden');
+      mainContent.style.display = 'flex';
+    }
 
     const RANK_ORDER = [
       'Elite Urbana',
@@ -2241,7 +2197,7 @@
         userNav.innerHTML = `
           <span class="user-info">
             <span class="email">
-              <i class="fas fa-user-circle"></i> ${user.email}
+              <i class="fas fa-user-circle"></i> ${escapeHtml(user.email)}
             </span>
             <button class="logout-btn" id="logoutBtnNav">
               <i class="fas fa-sign-out-alt"></i> SALIR
@@ -2251,13 +2207,13 @@
             </button>
           </span>
         `;
-        document.getElementById('logoutBtnNav').addEventListener('click', handleLogout);
-        document.getElementById('shareBtn').addEventListener('click', compartirURL);
+        $('logoutBtnNav').addEventListener('click', handleLogout);
+        $('shareBtn').addEventListener('click', compartirURL);
 
         sideMenuUser.style.display = 'flex';
         sideMenuUser.innerHTML = `
           <span class="email">
-            <i class="fas fa-user-circle"></i> ${user.email}
+            <i class="fas fa-user-circle"></i> ${escapeHtml(user.email)}
           </span>
           <button class="logout-btn" id="logoutBtnSide">
             <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
@@ -2266,8 +2222,8 @@
             <i class="fas fa-share-alt"></i> COMPARTIR
           </button>
         `;
-        document.getElementById('logoutBtnSide').addEventListener('click', handleLogout);
-        document.getElementById('shareBtnSide').addEventListener('click', compartirURL);
+        $('logoutBtnSide').addEventListener('click', handleLogout);
+        $('shareBtnSide').addEventListener('click', compartirURL);
       }
     }
 
@@ -2317,19 +2273,30 @@
       document.body.removeChild(input);
     }
 
-    const canvas = document.getElementById('skin-container');
-    const viewer = new skinview3d.SkinViewer({
-      canvas: canvas,
-      width: 280,
-      height: 280
-    });
-    viewer.camera.position.set(0, 10, 32);
-    viewer.controls.target.set(0, 8, 0);
-    viewer.controls.enableRotate = false;
-    viewer.controls.enableZoom = false;
-    viewer.controls.enablePan = false;
-    viewer.globalLight.intensity = 2.5;
-    viewer.cameraLight.intensity = 1.2;
+    // ============================================================
+    // VISORES 3D (renderPaused: solo se renderiza cuando se pide)
+    // ============================================================
+    function crearViewer(canvasId, w, h) {
+      const v = new skinview3d.SkinViewer({
+        canvas: $(canvasId),
+        width: w,
+        height: h,
+        renderPaused: true
+      });
+      v.camera.position.set(0, 10, 32);
+      v.controls.target.set(0, 8, 0);
+      v.controls.enableRotate = v.controls.enableZoom = v.controls.enablePan = false;
+      v.globalLight.intensity = 2.5;
+      v.cameraLight.intensity = 1.2;
+      return v;
+    }
+
+    const viewer = crearViewer('skin-container', 280, 280);
+    const bookViewer = crearViewer('bookSkinCanvas', 110, 110);
+    // El visor del DNI se crea solo si hace falta (ciudadanos)
+    let dniViewer = null;
+    const getDniViewer = () => (dniViewer ??= crearViewer('dniSkinCanvas', 150, 170));
+    const dniCanvas = $('dniSkinCanvas');
 
     const START_X = 28;
     let state = "WALKING";
@@ -2345,38 +2312,10 @@
     let skinLoaded = false;
     let currentNick = '';
 
-    const dniCanvas = document.getElementById('dniSkinCanvas');
-    const dniViewer = new skinview3d.SkinViewer({
-      canvas: dniCanvas,
-      width: 150,
-      height: 170
-    });
-    dniViewer.camera.position.set(0, 10, 32);
-    dniViewer.controls.target.set(0, 8, 0);
-    dniViewer.controls.enableRotate = false;
-    dniViewer.controls.enableZoom = false;
-    dniViewer.controls.enablePan = false;
-    dniViewer.globalLight.intensity = 2.5;
-    dniViewer.cameraLight.intensity = 1.2;
-
-    const bookCanvas = document.getElementById('bookSkinCanvas');
-    const bookViewer = new skinview3d.SkinViewer({
-      canvas: bookCanvas,
-      width: 110,
-      height: 110
-    });
-    bookViewer.camera.position.set(0, 10, 32);
-    bookViewer.controls.target.set(0, 8, 0);
-    bookViewer.controls.enableRotate = false;
-    bookViewer.controls.enableZoom = false;
-    bookViewer.controls.enablePan = false;
-    bookViewer.globalLight.intensity = 2.5;
-    bookViewer.cameraLight.intensity = 1.2;
-
     window._poseLibro = null;
 
     function aplicarPoseEnLibro(data) {
-      const pose = {
+      window._poseLibro = {
         headPitch: Number(data.headPitch) || 0,
         headRoll:  Number(data.headRoll)  || 0,
         headYaw:   Number(data.headYaw)   || 0,
@@ -2391,12 +2330,11 @@
         rightLegX: Number(data.rightLegX) || 0,
         rightLegZ: Number(data.rightLegZ) || 0
       };
-      window._poseLibro = pose;
       aplicarPoseABookViewer();
     }
 
     function aplicarPoseABookViewer() {
-      if (!bookViewer || !bookViewer.playerObject || !bookViewer.playerObject.skin) return;
+      if (!bookViewer?.playerObject?.skin) return;
       const pose = window._poseLibro;
       if (!pose) return;
       const player = bookViewer.playerObject;
@@ -2406,23 +2344,13 @@
       player.position.y = 0;
       player.rotation.y = 0;
 
-      skin.head.rotation.y = pose.headYaw;
-      skin.head.rotation.x = pose.headPitch;
-      skin.head.rotation.z = pose.headRoll;
-
-      skin.leftArm.rotation.x = pose.leftArmX;
-      skin.leftArm.rotation.y = pose.leftArmY;
-      skin.leftArm.rotation.z = pose.leftArmZ;
-
-      skin.rightArm.rotation.x = pose.rightArmX;
-      skin.rightArm.rotation.y = pose.rightArmY;
-      skin.rightArm.rotation.z = pose.rightArmZ;
-
+      skin.head.rotation.set(pose.headPitch, pose.headYaw, pose.headRoll);
+      skin.leftArm.rotation.set(pose.leftArmX, pose.leftArmY, pose.leftArmZ);
+      skin.rightArm.rotation.set(pose.rightArmX, pose.rightArmY, pose.rightArmZ);
       skin.leftLeg.rotation.x = pose.leftLegX;
       skin.leftLeg.rotation.z = pose.leftLegZ;
       skin.rightLeg.rotation.x = pose.rightLegX;
       skin.rightLeg.rotation.z = pose.rightLegZ;
-
       skin.body.rotation.z = 0;
 
       bookViewer.render();
@@ -2454,114 +2382,55 @@
       }
       programarProximoGesto();
     }
-    function configurarSkin() {
-      const skin = viewer.playerObject?.skin;
-      if (skin) {
-        skin.traverse((child) => {
-          if (child.isMesh) {
-            child.material.side = 2;
-            child.material.transparent = true;
-            child.material.alphaTest = 0.1;
-          }
-        });
-        const player = viewer.playerObject;
-        if (player) {
-          player.position.x = 0;
-          player.position.y = 0;
-          player.rotation.y = 0;
-          if (player.skin) {
-            player.skin.leftArm.rotation.x = 0;
-            player.skin.rightArm.rotation.x = 0;
-            player.skin.leftLeg.rotation.x = 0;
-            player.skin.rightLeg.rotation.x = 0;
-            player.skin.head.rotation.y = 0;
-            player.skin.head.rotation.z = 0;
-            player.skin.body.rotation.z = 0;
-          }
+
+    // Configuración común de skin para cualquiera de los 3 visores
+    function prepararSkin(v) {
+      const player = v.playerObject;
+      if (!player?.skin) return;
+      player.skin.traverse((c) => {
+        if (c.isMesh) {
+          c.material.side = 2;
+          c.material.transparent = true;
+          c.material.alphaTest = 0.1;
         }
-        viewer.render();
-        skinLoaded = true;
-        resetToWalking();
-      }
+      });
+      player.position.set(0, 0, 0);
+      player.rotation.y = 0;
+      const s = player.skin;
+      s.leftArm.rotation.x = s.rightArm.rotation.x = 0;
+      s.leftLeg.rotation.x = s.rightLeg.rotation.x = 0;
+      s.head.rotation.y = s.head.rotation.z = s.body.rotation.z = 0;
+      v.render();
     }
-    function cargarSkinEnViewers(nick) {
-      if (!nick) return;
-      if (nick === currentNick && skinLoaded) return;
+
+    async function cargarSkinEn(v, url) {
+      await v.loadSkin(url);
+      prepararSkin(v);
+    }
+
+    async function cargarSkinEnViewers(nick) {
+      if (!nick || (nick === currentNick && skinLoaded)) return;
       currentNick = nick;
       skinLoaded = false;
-      const skinSources = [
-        `https://crafatar.com/skins/${encodeURIComponent(nick)}`,
-        `https://minotar.net/skin/${encodeURIComponent(nick)}`,
-        `https://mc-heads.net/skin/${encodeURIComponent(nick)}`,
+      const n = encodeURIComponent(nick);
+      const urls = [
+        `https://crafatar.com/skins/${n}`,
+        `https://minotar.net/skin/${n}`,
+        `https://mc-heads.net/skin/${n}`,
+        'https://crafatar.com/skins/steve'
       ];
-      let intento = 0;
-      function intentarCargar() {
-        if (intento >= skinSources.length) {
-          viewer.loadSkin('https://crafatar.com/skins/steve').then(() => {
-            configurarSkin();
-            cargarSkinEnDNI('https://crafatar.com/skins/steve');
-            cargarSkinEnLibro('https://crafatar.com/skins/steve');
-          });
-          return;
-        }
-        viewer.loadSkin(skinSources[intento]).then(() => {
-          configurarSkin();
-          cargarSkinEnDNI(skinSources[intento]);
-          cargarSkinEnLibro(skinSources[intento]);
-        }).catch(() => {
-          intento++;
-          intentarCargar();
-        });
-      }
-      intentarCargar();
-    }
-    function cargarSkinEnDNI(skinUrl) {
-      if (!dniViewer) return;
-      dniViewer.loadSkin(skinUrl).then(() => {
-        const skin = dniViewer.playerObject?.skin;
-        if (skin) {
-          skin.traverse((child) => {
-            if (child.isMesh) {
-              child.material.side = 2;
-              child.material.transparent = true;
-              child.material.alphaTest = 0.1;
-            }
-          });
-          const player = dniViewer.playerObject;
-          if (player) {
-            player.position.x = 0;
-            player.position.y = 0;
-            player.rotation.y = 0;
-            if (player.skin) {
-              player.skin.leftArm.rotation.x = 0;
-              player.skin.rightArm.rotation.x = 0;
-              player.skin.leftLeg.rotation.x = 0;
-              player.skin.rightLeg.rotation.x = 0;
-              player.skin.head.rotation.y = 0;
-              player.skin.head.rotation.z = 0;
-              player.skin.body.rotation.z = 0;
-            }
+      for (const url of urls) {
+        try {
+          await cargarSkinEn(viewer, url);
+          skinLoaded = true;
+          resetToWalking();
+          cargarSkinEn(bookViewer, url).then(aplicarPoseABookViewer).catch(() => {});
+          if (mainContent.classList.contains('is-citizen')) {
+            cargarSkinEn(getDniViewer(), url).catch(() => {});
           }
-          dniViewer.render();
-        }
-      });
-    }
-    function cargarSkinEnLibro(skinUrl) {
-      if (!bookViewer) return;
-      bookViewer.loadSkin(skinUrl).then(() => {
-        const skin = bookViewer.playerObject?.skin;
-        if (skin) {
-          skin.traverse((child) => {
-            if (child.isMesh) {
-              child.material.side = 2;
-              child.material.transparent = true;
-              child.material.alphaTest = 0.1;
-            }
-          });
-          aplicarPoseABookViewer();
-          bookViewer.render();
-        }
-      });
+          return;
+        } catch (e) { /* probar siguiente fuente */ }
+      }
     }
 
     function animate(time) {
@@ -2655,39 +2524,32 @@
           programarProximoGesto();
         }
       }
-      if (player.skin) {
-        player.skin.updateMatrixWorld(true);
-      }
+      player.skin.updateMatrixWorld(true);
       viewer.render();
     }
 
     function aplicarModoPasaporte() {
-      const dniContainer = document.getElementById('dniContainer');
-      const downloadWrapper = document.getElementById('downloadDniWrapper');
-      if (dniContainer) dniContainer.style.display = 'none';
-      if (downloadWrapper) downloadWrapper.style.display = 'none';
+      $('book')?.classList.add('passport');
 
-      const bookEl = document.getElementById('book');
-      if (bookEl) bookEl.classList.add('passport');
+      setText('coverTitle', 'PASAPORTE LOMBARDO');
+      setText('coverSubtitle', 'REGISTRO DE EXTRANJEROS');
 
-      document.getElementById('coverTitle').textContent = 'PASAPORTE LOMBARDO';
-      document.getElementById('coverSubtitle').textContent = 'REGISTRO DE EXTRANJEROS';
+      setText('innerCoverTitle', 'PASAPORTE LOMBARDO');
+      setText('innerCoverSubtitle', 'Documento Oficial de Extranjero');
 
-      document.getElementById('innerCoverTitle').textContent = 'PASAPORTE LOMBARDO';
-      document.getElementById('innerCoverSubtitle').textContent = 'Documento Oficial de Extranjero';
-
-      document.getElementById('bookHeaderTitle').textContent = 'PASAPORTE LOMBARDO';
-      document.getElementById('bookHeaderSubtitle').textContent = 'REGISTRO DE EXTRANJERO';
-      document.getElementById('bookHeaderSmall').textContent = 'INDOCUMENTADO';
+      setText('bookHeaderTitle', 'PASAPORTE LOMBARDO');
+      setText('bookHeaderSubtitle', 'REGISTRO DE EXTRANJERO');
+      setText('bookHeaderSmall', 'INDOCUMENTADO');
 
       const infoTitle = document.querySelector('#page-1 .back .section-title');
       if (infoTitle) infoTitle.innerHTML = '<i class="fas fa-id-card"></i> INFORMACIÓN DEL EXTRANJERO';
 
-      const motto = document.getElementById('bookMotto');
+      const motto = $('bookMotto');
       if (motto) motto.innerHTML = '<i class="fas fa-passport"></i> POR LA LIGA · CONTROL MIGRATORIO <i class="fas fa-passport"></i>';
 
-      document.getElementById('bookEndTitle').textContent = 'FIN';
-      document.getElementById('bookEndSubtitle').innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
+      setText('bookEndTitle', 'FIN');
+      const endSub = $('bookEndSubtitle');
+      if (endSub) endSub.innerHTML = '<i class="fas fa-passport"></i> PASAPORTE LOMBARDO <i class="fas fa-passport"></i>';
     }
 
     // ============================================================
@@ -2746,9 +2608,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    /**
-     * Construye el HTML de un fragmento de antecedente.
-     */
     function renderFragmento(a, textoTrozo, continuacion, esUltimo) {
       const titulo = escapeHtml(a.titulo || 'Sin título') + (continuacion ? ' (cont.)' : '');
       const fecha  = escapeHtml(a.fecha || '—');
@@ -2768,8 +2627,9 @@
 
     /**
      * Pagina una lista de antecedentes en `contEl` y devuelve los que NO cupieron.
-     * Si un antecedente no cabe entero, se parte por palabras y el resto
-     * se devuelve como continuación para la siguiente cara/hoja.
+     * Si un antecedente no cabe entero, se parte por palabras (búsqueda binaria)
+     * y el resto se devuelve como continuación para la siguiente cara/hoja.
+     * IMPORTANTE: requiere que el contenedor sea visible (para medir alturas).
      */
     function paginarAntecedentesEnContenedor(contEl, lista) {
       if (!contEl || !Array.isArray(lista) || lista.length === 0) return [];
@@ -2816,14 +2676,15 @@
           break;
         }
 
-        let mejorCorte = 0;
-        for (let i = 0; i < palabras.length; i++) {
-          textoEl.textContent = palabras.slice(0, i + 1).join('');
-          if (contEl.scrollHeight > contEl.clientHeight) {
-            break;
-          }
-          mejorCorte = i + 1;
+        // Búsqueda binaria del mayor número de "palabras" que caben
+        let lo = 0, hi = palabras.length;
+        while (lo < hi) {
+          const mid = (lo + hi + 1) >> 1;
+          textoEl.textContent = palabras.slice(0, mid).join('');
+          if (contEl.scrollHeight > contEl.clientHeight) hi = mid - 1;
+          else lo = mid;
         }
+        const mejorCorte = lo;
 
         if (mejorCorte === 0) {
           contEl.removeChild(bloqueParcial);
@@ -2894,13 +2755,13 @@
     }
 
     function construirPaginasAntecedentes(listaAntecedentes) {
-      const container = document.getElementById('book');
+      const container = $('book');
       if (!container) return;
 
       document.querySelectorAll('.page-notas-dinamica').forEach(el => el.remove());
 
-      const page3 = document.getElementById('page-3');
-      const bookObservations = document.getElementById('bookObservations');
+      const page3 = $('page-3');
+      const bookObservations = $('bookObservations');
       if (!page3 || !bookObservations) return;
 
       bookObservations.innerHTML = '';
@@ -2915,7 +2776,7 @@
         return;
       }
 
-      bookObservations.offsetHeight;
+      bookObservations.offsetHeight; // fuerza layout
 
       restantes = paginarAntecedentesEnContenedor(bookObservations, restantes);
 
@@ -2939,11 +2800,10 @@
         const frontLines = pageEl.querySelector('.front .obs-lines');
         restantes = paginarAntecedentesEnContenedor(frontLines, restantes);
 
+        const backLines = pageEl.querySelector('.back .obs-lines');
         if (restantes.length > 0) {
-          const backLines = pageEl.querySelector('.back .obs-lines');
           restantes = paginarAntecedentesEnContenedor(backLines, restantes);
         } else {
-          const backLines = pageEl.querySelector('.back .obs-lines');
           backLines.innerHTML = '<div class="obs-lines empty">— Sin más observaciones —</div>';
         }
       }
@@ -2974,6 +2834,19 @@
       });
     }
 
+    function pintarBarras(keys, valores) {
+      keys.forEach((k) => {
+        const c = $('book' + k[0].toUpperCase() + k.slice(1));
+        if (!c) return;
+        const val = valores[k] || 0;
+        c.replaceChildren(...Array.from({ length: 10 }, (_, i) => {
+          const b = document.createElement('i');
+          if (i < val) b.className = 'fill';
+          return b;
+        }));
+      });
+    }
+
     function actualizarUI(data) {
       const name = data.name || 'SIN REGISTRO';
       const alias = data.alias || '—';
@@ -2991,8 +2864,6 @@
       const stats = data.stats || {};
       const competencies = data.competencies || {};
 
-      // ====== ESTADO CIVIL (marital) ======
-      // El expediente guarda el estado civil bajo `marital` (u otras claves posibles)
       const estadoCivil =
         (data.marital && String(data.marital).trim()) ||
         (data.estadoCivil && String(data.estadoCivil).trim()) ||
@@ -3001,126 +2872,88 @@
         '—';
 
       const listaAntecedentes = normalizarAntecedentes(data.antecedentes);
-
       const inmigrante = esInmigrante(data);
 
-      let clanDisplay;
-      if (clanRaw && String(clanRaw).trim() !== '') {
-        clanDisplay = clanRaw;
+      const clanDisplay = (clanRaw && String(clanRaw).trim() !== '')
+        ? clanRaw
+        : (inmigrante ? 'SIN CLAN' : 'LIGA LOMBARDA');
+
+      // ---- Modo ciudadano / pasaporte (antes de mostrar nada) ----
+      mainContent.classList.toggle('is-citizen', !inmigrante);
+      mainContent.classList.toggle('is-passport', inmigrante);
+
+      const fechaFinal = formatearFechaEmision(data.createdAt) || (() => {
+        const hoy = new Date();
+        return String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
+      })();
+
+      // ---- Panel superior ----
+      setText('displayName', name);
+      setText('displayAlias', '★ "' + alias + '"');
+      const clanEl = $('displayClan');
+      if (clanEl) clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${escapeHtml(clanDisplay)}`;
+      setText('displayRank', rank);
+      setText('displayNationality', nationality);
+      setText('displayOccupation', occupation);
+      setText('displayStatus', status);
+
+      // ---- DNI (solo ciudadanos) o pasaporte ----
+      if (inmigrante) {
+        aplicarModoPasaporte();
       } else {
-        clanDisplay = inmigrante ? 'SIN CLAN' : 'LIGA LOMBARDA';
+        setText('dniName', name);
+        setText('dniAlias', alias);
+        setText('dniRank', rank);
+        setText('dniNationality', nationality);
+        setText('dniOccupation', occupation);
+        setText('dniBirthday', birthday);
+        setText('dniGender', gender);
+        setText('dniSpecies', species);
+        setText('dniFileNumber', fileNumber);
+        setText('dniDate', fechaFinal);
+        inicializarWatermarkVista();
       }
 
-      document.getElementById('displayName').textContent = name;
-      document.getElementById('displayAlias').textContent = '★ "' + alias + '"';
+      // ---- Librito ----
+      setText('bookName', name);
+      setText('bookAlias', alias);
+      setText('bookRank', rank);
+      setText('bookNationality', nationality);
+      setText('bookOccupation', occupation);
+      setText('bookBirthday', birthday);
+      setText('bookGender', gender);
+      setText('bookSpecies', species);
+      setText('bookDescription', description);
+      setText('bookFileNumber', fileNumber);
+      setText('bookCertDate', fechaFinal);
+      setText('bookLastVerification', fechaFinal);
+      setText('bookMaritalFront', estadoCivil);
+      setText('bookMarital', estadoCivil);
+      setText('bookClan', clanDisplay);
 
-      const clanEl = document.getElementById('displayClan');
-      clanEl.innerHTML = `<i class="fas fa-users"></i> CLAN: ${escapeHtml(clanDisplay)}`;
-
-      document.getElementById('displayRank').textContent = rank;
-      document.getElementById('displayNationality').textContent = nationality;
-      document.getElementById('displayOccupation').textContent = occupation;
-      document.getElementById('displayStatus').textContent = status;
-
-      const fechaEmisionFormateada = formatearFechaEmision(data.createdAt);
-      const hoy = new Date();
-      const fechaFallback = String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
-      const fechaFinal = fechaEmisionFormateada || fechaFallback;
-
-      if (!inmigrante) {
-        document.getElementById('dniName').textContent = name;
-        document.getElementById('dniAlias').textContent = alias;
-        document.getElementById('dniRank').textContent = rank;
-        document.getElementById('dniNationality').textContent = nationality;
-        document.getElementById('dniOccupation').textContent = occupation;
-        document.getElementById('dniBirthday').textContent = birthday;
-        document.getElementById('dniGender').textContent = gender;
-        document.getElementById('dniSpecies').textContent = species;
-        document.getElementById('dniFileNumber').textContent = fileNumber;
-      }
-
-      const dniDateEl = document.getElementById('dniDate');
-      if (dniDateEl) dniDateEl.textContent = fechaFinal;
-
-      document.getElementById('bookName').textContent = name;
-      document.getElementById('bookAlias').textContent = alias;
-      document.getElementById('bookRank').textContent = rank;
-      document.getElementById('bookNationality').textContent = nationality;
-      document.getElementById('bookOccupation').textContent = occupation;
-      document.getElementById('bookBirthday').textContent = birthday;
-      document.getElementById('bookGender').textContent = gender;
-      document.getElementById('bookSpecies').textContent = species;
-      document.getElementById('bookDescription').textContent = description;
-      document.getElementById('bookFileNumber').textContent = fileNumber;
-      document.getElementById('bookCertDate').textContent = fechaFinal;
-      document.getElementById('bookLastVerification').textContent = fechaFinal;
-
-      // ====== ESTADO CIVIL en el librito ======
-      const bookMaritalFrontEl = document.getElementById('bookMaritalFront');
-      if (bookMaritalFrontEl) bookMaritalFrontEl.textContent = estadoCivil;
-
-      const bookMaritalEl = document.getElementById('bookMarital');
-      if (bookMaritalEl) bookMaritalEl.textContent = estadoCivil;
-
-      const bookStatusBadge = document.getElementById('bookStatusBadge');
-      const bookAuditJudicial = document.getElementById('bookAuditJudicial');
-
+      const bookStatusBadge = $('bookStatusBadge');
       if (listaAntecedentes.length > 0) {
         if (bookStatusBadge) {
           bookStatusBadge.classList.add('warn');
           bookStatusBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> CON ANTECEDENTES REGISTRADOS';
         }
-        if (bookAuditJudicial) {
-          bookAuditJudicial.textContent = `Se registran ${listaAntecedentes.length} antecedente(s).`;
-        }
+        setText('bookAuditJudicial', `Se registran ${listaAntecedentes.length} antecedente(s).`);
       } else {
         if (bookStatusBadge) {
           bookStatusBadge.classList.remove('warn');
           bookStatusBadge.innerHTML = '<i class="fas fa-check-circle"></i> SIN ANTECEDENTES';
         }
-        if (bookAuditJudicial) {
-          bookAuditJudicial.textContent = 'No se registran sanciones.';
-        }
-      }
-
-      const bookClanEl = document.getElementById('bookClan');
-      if (bookClanEl) {
-        bookClanEl.textContent = clanDisplay;
-      }
-
-      if (inmigrante) {
-        aplicarModoPasaporte();
+        setText('bookAuditJudicial', 'No se registran sanciones.');
       }
 
       aplicarPoseEnLibro(data);
 
-      const statKeys = ['strength','perception','endurance','charisma','intelligence','agility','luck'];
-      statKeys.forEach((key) => {
-        const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
-        if (container) {
-          const val = stats[key] || 0;
-          container.innerHTML = '';
-          for (let j = 1; j <= 10; j++) {
-            const box = document.createElement('i');
-            if (j <= val) box.classList.add('fill');
-            container.appendChild(box);
-          }
-        }
-      });
+      pintarBarras(['strength','perception','endurance','charisma','intelligence','agility','luck'], stats);
+      pintarBarras(['combat','building','farming','redstone'], competencies);
 
-      const compKeys = ['combat','building','farming','redstone'];
-      compKeys.forEach((key) => {
-        const container = document.getElementById('book' + key.charAt(0).toUpperCase() + key.slice(1));
-        if (container) {
-          const val = competencies[key] || 0;
-          container.innerHTML = '';
-          for (let j = 1; j <= 10; j++) {
-            const box = document.createElement('i');
-            if (j <= val) box.classList.add('fill');
-            container.appendChild(box);
-          }
-        }
-      });
+      // Ya se sabe el tipo de documento: se muestra la página.
+      // (Debe ser visible ANTES de paginar antecedentes, que mide alturas.)
+      revelarContenido();
 
       if (minecraftNick) {
         cargarSkinEnViewers(minecraftNick);
@@ -3140,6 +2973,7 @@
     let reintentoSinExpediente = 0;
 
     function mostrarError(icono, titulo, mensaje) {
+      authOverlay.classList.add('hidden');
       mainContent.innerHTML = `
         <div class="error-state">
           <i class="fas ${icono}"></i>
@@ -3160,13 +2994,11 @@
       if (unsubscribeExpediente) unsubscribeExpediente();
 
       const expedienteRef = ref(database, `expedientes/${id}`);
-      console.log(`🔄 Escuchando expedientes/${id} en vivo...`);
 
       unsubscribeExpediente = onValue(expedienteRef, (snapshot) => {
         if (!snapshot.exists()) {
           if (reintentoSinExpediente < 3) {
             reintentoSinExpediente++;
-            console.warn(`⏳ Expediente aún no sincronizado, reintento ${reintentoSinExpediente}/3...`);
             setTimeout(() => {
               if (unsubscribeExpediente) unsubscribeExpediente();
               cargarExpediente(id);
@@ -3183,16 +3015,10 @@
         const inm = esInmigrante(data);
 
         const hash = JSON.stringify(data);
-        if (hash === ultimoHashData) {
-          console.log('ℹ️ Sin cambios en el expediente, se omite re-render.');
-          return;
-        }
+        if (hash === ultimoHashData) return;
         ultimoHashData = hash;
 
-        console.log('📥 Datos recibidos de Firebase:', data);
-
         if (ultimoEsInmigrante !== null && ultimoEsInmigrante !== inm) {
-          console.log('🔁 Cambió tipo ciudadano/inmigrante, recargando página...');
           window.location.reload();
           return;
         }
@@ -3202,6 +3028,8 @@
           actualizarUI(data);
         } catch (e) {
           console.error('Error al mostrar el expediente:', e);
+        } finally {
+          revelarContenido();
         }
       }, (error) => {
         console.error('Error al cargar expediente:', error);
@@ -3219,7 +3047,7 @@
 
     function initBookPagination() {
       pages = document.querySelectorAll('.page');
-      book = document.getElementById('book');
+      book = $('book');
       totalPages = pages.length;
 
       if (currentStep > totalPages - 1) currentStep = totalPages - 1;
@@ -3235,13 +3063,9 @@
               const clickX = e.clientX - rect.left;
               const mitad = rect.width / 2;
               if (clickX > mitad) {
-                if (currentStep === index) {
-                  window.nextPage();
-                }
+                if (currentStep === index) window.nextPage();
               } else {
-                if (currentStep === index + 1) {
-                  window.prevPage();
-                }
+                if (currentStep === index + 1) window.prevPage();
               }
             });
           }
@@ -3266,8 +3090,8 @@
         } else {
           book.classList.remove('open');
         }
-        const prevBtn = document.getElementById('prevBookBtn');
-        const nextBtn = document.getElementById('nextBookBtn');
+        const prevBtn = $('prevBookBtn');
+        const nextBtn = $('nextBookBtn');
         if (prevBtn) prevBtn.disabled = (currentStep <= 0);
         if (nextBtn) nextBtn.disabled = (currentStep >= totalPages - 1);
       });
@@ -3287,7 +3111,7 @@
     };
 
     // ============================================================
-    // WATERMARK EN VIVO
+    // WATERMARK (solo ciudadanos)
     // ============================================================
     function dibujarCruzWatermark(ctx, ancho, alto, color, alpha) {
       ctx.save();
@@ -3314,45 +3138,57 @@
     }
 
     function inicializarWatermarkVista() {
-      const wm = document.getElementById('dniWatermark');
+      let wm = $('dniWatermark');
       if (!wm) return;
       if (wm.tagName !== 'CANVAS') {
         const canvasWm = document.createElement('canvas');
         canvasWm.id = 'dniWatermark';
         canvasWm.className = 'dni-watermark';
         wm.parentNode.replaceChild(canvasWm, wm);
+        wm = canvasWm;
       }
-      const canvasWm = document.getElementById('dniWatermark');
-      canvasWm.width = 750;
-      canvasWm.height = 380;
-      dibujarCruzWatermark(canvasWm.getContext('2d'), 750, 380, '#500a0e', 0.06);
-      canvasWm.style.position = 'absolute';
-      canvasWm.style.top = '0';
-      canvasWm.style.left = '0';
-      canvasWm.style.width = '100%';
-      canvasWm.style.height = '100%';
-      canvasWm.style.zIndex = '1';
-      canvasWm.style.pointerEvents = 'none';
+      wm.width = 750;
+      wm.height = 380;
+      dibujarCruzWatermark(wm.getContext('2d'), 750, 380, '#500a0e', 0.06);
+      Object.assign(wm.style, {
+        position: 'absolute', top: '0', left: '0',
+        width: '100%', height: '100%',
+        zIndex: '1', pointerEvents: 'none'
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', inicializarWatermarkVista);
-    inicializarWatermarkVista();
+    // ============================================================
+    // DESCARGA DEL DNI (html2canvas se carga solo al descargar)
+    // ============================================================
+    function loadHtml2Canvas() {
+      return new Promise((resolve, reject) => {
+        if (typeof html2canvas !== 'undefined') {
+          resolve();
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
 
-    // ============================================================
-    // DESCARGA DEL DNI
-    // ============================================================
-    const downloadBtn = document.getElementById('downloadDniBtn');
+    const downloadBtn = $('downloadDniBtn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async function() {
         try {
-          const dniCard = document.getElementById('dniCard');
+          await loadHtml2Canvas();
+
+          const dniCard = $('dniCard');
           if (!dniCard) return;
 
-          if (dniViewer) dniViewer.render();
+          const dv = getDniViewer();
+          dv.render();
 
           const skinDataURL = await new Promise((resolve) => {
             requestAnimationFrame(() => {
-              if (dniViewer) dniViewer.render();
+              dv.render();
               try {
                 resolve(dniCanvas.toDataURL('image/png'));
               } catch (e) {
@@ -3389,14 +3225,7 @@
               dniCanvasClone.parentNode.replaceChild(img, dniCanvasClone);
             } else {
               const placeholder = document.createElement('div');
-              placeholder.style.width = '100%';
-              placeholder.style.height = '100%';
-              placeholder.style.background = '#e8e4da';
-              placeholder.style.display = 'flex';
-              placeholder.style.alignItems = 'center';
-              placeholder.style.justifyContent = 'center';
-              placeholder.style.color = '#999';
-              placeholder.style.fontSize = '10px';
+              placeholder.style.cssText = 'width:100%;height:100%;background:#e8e4da;display:flex;align-items:center;justify-content:center;color:#999;font-size:10px;';
               placeholder.textContent = 'SIN FOTO';
               dniCanvasClone.parentNode.replaceChild(placeholder, dniCanvasClone);
             }
@@ -3425,7 +3254,7 @@
           );
 
           const link = document.createElement('a');
-          link.download = `DNI_${document.getElementById('dniName').textContent || 'expediente'}.png`;
+          link.download = `DNI_${$('dniName').textContent || 'expediente'}.png`;
           link.href = canvasCaptured.toDataURL('image/png');
           link.click();
           showToast('✅ DNI descargado correctamente', 'success', 3000);
@@ -3436,39 +3265,26 @@
       });
     }
 
-    function loadHtml2Canvas() {
-      return new Promise((resolve, reject) => {
-        if (typeof html2canvas !== 'undefined') {
-          resolve();
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.onload = resolve;
-        script.onerror = reject;
-        document.head.appendChild(script);
-      });
-    }
-    loadHtml2Canvas().catch(() => console.warn('html2canvas no cargado'));
-
+    // ============================================================
+    // ARRANQUE
+    // El overlay "VERIFICANDO ACCESO..." se queda hasta que llegan
+    // los datos y se sabe si es ciudadano o inmigrante.
+    // ============================================================
     onAuthStateChanged(auth, async (user) => {
-      authOverlay.classList.add('hidden');
       if (!user) {
+        authOverlay.classList.add('hidden');
         showToast('🔐 Debes iniciar sesión para ver el expediente', 'error', 2000);
         setTimeout(() => {
           window.location.href = 'login.html';
         }, 500);
         return;
       }
-      mainContent.style.display = 'block';
       renderNav(user);
       initBookPagination();
       cargarExpediente(getExpedienteId());
-      console.log(`📄 Expediente - Usuario: ${user.email}`);
     });
 
     requestAnimationFrame(animate);
-    console.log('📄 Página de expediente lista');
   </script>
 
 </body>
