@@ -478,6 +478,11 @@
             min-width: 160px;
         }
         .filter-select:focus { border-color: var(--accent); }
+        .filter-select:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background: #efefef;
+        }
         .refresh-btn {
             border: 2px solid var(--accent-dark);
             background: var(--accent);
@@ -1175,15 +1180,26 @@
                     <i class="fas fa-search"></i>
                     <input type="text" id="searchInput" placeholder="Buscar por nombre, alias, nick, expediente..." />
                 </div>
+
+                <!-- FILTRO 1: Todos / Liga / Inmigrantes -->
                 <select class="filter-select" id="filterTipo">
-                    <option value="">Todos los tipos</option>
-                    <option value="ciudadano">Ciudadanos</option>
+                    <option value="">Todos</option>
+                    <option value="ciudadano">Liga</option>
                     <option value="inmigrante">Inmigrantes</option>
                 </select>
-                <!-- ⬇️ Filtro por RANGO / CLAN (reemplaza al de estado) -->
-                <select class="filter-select" id="filterRango">
-                    <option value="">Todos los rangos / clanes</option>
+
+                <!-- FILTRO 2: Todos / Con antecedentes / Sin antecedentes -->
+                <select class="filter-select" id="filterAntec">
+                    <option value="">Todos (antecedentes)</option>
+                    <option value="con">Con antecedentes</option>
+                    <option value="sin">Sin antecedentes</option>
                 </select>
+
+                <!-- FILTRO 3: depende del filtro 1 (rangos si Liga, clanes si Inmigrantes) -->
+                <select class="filter-select" id="filterRango" disabled>
+                    <option value="">Elegí Liga o Inmigrantes</option>
+                </select>
+
                 <button class="refresh-btn" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i> RECARGAR
                 </button>
@@ -1343,6 +1359,7 @@
 
         const searchInput = document.getElementById('searchInput');
         const filterTipo = document.getElementById('filterTipo');
+        const filterAntec = document.getElementById('filterAntec');
         const filterRango = document.getElementById('filterRango');
         const refreshBtn = document.getElementById('refreshBtn');
 
@@ -1659,26 +1676,50 @@
         }
 
         // =========================================================
-        // POBLAR FILTRO DE RANGOS/CLANES
+        // FILTRO 3: poblar rangos (Liga) o clanes (Inmigrantes)
+        // según lo elegido en el filtro 1
         // =========================================================
         function poblarFiltroRango() {
+            const tipo = filterTipo.value;
             const valorActual = filterRango.value;
 
-            // Recolectar todos los rangos y clanes únicos
-            const setRangos = new Set();
+            // Si no se eligió Liga ni Inmigrantes, el filtro queda deshabilitado
+            if (tipo !== 'ciudadano' && tipo !== 'inmigrante') {
+                filterRango.innerHTML = `<option value="">Elegí Liga o Inmigrantes</option>`;
+                filterRango.value = '';
+                filterRango.disabled = true;
+                return;
+            }
+
+            const esInm = tipo === 'inmigrante';
+            const base = esInm ? CLANES_INMIGRANTES : RANGOS_LIGA;
+
+            // Opciones base + valores existentes en los expedientes de ese tipo
+            const setValores = new Set(base);
             expedientesData.forEach(({ data }) => {
+                if (esInmigrante(data) !== esInm) return;
                 const r = getRangoOClan(data);
-                if (r && String(r).trim()) setRangos.add(String(r).trim());
+                if (r && String(r).trim()) setValores.add(String(r).trim());
             });
 
-            const valores = Array.from(setRangos).sort((a, b) => a.localeCompare(b, 'es'));
+            // Mantiene el orden de las constantes y agrega al final los extras
+            const extras = Array.from(setValores)
+                .filter(v => !base.includes(v))
+                .sort((a, b) => a.localeCompare(b, 'es'));
+            const valores = [...base, ...extras];
 
-            let html = `<option value="">Todos los rangos / clanes</option>`;
+            let html = `<option value="">${esInm ? 'Todos los clanes' : 'Todos los rangos'}</option>`;
             valores.forEach(v => {
                 const sel = (v === valorActual) ? 'selected' : '';
                 html += `<option value="${escapeHtml(v)}" ${sel}>${escapeHtml(v)}</option>`;
             });
             filterRango.innerHTML = html;
+            filterRango.disabled = false;
+
+            // Si el valor que estaba seleccionado ya no existe, se resetea
+            if (valorActual && !valores.includes(valorActual)) {
+                filterRango.value = '';
+            }
         }
 
         // =========================================================
@@ -1744,14 +1785,20 @@
         function getExpedientesFiltrados() {
             const q = searchInput.value.trim().toLowerCase();
             const tipo = filterTipo.value;
+            const antecFiltro = filterAntec.value;
             const rangoFiltro = filterRango.value;
 
             return expedientesData.filter(({ data }) => {
+                // Filtro 1: Liga / Inmigrantes
                 if (tipo === 'ciudadano' && esInmigrante(data)) return false;
                 if (tipo === 'inmigrante' && !esInmigrante(data)) return false;
 
-                // ⬇️ Filtro por rango / clan
-                if (rangoFiltro) {
+                // Filtro 2: Con / sin antecedentes
+                if (antecFiltro === 'con' && !tieneNotas(data)) return false;
+                if (antecFiltro === 'sin' && tieneNotas(data)) return false;
+
+                // Filtro 3: rango (Liga) o clan (Inmigrantes)
+                if (rangoFiltro && (tipo === 'ciudadano' || tipo === 'inmigrante')) {
                     const r = getRangoOClan(data);
                     if (String(r).trim() !== rangoFiltro) return false;
                 }
@@ -2449,7 +2496,15 @@
         // FILTROS / BÚSQUEDA
         // =========================================================
         searchInput.addEventListener('input', renderExpedientes);
-        filterTipo.addEventListener('change', renderExpedientes);
+
+        // Al cambiar el filtro 1, se reinicia y repuebla el filtro 3
+        filterTipo.addEventListener('change', () => {
+            filterRango.value = '';
+            poblarFiltroRango();
+            renderExpedientes();
+        });
+
+        filterAntec.addEventListener('change', renderExpedientes);
         filterRango.addEventListener('change', renderExpedientes);
 
         refreshBtn.addEventListener('click', () => {
