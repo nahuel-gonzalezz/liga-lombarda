@@ -683,7 +683,7 @@
             justify-content: center;
             align-items: flex-start;
             gap: clamp(14px, 4vw, 28px);
-            padding: 46px 8px 10px;
+            padding: 46px 8px 4px;
         }
         .warn-item {
             display: flex;
@@ -701,39 +701,6 @@
         }
         .warn-box[data-state="on"] + .warn-label { color: var(--text-dark); }
         .warn-box[data-state="dim"] + .warn-label { color: #b5b5b9; }
-        .warn-hint {
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-soft);
-            margin: 4px 0 14px;
-        }
-        .warn-selected {
-            background: var(--warning-bg);
-            border: 2px solid rgba(138, 106, 26, 0.2);
-            border-radius: 14px;
-            padding: 14px 16px;
-        }
-        .warn-selected-title {
-            font-weight: 800;
-            font-size: 12px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 6px;
-        }
-        .warn-selected-text {
-            font-family: "Libre Baskerville", Georgia, serif;
-            font-size: 13px;
-            line-height: 1.7;
-            color: var(--text-dark);
-        }
-        .warn-selected-text.empty {
-            font-family: "Plus Jakarta Sans", sans-serif;
-            font-style: italic;
-            font-size: 12px;
-            color: var(--text-soft);
-        }
         .warn-box {
             --warn-size: 64px;
             position: relative;
@@ -1534,8 +1501,6 @@
             </div>
             <div class="modal-body">
                 <div class="warn-picker" id="warnPicker" role="radiogroup" aria-label="Nivel de warns"></div>
-                <div class="warn-hint">Elegí un nivel: los anteriores quedan apagados · tocá de nuevo el activo para limpiar</div>
-                <div class="warn-selected" id="warnSelected"></div>
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-cancel" id="warnsModalCancel">
@@ -1599,7 +1564,6 @@
         const warnsModal = document.getElementById('warnsModal');
         const warnsModalSubtitle = document.getElementById('warnsModalSubtitle');
         const warnPicker = document.getElementById('warnPicker');
-        const warnSelected = document.getElementById('warnSelected');
         const warnsModalCancel = document.getElementById('warnsModalCancel');
         const warnsModalSave = document.getElementById('warnsModalSave');
 
@@ -1807,7 +1771,7 @@
                 </div>`).join('');
         }
 
-        // Actualiza estados (on / dim / off) y el panel de descripción sin reconstruir los botones
+        // Actualiza estados (on / dim / off) sin reconstruir los botones
         function updateWarnPicker() {
             warnPicker.querySelectorAll('.warn-box').forEach(b => {
                 const level = parseInt(b.dataset.level, 10);
@@ -1815,14 +1779,6 @@
                 b.dataset.state = state;
                 b.setAttribute('aria-checked', level === pendingWarnLevel ? 'true' : 'false');
             });
-            if (pendingWarnLevel === 0) {
-                warnSelected.innerHTML = `<div class="warn-selected-text empty">Sin warns. Elegí un nivel para ver su descripción.</div>`;
-            } else {
-                const w = WARN_LEVELS[pendingWarnLevel - 1];
-                warnSelected.innerHTML = `
-                    <div class="warn-selected-title">${escapeHtml(w.title)}</div>
-                    <div class="warn-selected-text">${escapeHtml(w.desc)}</div>`;
-            }
         }
 
         function abrirWarnsModal(id) {
