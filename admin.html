@@ -512,10 +512,10 @@
             overflow: hidden;
         }
 
-        /* Columnas: nombre | expediente | WARNS | tipo | rango/clan | estado | acciones */
+        /* Columnas: nombre | expediente | tipo | rango/clan | estado | acciones */
         .expedientes-header {
             display: grid;
-            grid-template-columns: 2.2fr 1fr 168px 1fr 1fr 1fr 200px;
+            grid-template-columns: 2.4fr 1fr 1fr 1fr 1fr 240px;
             gap: 12px;
             padding: 14px 22px;
             background: var(--accent-bg);
@@ -530,7 +530,7 @@
 
         .expediente-row {
             display: grid;
-            grid-template-columns: 2.2fr 1fr 168px 1fr 1fr 1fr 200px;
+            grid-template-columns: 2.4fr 1fr 1fr 1fr 1fr 240px;
             gap: 12px;
             padding: 14px 22px;
             align-items: center;
@@ -628,6 +628,11 @@
         .cell-name small.has-notes i {
             color: #8a6a1a;
         }
+        .cell-name small.has-warns {
+            color: var(--danger);
+            font-weight: 700;
+        }
+        .cell-name small.has-warns i { color: var(--danger); }
 
         .cell-actions {
             display: flex;
@@ -656,6 +661,8 @@
         .action-btn.delete:hover { background: #8b1a1a; color: white; transform: translateY(-2px); }
         .action-btn.download { background: rgba(26, 74, 42, 0.1); color: #1a4a2a; }
         .action-btn.download:hover { background: #1a4a2a; color: white; transform: translateY(-2px); }
+        .action-btn.warns { background: rgba(199, 120, 0, 0.12); color: #c77800; }
+        .action-btn.warns:hover { background: #c77800; color: white; transform: translateY(-2px); }
 
         /* =========================================================
            WARNS (4 caras de peligro)
@@ -667,20 +674,65 @@
             overflow: hidden;
         }
 
-        .cell-warns {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            overflow: visible;
-        }
-        .warn-group {
+        .warn-picker {
             display: flex;
             flex-wrap: nowrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: clamp(14px, 4vw, 28px);
+            padding: 46px 8px 10px;
+        }
+        .warn-item {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 9px;
+            gap: 12px;
+        }
+        .warn-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-soft);
+            text-align: center;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .warn-box[data-state="on"] + .warn-label { color: var(--text-dark); }
+        .warn-box[data-state="dim"] + .warn-label { color: #b5b5b9; }
+        .warn-hint {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-soft);
+            margin: 4px 0 14px;
+        }
+        .warn-selected {
+            background: var(--warning-bg);
+            border: 2px solid rgba(138, 106, 26, 0.2);
+            border-radius: 14px;
+            padding: 14px 16px;
+        }
+        .warn-selected-title {
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+        .warn-selected-text {
+            font-family: "Libre Baskerville", Georgia, serif;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-dark);
+        }
+        .warn-selected-text.empty {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-style: italic;
+            font-size: 12px;
+            color: var(--text-soft);
         }
         .warn-box {
-            --warn-size: 30px;
+            --warn-size: 64px;
             position: relative;
             flex-shrink: 0;
             width: var(--warn-size);
@@ -1123,6 +1175,12 @@
         }
         .modal-btn-notes:hover { filter: brightness(1.1); transform: translateY(-2px); }
         .modal-btn-notes:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .modal-btn-warns {
+            background: #c77800;
+            color: white;
+            border: 2px solid #9a5d00;
+        }
+        .modal-btn-warns:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
         .danger-icon {
             text-align: center;
@@ -1156,8 +1214,7 @@
                 gap: 10px;
                 padding: 16px 18px;
             }
-            .expediente-row .cell-text::before,
-            .expediente-row .cell-warns::before {
+            .expediente-row .cell-text::before {
                 content: attr(data-label) ': ';
                 font-weight: 800;
                 color: var(--text-soft);
@@ -1166,7 +1223,6 @@
                 letter-spacing: 1px;
                 margin-right: 4px;
             }
-            .cell-warns { padding: 6px 0; }
             .cell-actions {
                 justify-content: flex-start;
                 margin-top: 8px;
@@ -1218,8 +1274,9 @@
             .modal-footer { flex-direction: column-reverse; }
             .modal-btn { justify-content: center; width: 100%; }
 
-            .cell-warns { flex-wrap: wrap; }
-            .warn-group { gap: 12px; }
+            .warn-picker { gap: 10px; padding: 40px 0 8px; }
+            .warn-box { --warn-size: 52px; }
+            .warn-label { font-size: 10px; }
         }
     </style>
 </head>
@@ -1388,6 +1445,9 @@
                 <button class="modal-btn modal-btn-notes" id="viewModalEditNotes">
                     <i class="fas fa-sticky-note"></i> EDITAR ANTECEDENTES
                 </button>
+                <button class="modal-btn modal-btn-warns" id="viewModalEditWarns">
+                    <i class="fas fa-triangle-exclamation"></i> EDITAR WARN
+                </button>
                 <button class="modal-btn modal-btn-primary" id="viewModalOpenDoc">
                     <i class="fas fa-external-link-alt"></i> VER DOCUMENTO
                 </button>
@@ -1461,6 +1521,29 @@
         </div>
     </div>
 
+    <!-- ===== MODAL WARNS ===== -->
+    <div class="modal-overlay" id="warnsModal">
+        <div class="modal modal-md">
+            <div class="modal-header">
+                <h2><i class="fas fa-triangle-exclamation"></i> Editar Warn</h2>
+                <p id="warnsModalSubtitle">—</p>
+            </div>
+            <div class="modal-body">
+                <div class="warn-picker" id="warnPicker" role="radiogroup" aria-label="Nivel de warns"></div>
+                <div class="warn-hint">Elegí un nivel: los anteriores quedan apagados · tocá de nuevo el activo para limpiar</div>
+                <div class="warn-selected" id="warnSelected"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="warnsModalCancel">
+                    <i class="fas fa-times"></i> CANCELAR
+                </button>
+                <button class="modal-btn modal-btn-primary" id="warnsModalSave">
+                    <i class="fas fa-save"></i> GUARDAR
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="deleteModal">
         <div class="modal modal-sm">
             <div class="modal-body">
@@ -1509,6 +1592,12 @@
         const toast = document.getElementById('toast');
         const expedientesContainer = document.getElementById('expedientesContainer');
         const warnTip = document.getElementById('warnTip');
+        const warnsModal = document.getElementById('warnsModal');
+        const warnsModalSubtitle = document.getElementById('warnsModalSubtitle');
+        const warnPicker = document.getElementById('warnPicker');
+        const warnSelected = document.getElementById('warnSelected');
+        const warnsModalCancel = document.getElementById('warnsModalCancel');
+        const warnsModalSave = document.getElementById('warnsModalSave');
 
         const menuToggle = document.getElementById('menuToggle');
         const sideMenu = document.getElementById('sideMenu');
@@ -1527,6 +1616,7 @@
         const viewModalClose = document.getElementById('viewModalClose');
         const viewModalOpenDoc = document.getElementById('viewModalOpenDoc');
         const viewModalEditNotes = document.getElementById('viewModalEditNotes');
+        const viewModalEditWarns = document.getElementById('viewModalEditWarns');
 
         const editModal = document.getElementById('editModal');
         const editModalBody = document.getElementById('editModalBody');
@@ -1562,7 +1652,8 @@
         let currentDeleteId = null;
         let unsubscribeExpedientes = null;
         let editingAntecId = null;
-        const warnsPending = new Set();
+        let currentWarnsId = null;
+        let pendingWarnLevel = 0;
 
         const MAX_ANTEC_TEXT = 1500;
         const MAX_DESCRIPTION_LENGTH = 600;
@@ -1704,39 +1795,83 @@
             return n === 0 ? 'Sin warns' : WARN_LEVELS[n - 1].title;
         }
 
-        function buildWarnsHtml(id, data) {
-            const cur = getWarns(data);
-            const boxes = WARN_LEVELS.map((w, i) => {
-                const level = i + 1;
-                const state = level === cur ? 'on' : (level < cur ? 'dim' : 'off');
-                return `<button type="button" class="warn-box" data-state="${state}" data-level="${level}" data-id="${escapeHtml(id)}" role="radio" aria-checked="${level === cur}" aria-label="${w.aria}">${WARN_FACES[i]}</button>`;
-            }).join('');
-            return `<div class="warn-group" role="radiogroup" aria-label="Nivel de warns">${boxes}</div>`;
+        function buildWarnPickerHtml() {
+            return WARN_LEVELS.map((w, i) => `
+                <div class="warn-item">
+                    <button type="button" class="warn-box" data-state="off" data-level="${i + 1}" role="radio" aria-checked="false" aria-label="${w.aria}">${WARN_FACES[i]}</button>
+                    <span class="warn-label">${w.aria}</span>
+                </div>`).join('');
         }
 
-        async function setWarns(id, level) {
-            if (warnsPending.has(id)) return;
+        // Actualiza estados (on / dim / off) y el panel de descripción sin reconstruir los botones
+        function updateWarnPicker() {
+            warnPicker.querySelectorAll('.warn-box').forEach(b => {
+                const level = parseInt(b.dataset.level, 10);
+                const state = level === pendingWarnLevel ? 'on' : (level < pendingWarnLevel ? 'dim' : 'off');
+                b.dataset.state = state;
+                b.setAttribute('aria-checked', level === pendingWarnLevel ? 'true' : 'false');
+            });
+            if (pendingWarnLevel === 0) {
+                warnSelected.innerHTML = `<div class="warn-selected-text empty">Sin warns. Elegí un nivel para ver su descripción.</div>`;
+            } else {
+                const w = WARN_LEVELS[pendingWarnLevel - 1];
+                warnSelected.innerHTML = `
+                    <div class="warn-selected-title">${escapeHtml(w.title)}</div>
+                    <div class="warn-selected-text">${escapeHtml(w.desc)}</div>`;
+            }
+        }
+
+        function abrirWarnsModal(id) {
             const exp = expedientesData.find(e => e.id === id);
             if (!exp) return;
+            currentWarnsId = id;
+            pendingWarnLevel = getWarns(exp.data);
+            warnsModalSubtitle.textContent = `${exp.data.fileNumber || '—'} · ${exp.data.name || 'SIN REGISTRO'}`;
+            warnPicker.innerHTML = buildWarnPickerHtml();
+            updateWarnPicker();
+            warnsModal.classList.add('visible');
+        }
 
-            const actual = getWarns(exp.data);
-            const nuevo = actual === level ? 0 : level; // tocar de nuevo el activo = limpiar
+        function cerrarWarnsModal() {
+            hideWarnTip();
+            warnsModal.classList.remove('visible');
+            currentWarnsId = null;
+            pendingWarnLevel = 0;
+        }
 
-            warnsPending.add(id);
+        warnsModalCancel.addEventListener('click', cerrarWarnsModal);
+        warnsModal.addEventListener('click', (e) => { if (e.target === warnsModal) cerrarWarnsModal(); });
+
+        viewModalEditWarns.addEventListener('click', () => {
+            if (currentViewId) {
+                const id = currentViewId;
+                viewModal.classList.remove('visible');
+                abrirWarnsModal(id);
+            }
+        });
+
+        warnsModalSave.addEventListener('click', async () => {
+            if (!currentWarnsId) return;
+            const id = currentWarnsId;
+            const nivel = pendingWarnLevel;
+            const btn = warnsModalSave;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
             try {
                 await update(ref(database, `expedientes/${id}`), {
-                    warns: nuevo,
+                    warns: nivel,
                     warnsUpdatedAt: new Date().toISOString()
                 });
-                if (nuevo === 0) showToast('✅ Warns limpiados', 'success', 2200);
-                else showToast(`⚠️ ${WARN_LEVELS[nuevo - 1].title} registrado`, 'info', 2200);
+                showToast(nivel === 0 ? '✅ Warns limpiados' : `⚠️ ${WARN_LEVELS[nivel - 1].title} registrado`, nivel === 0 ? 'success' : 'info', 2500);
+                cerrarWarnsModal();
             } catch (error) {
                 console.error('Error al guardar warns:', error);
                 showToast('❌ Error al guardar el warn', 'error', 4000);
             } finally {
-                warnsPending.delete(id);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> GUARDAR';
             }
-        }
+        });
 
         // ---- Tooltip ----
         function showWarnTip(btn) {
@@ -1755,27 +1890,30 @@
         }
         function hideWarnTip() { warnTip.classList.remove('show'); }
 
-        expedientesContainer.addEventListener('mouseover', (e) => {
+        warnPicker.addEventListener('mouseover', (e) => {
             const b = e.target.closest('.warn-box');
             if (b) showWarnTip(b);
         });
-        expedientesContainer.addEventListener('mouseout', (e) => {
+        warnPicker.addEventListener('mouseout', (e) => {
             const b = e.target.closest('.warn-box');
             if (!b) return;
             const to = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.warn-box') : null;
             if (!to) hideWarnTip();
         });
-        expedientesContainer.addEventListener('focusin', (e) => {
+        warnPicker.addEventListener('focusin', (e) => {
             const b = e.target.closest('.warn-box');
             if (b) showWarnTip(b);
         });
-        expedientesContainer.addEventListener('focusout', (e) => {
+        warnPicker.addEventListener('focusout', (e) => {
             if (e.target.closest('.warn-box')) hideWarnTip();
         });
-        expedientesContainer.addEventListener('click', (e) => {
+        // Elegir nivel (todavía NO se guarda): tocar de nuevo el activo = limpiar
+        warnPicker.addEventListener('click', (e) => {
             const b = e.target.closest('.warn-box');
             if (!b) return;
-            setWarns(b.dataset.id, parseInt(b.dataset.level, 10));
+            const level = parseInt(b.dataset.level, 10);
+            pendingWarnLevel = pendingWarnLevel === level ? 0 : level;
+            updateWarnPicker();
         });
         window.addEventListener('scroll', hideWarnTip, { passive: true });
         window.addEventListener('resize', hideWarnTip);
@@ -2176,6 +2314,10 @@
                 const estadoKey = getEstadoKey(data?.status);
                 const estadoBadge = getEstadoBadgeClass(data?.status);
                 const rango = esInm ? (data?.clan || '—') : (data?.rank || '—');
+                const warnsN = getWarns(data);
+                const warnPreview = warnsN
+                    ? `<small class="has-warns"><i class="fas fa-triangle-exclamation"></i> ${escapeHtml(WARN_LEVELS[warnsN - 1].title)}</small>`
+                    : '';
                 const nick = data?.minecraftNick || '';
                 const faceUrl = getSkinFaceUrl(nick);
                 const antecs = getAntecedentes(data);
@@ -2191,13 +2333,11 @@
                                 <strong>${escapeHtml(nombre)}</strong>
                                 <small><i class="fas fa-tag"></i> ${escapeHtml(alias)} · <i class="fas fa-gamepad"></i> ${escapeHtml(nick || '—')}</small>
                                 ${notasPreview}
+                                ${warnPreview}
                             </div>
                         </div>
                         <div class="cell-text" data-label="Expediente">
                             <span style="font-family: 'Cinzel', serif; font-weight:700; color: var(--accent);">${escapeHtml(fileNumber)}</span>
-                        </div>
-                        <div class="cell-warns" data-label="Warns">
-                            ${buildWarnsHtml(id, data)}
                         </div>
                         <div class="cell-text" data-label="Tipo">
                             <span class="badge ${tipoBadge}">
@@ -2218,6 +2358,9 @@
                             </button>
                             <button class="action-btn notes" title="Editar antecedentes" data-action="notes" data-id="${id}">
                                 <i class="fas fa-sticky-note"></i>
+                            </button>
+                            <button class="action-btn warns" title="Editar warn" data-action="warns" data-id="${id}">
+                                <i class="fas fa-triangle-exclamation"></i>
                             </button>
                             <button class="action-btn download" title="Ver documento" data-action="open" data-id="${id}">
                                 <i class="fas fa-external-link-alt"></i>
@@ -2244,6 +2387,7 @@
                     else if (action === 'open') window.open(`expediente.html?id=${id}`, '_blank');
                     else if (action === 'edit') abrirEditModal(id);
                     else if (action === 'notes') abrirNotesModal(id);
+                    else if (action === 'warns') abrirWarnsModal(id);
                     else if (action === 'delete') abrirDeleteModal(id);
                 });
             });
