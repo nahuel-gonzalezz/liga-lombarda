@@ -2020,6 +2020,10 @@
                   <div class="page-inner">
                     <div class="section-title"><i class="fas fa-history"></i> ANTECEDENTES</div>
                     <div class="main-content-area" id="antecedentesMainArea">
+                      <!-- NUEVO: Nivel de Warn visible en antecedentes -->
+                      <div class="audit-info" style="margin-bottom:6px;">
+                        <p><strong><i class="fas fa-exclamation-triangle"></i> NIVEL DE WARN:</strong> <span id="bookWarns">0</span> <span style="font-size:0.6rem;color:#888;">(0 = limpio · 4 = máximo)</span></p>
+                      </div>
                       <div class="status-badge" id="bookStatusBadge">
                         <i class="fas fa-check-circle"></i> SIN ANTECEDENTES
                       </div>
@@ -2284,7 +2288,7 @@
     }
 
     // ============================================================
-    // VISORES 3D (renderPaused: solo se renderiza cuando se pide)
+    // VISORES 3D
     // ============================================================
     function crearViewer(canvasId, w, h) {
       const v = new skinview3d.SkinViewer({
@@ -2893,13 +2897,6 @@
 
       if (inmigrante) {
         aplicarModoPasaporte();
-        // Incluso para inmigrantes, mostrar warns en el pasaporte si existe el campo
-        const warnsNivel = Math.min(4, Math.max(0, parseInt(data.warns, 10) || 0));
-        // En pasaporte, agregar el nivel de warn en la información del extranjero
-        const bookWarnsElem = $('bookWarns');
-        if (bookWarnsElem) {
-          bookWarnsElem.textContent = warnsNivel >= 4 ? '4+' : String(warnsNivel);
-        }
       } else {
         setText('dniName', name);
         setText('dniAlias', alias);
@@ -2931,6 +2928,17 @@
       setText('bookMaritalFront', estadoCivil);
       setText('bookMarital', estadoCivil);
       setText('bookClan', clanDisplay);
+
+      // ====== NIVEL DE WARN EN ANTECEDENTES (librito/pasaporte) ======
+      const warnsNivelBook = Math.min(4, Math.max(0, parseInt(data.warns, 10) || 0));
+      const bookWarnsEl = $('bookWarns');
+      if (bookWarnsEl) {
+        bookWarnsEl.textContent = warnsNivelBook >= 4 ? '4+' : String(warnsNivelBook);
+        // Color según nivel
+        if (warnsNivelBook === 0) bookWarnsEl.style.color = '#2e7d32';
+        else if (warnsNivelBook <= 2) bookWarnsEl.style.color = '#8a6a1a';
+        else bookWarnsEl.style.color = '#a00';
+      }
 
       const bookStatusBadge = $('bookStatusBadge');
       if (listaAntecedentes.length > 0) {
