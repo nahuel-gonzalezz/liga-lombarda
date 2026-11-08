@@ -609,6 +609,16 @@
       opacity: 0.8;
     }
     .dni-class-val { font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
+    .dni-exp-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .dni-exp-warn {
+      padding-left: 14px;
+      border-left: 1px solid rgba(255,255,255,0.3);
+    }
     .dni-separator {
       width: 100%;
       height: 1px;
@@ -1864,8 +1874,16 @@
                   <div class="dni-exp-label">Nº EXPEDIENTE</div>
                   <div class="dni-exp-num" id="dniFileNumber">LL-2026-0000</div>
                   <div class="dni-exp-divider"></div>
-                  <div class="dni-class-label">CLASIFICACIÓN</div>
-                  <div class="dni-class-val">CIUDADANO</div>
+                  <div class="dni-exp-row">
+                    <div class="dni-exp-col">
+                      <div class="dni-class-label">CLASIFICACIÓN</div>
+                      <div class="dni-class-val">CIUDADANO</div>
+                    </div>
+                    <div class="dni-exp-col dni-exp-warn">
+                      <div class="dni-class-label">WARNS</div>
+                      <div class="dni-class-val" id="dniWarns">0</div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="dni-separator"></div>
@@ -2910,6 +2928,8 @@
         setText('dniGender', gender);
         setText('dniSpecies', species);
         setText('dniFileNumber', fileNumber);
+        const warnsNivel = Math.min(4, Math.max(0, parseInt(data.warns, 10) || 0));
+        setText('dniWarns', warnsNivel >= 4 ? '4+' : String(warnsNivel));
         setText('dniDate', fechaFinal);
         inicializarWatermarkVista();
       }
