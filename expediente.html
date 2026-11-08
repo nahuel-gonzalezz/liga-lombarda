@@ -1245,7 +1245,7 @@
       padding: 8px;
       font-size: 0.75rem;
       letter-spacing: 2px;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       flex-shrink: 0;
       border-radius: 4px;
       font-family: "Montserrat", sans-serif;
@@ -1257,6 +1257,38 @@
       background: rgba(138,106,26,0.06);
     }
     .status-badge.warn i { color: #8a6a1a; }
+
+    /* NUEVO: fila del nivel de warn debajo del badge de antecedentes */
+    .warn-level-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #bbb;
+      background: rgba(255,255,240,0.2);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-family: "Montserrat", sans-serif;
+      font-size: 0.7rem;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    .warn-level-row strong {
+      color: #333 !important;
+      font-weight: 700;
+      font-size: 0.65rem;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .warn-level-row strong i { color: #8c2323; }
+    .warn-level-row span.warn-level-val {
+      font-weight: 800;
+      font-size: 0.85rem;
+      font-family: "Libre Baskerville", serif;
+      letter-spacing: 1px;
+    }
+
     .audit-info {
       font-size: 0.7rem;
       line-height: 1.6;
@@ -1645,7 +1677,10 @@
       .boxes-container { gap: 2px; }
       .boxes-container i { width: 9px; height: 9px; }
 
-      .status-badge { font-size: 0.6rem; padding: 5px; margin-bottom: 6px; }
+      .status-badge { font-size: 0.6rem; padding: 5px; margin-bottom: 5px; }
+      .warn-level-row { font-size: 0.6rem; padding: 4px 8px; }
+      .warn-level-row strong { font-size: 0.55rem; }
+      .warn-level-row span.warn-level-val { font-size: 0.75rem; }
       .audit-info { font-size: 0.55rem; }
       .audit-info p span { font-size: 0.65rem; }
       .obs-section label { font-size: 0.5rem; }
@@ -1738,7 +1773,10 @@
       .boxes-container { gap: 1.5px; }
       .boxes-container i { width: 7px; height: 7px; }
 
-      .status-badge { font-size: 0.5rem; padding: 4px; margin-bottom: 5px; }
+      .status-badge { font-size: 0.5rem; padding: 4px; margin-bottom: 4px; }
+      .warn-level-row { font-size: 0.5rem; padding: 3px 6px; margin-bottom: 6px; }
+      .warn-level-row strong { font-size: 0.48rem; gap: 3px; }
+      .warn-level-row span.warn-level-val { font-size: 0.65rem; }
       .audit-info { font-size: 0.48rem; }
       .audit-info p span { font-size: 0.55rem; }
       .obs-section label { font-size: 0.45rem; }
@@ -2020,12 +2058,13 @@
                   <div class="page-inner">
                     <div class="section-title"><i class="fas fa-history"></i> ANTECEDENTES</div>
                     <div class="main-content-area" id="antecedentesMainArea">
-                      <!-- NUEVO: Nivel de Warn visible en antecedentes -->
-                      <div class="audit-info" style="margin-bottom:6px;">
-                        <p><strong><i class="fas fa-exclamation-triangle"></i> NIVEL DE WARN:</strong> <span id="bookWarns">0</span> <span style="font-size:0.6rem;color:#888;">(0 = limpio · 4 = máximo)</span></p>
-                      </div>
                       <div class="status-badge" id="bookStatusBadge">
                         <i class="fas fa-check-circle"></i> SIN ANTECEDENTES
+                      </div>
+                      <!-- NUEVO: Nivel de Warn justo debajo del badge de estado -->
+                      <div class="warn-level-row">
+                        <strong><i class="fas fa-exclamation-triangle"></i> NIVEL DE WARN:</strong>
+                        <span class="warn-level-val" id="bookWarns">0</span>
                       </div>
                       <div class="audit-info">
                         <p><strong><i class="fas fa-gavel"></i> EVALUACIÓN JUDICIAL:</strong> <span id="bookAuditJudicial">No se registran sanciones.</span></p>
@@ -2929,12 +2968,12 @@
       setText('bookMarital', estadoCivil);
       setText('bookClan', clanDisplay);
 
-      // ====== NIVEL DE WARN EN ANTECEDENTES (librito/pasaporte) ======
+      // ====== NIVEL DE WARN EN ANTECEDENTES (debajo del badge) ======
       const warnsNivelBook = Math.min(4, Math.max(0, parseInt(data.warns, 10) || 0));
       const bookWarnsEl = $('bookWarns');
       if (bookWarnsEl) {
         bookWarnsEl.textContent = warnsNivelBook >= 4 ? '4+' : String(warnsNivelBook);
-        // Color según nivel
+        // Color dinámico según nivel
         if (warnsNivelBook === 0) bookWarnsEl.style.color = '#2e7d32';
         else if (warnsNivelBook <= 2) bookWarnsEl.style.color = '#8a6a1a';
         else bookWarnsEl.style.color = '#a00';
