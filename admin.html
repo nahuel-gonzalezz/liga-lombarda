@@ -628,11 +628,14 @@
         .cell-name small.has-notes i {
             color: #8a6a1a;
         }
-        .cell-name small.has-warns {
-            color: var(--danger);
-            font-weight: 700;
+        .cell-warnblock {
+            display: flex;
+            align-items: center;
+            overflow: visible;
         }
-        .cell-name small.has-warns i { color: var(--danger); }
+        .warn-box.warn-static { cursor: default; }
+        .warn-box.warn-static:hover { transform: none; }
+        .warn-box.warn-static[data-state="off"]:hover { border-color: var(--border-soft); }
 
         .cell-actions {
             display: flex;
@@ -1214,7 +1217,8 @@
                 gap: 10px;
                 padding: 16px 18px;
             }
-            .expediente-row .cell-text::before {
+            .expediente-row .cell-text::before,
+            .expediente-row .cell-warnblock::before {
                 content: attr(data-label) ': ';
                 font-weight: 800;
                 color: var(--text-soft);
@@ -1823,7 +1827,7 @@
 
         function abrirWarnsModal(id) {
             const exp = expedientesData.find(e => e.id === id);
-            if (!exp) return;
+            if (!exp || esInmigrante(exp.data)) return; // los inmigrantes no tienen sistema de warns
             currentWarnsId = id;
             pendingWarnLevel = getWarns(exp.data);
             warnsModalSubtitle.textContent = `${exp.data.fileNumber || '—'} · ${exp.data.name || 'SIN REGISTRO'}`;
@@ -2315,9 +2319,7 @@
                 const estadoBadge = getEstadoBadgeClass(data?.status);
                 const rango = esInm ? (data?.clan || '—') : (data?.rank || '—');
                 const warnsN = getWarns(data);
-                const warnPreview = warnsN
-                    ? `<small class="has-warns"><i class="fas fa-triangle-exclamation"></i> ${escapeHtml(WARN_LEVELS[warnsN - 1].title)}</small>`
-                    : '';
+
                 const nick = data?.minecraftNick || '';
                 const faceUrl = getSkinFaceUrl(nick);
                 const antecs = getAntecedentes(data);
@@ -2333,12 +2335,15 @@
                                 <strong>${escapeHtml(nombre)}</strong>
                                 <small><i class="fas fa-tag"></i> ${escapeHtml(alias)} · <i class="fas fa-gamepad"></i> ${escapeHtml(nick || '—')}</small>
                                 ${notasPreview}
-                                ${warnPreview}
                             </div>
                         </div>
+                        ${esInm ? `
                         <div class="cell-text" data-label="Expediente">
                             <span style="font-family: 'Cinzel', serif; font-weight:700; color: var(--accent);">${escapeHtml(fileNumber)}</span>
-                        </div>
+                        </div>` : `
+                        <div class="cell-warnblock" data-label="Warn">
+                            <div class="warn-box warn-static" style="--warn-size:40px;" data-state="${warnsN ? 'on' : 'off'}" title="${escapeHtml(warnsN ? WARN_LEVELS[warnsN - 1].title : 'Sin warns')}" role="img" aria-label="${escapeHtml(warnsN ? WARN_LEVELS[warnsN - 1].title : 'Sin warns')}">${warnsN ? WARN_FACES[warnsN - 1] : ''}</div>
+                        </div>`}
                         <div class="cell-text" data-label="Tipo">
                             <span class="badge ${tipoBadge}">
                                 <i class="fas fa-${esInm ? 'passport' : 'user-shield'}"></i> ${tipoLabel}
@@ -2359,9 +2364,9 @@
                             <button class="action-btn notes" title="Editar antecedentes" data-action="notes" data-id="${id}">
                                 <i class="fas fa-sticky-note"></i>
                             </button>
-                            <button class="action-btn warns" title="Editar warn" data-action="warns" data-id="${id}">
+                            ${esInm ? '' : `<button class="action-btn warns" title="Editar warn" data-action="warns" data-id="${id}">
                                 <i class="fas fa-triangle-exclamation"></i>
-                            </button>
+                            </button>`}
                             <button class="action-btn download" title="Ver documento" data-action="open" data-id="${id}">
                                 <i class="fas fa-external-link-alt"></i>
                             </button>
@@ -2404,6 +2409,7 @@
 
             const esInm = esInmigrante(data);
             viewModalSubtitle.textContent = data.fileNumber || '—';
+            viewModalEditWarns.style.display = esInm ? 'none' : '';
 
             const stats = data.stats || {};
             const comps = data.competencies || {};
@@ -2492,10 +2498,10 @@
                         <span class="detail-label">Estado</span>
                         <span class="detail-value">${escapeHtml(data.status || '—')}</span>
                     </div>
-                    <div class="detail-item">
+                    ${esInm ? '' : `<div class="detail-item">
                         <span class="detail-label">Warns</span>
                         <span class="detail-value">${escapeHtml(getWarnsLabel(data))}</span>
-                    </div>
+                    </div>`}
                     <div class="detail-item">
                         <span class="detail-label">Fecha nac.</span>
                         <span class="detail-value">${escapeHtml(data.birthDate || '—')}</span>
