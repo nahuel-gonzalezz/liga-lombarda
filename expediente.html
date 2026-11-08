@@ -43,7 +43,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=Great+Vibes&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- Versión fija desde jsDelivr (verificá que sea la versión que venías usando) -->
   <script src="https://cdn.jsdelivr.net/npm/skinview3d@3.1.0/bundles/skinview3d.bundle.js"></script>
 
   <style>
@@ -914,8 +913,6 @@
 
     /* ============================================================
        PASAPORTE (inmigrante)
-       La carátula (.cover) queda idéntica a la de los lombardos
-       comunes: se la excluye de los overrides de las hojas interiores.
        ============================================================ */
     .passport .page:not(.cover) .front,
     .passport .page:not(.cover) .back {
@@ -1280,9 +1277,6 @@
     .audit-info p strong i { color: #8c2323; margin-right: 5px; }
     .audit-info p span { font-weight: 700; font-family: "Libre Baskerville", serif; font-size: 0.75rem; }
 
-    /* ============================================================
-       OBSERVACIONES / ANTECEDENTES
-       ============================================================ */
     .obs-section {
       border: 1px solid #bbb;
       background: rgba(255,255,240,0.15);
@@ -1880,7 +1874,7 @@
                       <div class="dni-class-val">CIUDADANO</div>
                     </div>
                     <div class="dni-exp-col dni-exp-warn">
-                      <div class="dni-class-label">WARNS</div>
+                      <div class="dni-class-label">NIVEL DE WARN</div>
                       <div class="dni-class-val" id="dniWarns">0</div>
                     </div>
                   </div>
@@ -2138,10 +2132,8 @@
       if (e.key === 'Escape') closeMenu();
     });
 
-    // Limpieza del listener de Firebase al salir de la página
     window.addEventListener('pagehide', () => unsubscribeExpediente?.());
 
-    // Muestra el contenido recién cuando ya se sabe si es ciudadano o inmigrante
     function revelarContenido() {
       authOverlay.classList.add('hidden');
       mainContent.style.display = 'flex';
@@ -2311,7 +2303,6 @@
 
     const viewer = crearViewer('skin-container', 280, 280);
     const bookViewer = crearViewer('bookSkinCanvas', 110, 110);
-    // El visor del DNI se crea solo si hace falta (ciudadanos)
     let dniViewer = null;
     const getDniViewer = () => (dniViewer ??= crearViewer('dniSkinCanvas', 150, 170));
     const dniCanvas = $('dniSkinCanvas');
@@ -2401,7 +2392,6 @@
       programarProximoGesto();
     }
 
-    // Configuración común de skin para cualquiera de los 3 visores
     function prepararSkin(v) {
       const player = v.playerObject;
       if (!player?.skin) return;
@@ -2571,7 +2561,7 @@
     }
 
     // ============================================================
-    // ANTECEDENTES — NORMALIZACIÓN Y RENDER ESTRUCTURADO
+    // ANTECEDENTES
     // ============================================================
 
     function normalizarAntecedentes(raw) {
@@ -2643,12 +2633,6 @@
       `;
     }
 
-    /**
-     * Pagina una lista de antecedentes en `contEl` y devuelve los que NO cupieron.
-     * Si un antecedente no cabe entero, se parte por palabras (búsqueda binaria)
-     * y el resto se devuelve como continuación para la siguiente cara/hoja.
-     * IMPORTANTE: requiere que el contenedor sea visible (para medir alturas).
-     */
     function paginarAntecedentesEnContenedor(contEl, lista) {
       if (!contEl || !Array.isArray(lista) || lista.length === 0) return [];
 
@@ -2660,7 +2644,6 @@
       while (idx < lista.length) {
         const a = lista[idx];
 
-        // 1) Intento: colocar el bloque completo
         const wrapperCompleto = document.createElement('div');
         wrapperCompleto.innerHTML = renderFragmento(a, a.texto, false, true);
         const bloqueCompleto = wrapperCompleto.firstElementChild;
@@ -2671,7 +2654,6 @@
           continue;
         }
 
-        // 2) No cupo entero: probar partir el texto
         contEl.removeChild(bloqueCompleto);
 
         const palabras = String(a.texto || '').split(/(\s+)/);
@@ -2694,7 +2676,6 @@
           break;
         }
 
-        // Búsqueda binaria del mayor número de "palabras" que caben
         let lo = 0, hi = palabras.length;
         while (lo < hi) {
           const mid = (lo + hi + 1) >> 1;
@@ -2794,7 +2775,7 @@
         return;
       }
 
-      bookObservations.offsetHeight; // fuerza layout
+      bookObservations.offsetHeight;
 
       restantes = paginarAntecedentesEnContenedor(bookObservations, restantes);
 
@@ -2829,9 +2810,6 @@
       actualizarNumeracionPaginas();
     }
 
-    /**
-     * Numera CARAS (no hojas).
-     */
     function actualizarNumeracionPaginas() {
       const pagesEls = Array.from(document.querySelectorAll('.page'));
       let faceNum = 0;
@@ -2896,7 +2874,6 @@
         ? clanRaw
         : (inmigrante ? 'SIN CLAN' : 'LIGA LOMBARDA');
 
-      // ---- Modo ciudadano / pasaporte (antes de mostrar nada) ----
       mainContent.classList.toggle('is-citizen', !inmigrante);
       mainContent.classList.toggle('is-passport', inmigrante);
 
@@ -2905,7 +2882,6 @@
         return String(hoy.getDate()).padStart(2,'0') + '/' + String(hoy.getMonth()+1).padStart(2,'0') + '/' + hoy.getFullYear();
       })();
 
-      // ---- Panel superior ----
       setText('displayName', name);
       setText('displayAlias', '★ "' + alias + '"');
       const clanEl = $('displayClan');
@@ -2915,9 +2891,15 @@
       setText('displayOccupation', occupation);
       setText('displayStatus', status);
 
-      // ---- DNI (solo ciudadanos) o pasaporte ----
       if (inmigrante) {
         aplicarModoPasaporte();
+        // Incluso para inmigrantes, mostrar warns en el pasaporte si existe el campo
+        const warnsNivel = Math.min(4, Math.max(0, parseInt(data.warns, 10) || 0));
+        // En pasaporte, agregar el nivel de warn en la información del extranjero
+        const bookWarnsElem = $('bookWarns');
+        if (bookWarnsElem) {
+          bookWarnsElem.textContent = warnsNivel >= 4 ? '4+' : String(warnsNivel);
+        }
       } else {
         setText('dniName', name);
         setText('dniAlias', alias);
@@ -2934,7 +2916,6 @@
         inicializarWatermarkVista();
       }
 
-      // ---- Librito ----
       setText('bookName', name);
       setText('bookAlias', alias);
       setText('bookRank', rank);
@@ -2971,8 +2952,6 @@
       pintarBarras(['strength','perception','endurance','charisma','intelligence','agility','luck'], stats);
       pintarBarras(['combat','building','farming','redstone'], competencies);
 
-      // Ya se sabe el tipo de documento: se muestra la página.
-      // (Debe ser visible ANTES de paginar antecedentes, que mide alturas.)
       revelarContenido();
 
       if (minecraftNick) {
@@ -2985,7 +2964,7 @@
     }
 
     // ============================================================
-    // CARGA DEL EXPEDIENTE (siempre datos frescos de Firebase)
+    // CARGA DEL EXPEDIENTE
     // ============================================================
     let unsubscribeExpediente = null;
     let ultimoEsInmigrante = null;
@@ -3131,7 +3110,7 @@
     };
 
     // ============================================================
-    // WATERMARK (solo ciudadanos)
+    // WATERMARK
     // ============================================================
     function dibujarCruzWatermark(ctx, ancho, alto, color, alpha) {
       ctx.save();
@@ -3157,8 +3136,6 @@
       ctx.restore();
     }
 
-    // Genera la cruz como imagen (PNG con transparencia) para insertarla
-    // en el clon del DNI y que html2canvas la renderice en su capa original.
     function generarWatermarkDataURL(escala = 3) {
       const c = document.createElement('canvas');
       c.width = 750 * escala;
@@ -3188,7 +3165,7 @@
     }
 
     // ============================================================
-    // DESCARGA DEL DNI (html2canvas se carga solo al descargar)
+    // DESCARGA DEL DNI
     // ============================================================
     function loadHtml2Canvas() {
       return new Promise((resolve, reject) => {
@@ -3240,8 +3217,6 @@
           clone.style.boxShadow = 'none';
           document.body.appendChild(clone);
 
-          // La cruz de fondo: se reemplaza el <canvas> clonado (que queda vacío)
-          // por una imagen con la cruz, en la misma posición y capa que en pantalla.
           const wmClone = clone.querySelector('.dni-watermark');
           let wmImg = null;
           if (wmClone) {
@@ -3299,8 +3274,6 @@
 
     // ============================================================
     // ARRANQUE
-    // El overlay "VERIFICANDO ACCESO..." se queda hasta que llegan
-    // los datos y se sabe si es ciudadano o inmigrante.
     // ============================================================
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
