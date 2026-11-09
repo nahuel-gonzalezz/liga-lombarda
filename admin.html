@@ -324,7 +324,7 @@
             font-weight: 700;
             font-size: 12px;
             letter-spacing: 1px;
-            z-index: 2500;
+            z-index: 20500;
             opacity: 0;
             transition: all 0.4s ease;
             pointer-events: none;
@@ -343,6 +343,13 @@
 
         .admin-header {
             margin-bottom: 30px;
+        }
+        .admin-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
         }
         .admin-header .small-title {
             font-size: 11px;
@@ -366,6 +373,36 @@
             font-size: 13px;
             margin-top: 6px;
         }
+
+        /* Botones USUARIOS / CUENTAS */
+        .view-switch {
+            display: inline-flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-soft);
+            border-radius: 16px;
+            border-top-right-radius: 4px;
+        }
+        .view-switch button {
+            border: none;
+            background: transparent;
+            color: var(--text-mid);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .view-switch button:hover { background: var(--accent-bg); color: var(--accent); }
+        .view-switch button.active { background: var(--accent); color: #ffffff; }
+        .view-switch button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
         .stats-grid {
             display: grid;
@@ -620,6 +657,11 @@
             color: #666;
             border: 1px solid rgba(138, 138, 138, 0.2);
         }
+        .badge-admin {
+            background: rgba(138, 106, 26, 0.1);
+            color: #8a6a1a;
+            border: 1px solid rgba(138, 106, 26, 0.25);
+        }
 
         .cell-name small.has-notes {
             color: #8a6a1a;
@@ -654,8 +696,9 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
+        .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
         .action-btn.view { background: rgba(21, 101, 192, 0.1); color: #1565c0; }
-        .action-btn.view:hover { background: #1565c0; color: white; transform: translateY(-2px); }
+        .action-btn.view:hover:not(:disabled) { background: #1565c0; color: white; transform: translateY(-2px); }
         .action-btn.edit { background: rgba(138, 106, 26, 0.1); color: #8a6a1a; }
         .action-btn.edit:hover { background: #8a6a1a; color: white; transform: translateY(-2px); }
         .action-btn.notes { background: rgba(123, 31, 162, 0.1); color: #7b1fa2; }
@@ -666,6 +709,190 @@
         .action-btn.download:hover { background: #1a4a2a; color: white; transform: translateY(-2px); }
         .action-btn.warns { background: rgba(199, 120, 0, 0.12); color: #c77800; }
         .action-btn.warns:hover { background: #c77800; color: white; transform: translateY(-2px); }
+
+        /* =========================================================
+           CUENTAS
+           ========================================================= */
+        .cuentas-header,
+        .cuenta-row {
+            display: grid;
+            grid-template-columns: 2.4fr 1fr 1.4fr 1fr 150px;
+            gap: 12px;
+            padding: 14px 22px;
+            align-items: center;
+        }
+        .cuentas-header {
+            background: var(--accent-bg);
+            border-bottom: 2px solid var(--border-soft);
+            font-weight: 800;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+        .cuenta-row {
+            border-bottom: 1px solid var(--border-soft);
+            transition: background 0.15s ease;
+        }
+        .cuenta-row:last-child { border-bottom: none; }
+        .cuenta-row:hover { background: #fafafa; }
+
+        .cuenta-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            border: 2px solid var(--border-soft);
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .cuenta-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .cuenta-title .badge { flex-shrink: 0; padding: 2px 8px; }
+        .cuenta-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: var(--text-mid);
+        }
+        .pass-mask {
+            letter-spacing: 3px;
+            font-weight: 800;
+            color: var(--text-soft);
+        }
+
+        .pass-wrap { display: flex; gap: 8px; }
+        .pass-wrap input { flex: 1; min-width: 0; }
+        .icon-btn {
+            border: 2px solid var(--border-soft);
+            background: #fafafa;
+            color: var(--text-mid);
+            width: 42px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .icon-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+        .field-hint {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-soft);
+            margin-top: 4px;
+        }
+
+        .acceso-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 16px;
+            border: 2px solid var(--border-soft);
+            border-radius: 14px;
+            background: #fafafa;
+            margin-top: 18px;
+        }
+        .acceso-toggle .t-title { font-weight: 800; font-size: 13px; color: var(--text-dark); }
+        .acceso-toggle .t-sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+        .acceso-toggle .t-control { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .acceso-toggle .t-state { font-size: 12px; font-weight: 800; color: var(--text-mid); min-width: 20px; text-align: right; }
+
+        .switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .switch .slider {
+            position: absolute;
+            inset: 0;
+            background: #cfcfd3;
+            border-radius: 26px;
+            cursor: pointer;
+            transition: background 0.25s ease;
+        }
+        .switch .slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            top: 3px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            transition: transform 0.25s ease;
+        }
+        .switch input:checked + .slider { background: var(--accent); }
+        .switch input:checked + .slider::before { transform: translateX(22px); }
+        .switch input:focus-visible + .slider { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+        .seccion-wrap { margin-top: 14px; transition: opacity 0.2s ease; }
+        .seccion-wrap.disabled { opacity: 0.45; pointer-events: none; }
+        .seccion-wrap .seccion-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-soft);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .seccion-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .seccion-opt { position: relative; }
+        .seccion-opt input { position: absolute; opacity: 0; pointer-events: none; }
+        .seccion-opt label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 8px;
+            border: 2px solid var(--border-soft);
+            border-radius: 14px;
+            background: #fafafa;
+            color: var(--text-mid);
+            font-size: 11px;
+            font-weight: 800;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s, color 0.2s;
+        }
+        .seccion-opt label i { font-size: 18px; color: var(--text-soft); transition: color 0.2s; }
+        .seccion-opt label:hover { border-color: #c9c9cd; }
+        .seccion-opt input:checked + label {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            color: var(--accent);
+        }
+        .seccion-opt input:checked + label i { color: var(--accent); }
+        .seccion-opt input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+        .hash-note {
+            margin-top: 18px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            background: rgba(138, 106, 26, 0.06);
+            border: 2px solid rgba(138, 106, 26, 0.2);
+            border-radius: 14px;
+            padding: 12px 14px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-mid);
+        }
+        .hash-note i { color: #8a6a1a; margin-top: 3px; }
 
         /* =========================================================
            WARNS (4 caras de peligro)
@@ -1200,6 +1427,22 @@
                 padding-top: 10px;
                 border-top: 1px dashed var(--border-soft);
             }
+
+            .cuentas-header { display: none; }
+            .cuenta-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 16px 18px;
+            }
+            .cuenta-cell::before {
+                content: attr(data-label) ': ';
+                font-weight: 800;
+                color: var(--text-soft);
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-right: 4px;
+            }
         }
 
         @media (max-width: 900px) {
@@ -1213,6 +1456,9 @@
             .admin-header h1 { font-size: 22px; }
             .stat-card .stat-value { font-size: 22px; }
             .stats-grid { gap: 10px; }
+
+            .view-switch { width: 100%; }
+            .view-switch button { flex: 1; justify-content: center; }
 
             .toolbar { padding: 14px; flex-direction: column; align-items: stretch; }
             .filter-select { width: 100%; min-width: 0; }
@@ -1244,6 +1490,10 @@
             .modal-header h2 { font-size: 16px; }
             .modal-footer { flex-direction: column-reverse; }
             .modal-btn { justify-content: center; width: 100%; }
+
+            .seccion-options { grid-template-columns: 1fr; }
+            .seccion-opt label { flex-direction: row; justify-content: flex-start; padding: 12px 14px; }
+            .acceso-toggle { flex-direction: column; align-items: flex-start; }
 
             .warn-picker { gap: 10px; padding: 40px 0 8px; }
             .warn-box { --warn-size: 52px; }
@@ -1321,77 +1571,159 @@
         <div class="admin-wrapper">
 
             <div class="admin-header">
-                <span class="small-title">PANEL DE ADMINISTRACIÓN</span>
-                <h1><i class="fas fa-shield-halved"></i> Gestión de Expedientes</h1>
-                <p>Visualizá, editá y eliminá expedientes del archivo central. Agregá antecedentes, notas internas y warns.</p>
+                <div class="admin-top">
+                    <span class="small-title">PANEL DE ADMINISTRACIÓN</span>
+                    <div class="view-switch" role="group" aria-label="Sección del panel">
+                        <button type="button" class="active" data-view="usuarios" aria-pressed="true">
+                            <i class="fas fa-users"></i> USUARIOS
+                        </button>
+                        <button type="button" data-view="cuentas" aria-pressed="false">
+                            <i class="fas fa-key"></i> CUENTAS
+                        </button>
+                    </div>
+                </div>
+                <h1 id="adminTitle"><i class="fas fa-shield-halved"></i> Gestión de Expedientes</h1>
+                <p id="adminDesc">Visualizá, editá y eliminá expedientes del archivo central. Agregá antecedentes, notas internas y warns.</p>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="statTotal">—</span>
-                        <span class="stat-label">Total</span>
+            <!-- =====================================================
+                 VISTA: USUARIOS (expedientes)
+                 ===================================================== -->
+            <div id="viewUsuarios">
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statTotal">—</span>
+                            <span class="stat-label">Total</span>
+                        </div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statCiudadanos">—</span>
+                            <span class="stat-label">Ciudadanos</span>
+                        </div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon"><i class="fas fa-passport"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statInmigrantes">—</span>
+                            <span class="stat-label">Inmigrantes</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-sticky-note"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statConNotas">—</span>
+                            <span class="stat-label">Con antecedentes</span>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card success">
-                    <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="statCiudadanos">—</span>
-                        <span class="stat-label">Ciudadanos</span>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre, alias, nick, expediente..." />
+                    </div>
+
+                    <!-- FILTRO 1: Todos / Liga / Inmigrantes -->
+                    <select class="filter-select" id="filterTipo">
+                        <option value="">Todos</option>
+                        <option value="ciudadano">Liga</option>
+                        <option value="inmigrante">Inmigrantes</option>
+                    </select>
+
+                    <!-- FILTRO 2: Todos / Con antecedentes / Sin antecedentes -->
+                    <select class="filter-select" id="filterAntec">
+                        <option value="">Todos (antecedentes)</option>
+                        <option value="con">Con antecedentes</option>
+                        <option value="sin">Sin antecedentes</option>
+                    </select>
+
+                    <!-- FILTRO 3: depende del filtro 1 (rangos si Liga, clanes si Inmigrantes) -->
+                    <select class="filter-select" id="filterRango" disabled>
+                        <option value="">Elegí Liga o Inmigrantes</option>
+                    </select>
+
+                    <button class="refresh-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i> RECARGAR
+                    </button>
+                </div>
+
+                <div class="expedientes-container" id="expedientesContainer">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Cargando expedientes...</p>
                     </div>
                 </div>
-                <div class="stat-card warning">
-                    <div class="stat-icon"><i class="fas fa-passport"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="statInmigrantes">—</span>
-                        <span class="stat-label">Inmigrantes</span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-sticky-note"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="statConNotas">—</span>
-                        <span class="stat-label">Con antecedentes</span>
-                    </div>
-                </div>
+
             </div>
 
-            <div class="toolbar">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Buscar por nombre, alias, nick, expediente..." />
+            <!-- =====================================================
+                 VISTA: CUENTAS
+                 ===================================================== -->
+            <div id="viewCuentas" style="display:none;">
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users-gear"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statCuentasTotal">—</span>
+                            <span class="stat-label">Cuentas</span>
+                        </div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon"><i class="fas fa-pen-to-square"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statCuentasForm">—</span>
+                            <span class="stat-label">Con formulario</span>
+                        </div>
+                    </div>
+                    <div class="stat-card warning">
+                        <div class="stat-icon"><i class="fas fa-lock"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statCuentasSin">—</span>
+                            <span class="stat-label">Sin formulario</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="statCuentasAdmin">—</span>
+                            <span class="stat-label">Admins</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- FILTRO 1: Todos / Liga / Inmigrantes -->
-                <select class="filter-select" id="filterTipo">
-                    <option value="">Todos</option>
-                    <option value="ciudadano">Liga</option>
-                    <option value="inmigrante">Inmigrantes</option>
-                </select>
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="cuentasSearch" placeholder="Buscar por nombre o email..." />
+                    </div>
 
-                <!-- FILTRO 2: Todos / Con antecedentes / Sin antecedentes -->
-                <select class="filter-select" id="filterAntec">
-                    <option value="">Todos (antecedentes)</option>
-                    <option value="con">Con antecedentes</option>
-                    <option value="sin">Sin antecedentes</option>
-                </select>
+                    <select class="filter-select" id="cuentasFilter">
+                        <option value="">Todas las cuentas</option>
+                        <option value="con">Con acceso al formulario</option>
+                        <option value="sin">Sin acceso al formulario</option>
+                        <option value="lombardos">Acceso a Lombardos</option>
+                        <option value="inmigrantes">Acceso a Inmigrantes</option>
+                        <option value="ambas">Acceso a ambas</option>
+                    </select>
 
-                <!-- FILTRO 3: depende del filtro 1 (rangos si Liga, clanes si Inmigrantes) -->
-                <select class="filter-select" id="filterRango" disabled>
-                    <option value="">Elegí Liga o Inmigrantes</option>
-                </select>
-
-                <button class="refresh-btn" id="refreshBtn">
-                    <i class="fas fa-sync-alt"></i> RECARGAR
-                </button>
-            </div>
-
-            <div class="expedientes-container" id="expedientesContainer">
-                <div class="loading-state">
-                    <div class="spinner"></div>
-                    <p>Cargando expedientes...</p>
+                    <button class="refresh-btn" id="cuentaNewBtn">
+                        <i class="fas fa-user-plus"></i> NUEVA CUENTA
+                    </button>
                 </div>
+
+                <div class="expedientes-container" id="cuentasContainer">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Cargando cuentas...</p>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -1532,6 +1864,112 @@
                     <i class="fas fa-times"></i> CANCELAR
                 </button>
                 <button class="modal-btn modal-btn-danger" id="deleteModalConfirm">
+                    <i class="fas fa-trash"></i> ELIMINAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL CUENTA (crear / editar) ===== -->
+    <div class="modal-overlay" id="cuentaModal">
+        <div class="modal modal-md">
+            <div class="modal-header">
+                <h2 id="cuentaModalTitle"><i class="fas fa-user-plus"></i> Nueva cuenta</h2>
+                <p id="cuentaModalSubtitle">—</p>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-field full">
+                        <label for="cuentaNombre"><i class="fas fa-user"></i> Nombre</label>
+                        <input type="text" id="cuentaNombre" maxlength="60" autocomplete="off" placeholder="Cómo querés identificar esta cuenta" />
+                    </div>
+                    <div class="form-field full">
+                        <label for="cuentaEmail"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="cuentaEmail" maxlength="120" autocomplete="off" placeholder="usuario@correo.com" />
+                    </div>
+                    <div class="form-field full">
+                        <label for="cuentaPassword" id="cuentaPassLabel"><i class="fas fa-lock"></i> Contraseña</label>
+                        <div class="pass-wrap">
+                            <input type="password" id="cuentaPassword" autocomplete="new-password" />
+                            <button type="button" class="icon-btn" id="cuentaPassToggle" title="Mostrar u ocultar lo que escribís" aria-label="Mostrar u ocultar contraseña">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="icon-btn" id="cuentaPassGen" title="Generar contraseña segura" aria-label="Generar contraseña">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                            </button>
+                        </div>
+                        <div class="field-hint" id="cuentaPassHint">Mínimo 6 caracteres.</div>
+                    </div>
+                </div>
+
+                <div class="hash-note" id="cuentaHashNote" style="display:none;">
+                    <i class="fas fa-shield-halved"></i>
+                    <span>La contraseña actual está guardada como hash y no se puede ver. Si escribís una nueva, reemplaza a la anterior.</span>
+                </div>
+
+                <div class="acceso-toggle">
+                    <div>
+                        <div class="t-title">Acceso al formulario</div>
+                        <div class="t-sub">Permite cargar expedientes desde el formulario.</div>
+                    </div>
+                    <div class="t-control">
+                        <span class="t-state" id="cuentaAccesoState">No</span>
+                        <label class="switch">
+                            <input type="checkbox" id="cuentaAcceso" aria-label="Acceso al formulario" />
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="seccion-wrap disabled" id="cuentaSeccionWrap">
+                    <div class="seccion-title">Secciones permitidas</div>
+                    <div class="seccion-options" role="radiogroup" aria-label="Secciones del formulario">
+                        <div class="seccion-opt">
+                            <input type="radio" name="cuentaSeccion" id="secLombardos" value="lombardos" checked />
+                            <label for="secLombardos"><i class="fas fa-user-shield"></i> Solo Lombardos</label>
+                        </div>
+                        <div class="seccion-opt">
+                            <input type="radio" name="cuentaSeccion" id="secInmigrantes" value="inmigrantes" />
+                            <label for="secInmigrantes"><i class="fas fa-passport"></i> Solo Inmigrantes</label>
+                        </div>
+                        <div class="seccion-opt">
+                            <input type="radio" name="cuentaSeccion" id="secAmbas" value="ambas" />
+                            <label for="secAmbas"><i class="fas fa-layer-group"></i> Ambas</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="cuentaModalCancel">
+                    <i class="fas fa-times"></i> CANCELAR
+                </button>
+                <button class="modal-btn modal-btn-primary" id="cuentaModalSave">
+                    <i class="fas fa-user-plus"></i> CREAR CUENTA
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL ELIMINAR CUENTA ===== -->
+    <div class="modal-overlay" id="cuentaDeleteModal">
+        <div class="modal modal-sm">
+            <div class="modal-body">
+                <div class="danger-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p class="danger-text">
+                    ¿Estás seguro de que querés eliminar la cuenta<br>
+                    <strong id="cuentaDeleteName">—</strong>?
+                </p>
+                <p class="danger-subtext">
+                    Se borra su acceso y sus permisos. Esta acción no se puede deshacer.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" id="cuentaDeleteCancel">
+                    <i class="fas fa-times"></i> CANCELAR
+                </button>
+                <button class="modal-btn modal-btn-danger" id="cuentaDeleteConfirm">
                     <i class="fas fa-trash"></i> ELIMINAR
                 </button>
             </div>
@@ -2984,12 +3422,19 @@
             renderNav(user);
             cargarExpedientes();
 
+            // Avisa a admin.js (pestaña CUENTAS) que ya se verificó al admin
+            window.__adminUser = user;
+            window.dispatchEvent(new CustomEvent('admin-ready', { detail: { user } }));
+
             showToast('👑 Panel de administración cargado', 'success', 2000);
             console.log(`👑 Admin panel - Usuario: ${user.email}`);
         });
 
         console.log('👑 Panel de administración listo');
     </script>
+
+    <!-- Lógica de la pestaña CUENTAS -->
+    <script type="module" src="./admin.js"></script>
 
 </body>
 </html>
