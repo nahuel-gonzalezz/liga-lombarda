@@ -15,7 +15,7 @@
 //     createdAt, createdBy, updatedAt
 //   }
 // =========================================================
-
+ 
 import {
     auth,
     database,
@@ -25,7 +25,7 @@ import {
     remove,
     onValue
 } from "./firebase-init.js";
-
+ 
 // IMPORTANTE: usá la misma versión del SDK que está en tu firebase-init.js
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -35,30 +35,30 @@ import {
     sendPasswordResetEmail,
     signOut as signOutSecundario
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+ 
 // =========================================================
 // CONFIG
 // =========================================================
 const FUNCTIONS_REGION = 'us-central1';          // región de tus Cloud Functions
 const MIN_PASSWORD = 6;                          // mínimo que exige Firebase Auth
 const SECONDARY_APP_NAME = 'cuentas-secundaria'; // app auxiliar para crear cuentas
-
+ 
 // =========================================================
 // REFERENCIAS DOM
 // =========================================================
 const $ = (id) => document.getElementById(id);
-
+ 
 const viewUsuarios = $('viewUsuarios');
 const viewCuentas = $('viewCuentas');
 const adminTitle = $('adminTitle');
 const adminDesc = $('adminDesc');
 const viewTabs = document.querySelectorAll('.view-switch [data-view]');
-
+ 
 const cuentasContainer = $('cuentasContainer');
 const cuentasSearch = $('cuentasSearch');
 const cuentasFilter = $('cuentasFilter');
 const cuentaNewBtn = $('cuentaNewBtn');
-
+ 
 const cuentaModal = $('cuentaModal');
 const cuentaModalTitle = $('cuentaModalTitle');
 const cuentaModalSubtitle = $('cuentaModalSubtitle');
@@ -76,12 +76,12 @@ const cuentaSeccionWrap = $('cuentaSeccionWrap');
 const cuentaSeccionInputs = document.querySelectorAll('input[name="cuentaSeccion"]');
 const cuentaModalCancel = $('cuentaModalCancel');
 const cuentaModalSave = $('cuentaModalSave');
-
+ 
 const cuentaDeleteModal = $('cuentaDeleteModal');
 const cuentaDeleteName = $('cuentaDeleteName');
 const cuentaDeleteCancel = $('cuentaDeleteCancel');
 const cuentaDeleteConfirm = $('cuentaDeleteConfirm');
-
+ 
 // =========================================================
 // ESTADO
 // =========================================================
@@ -92,14 +92,14 @@ let iniciado = false;
 let editingUid = null;   // null = creando una cuenta nueva
 let deleteUid = null;
 let guardando = false;
-
+ 
 // =========================================================
 // UTILIDADES
 // =========================================================
 function toast(message, type = 'info', duration = 4000) {
     if (typeof window.showToast === 'function') window.showToast(message, type, duration);
 }
-
+ 
 function escapeHtml(str) {
     if (str === undefined || str === null) return '';
     return String(str)
@@ -109,23 +109,23 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
-
+ 
 function emailValido(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
-
+ 
 function generarPassword(largo = 12) {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
     const arr = new Uint32Array(largo);
     crypto.getRandomValues(arr);
     return Array.from(arr, n => chars[n % chars.length]).join('');
 }
-
+ 
 // Traduce errores de Firebase Auth / Database / Functions a mensajes claros
 function mensajeError(err) {
     const code = String(err?.code || '');
     const msg = String(err?.message || '');
-
+ 
     const mapa = {
         'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
         'auth/invalid-email': 'El email no es válido.',
@@ -147,7 +147,7 @@ function mensajeError(err) {
     }
     return msg || 'Ocurrió un error inesperado.';
 }
-
+ 
 // =========================================================
 // CAMBIO DE VISTA: USUARIOS / CUENTAS
 // =========================================================
@@ -163,36 +163,36 @@ const VISTAS = {
         desc: 'Creá cuentas de acceso y definí si pueden usar el formulario y a qué sección. Las contraseñas están protegidas y no se pueden ver.'
     }
 };
-
+ 
 function setVista(nombre, { actualizarHash = true } = {}) {
     if (!VISTAS[nombre]) nombre = 'usuarios';
     const v = VISTAS[nombre];
-
+ 
     viewUsuarios.style.display = nombre === 'usuarios' ? '' : 'none';
     viewCuentas.style.display = nombre === 'cuentas' ? '' : 'none';
-
+ 
     viewTabs.forEach(btn => {
         const activo = btn.dataset.view === nombre;
         btn.classList.toggle('active', activo);
         btn.setAttribute('aria-pressed', activo ? 'true' : 'false');
     });
-
+ 
     adminTitle.innerHTML = `<i class="fas ${v.icono}"></i> ${escapeHtml(v.titulo)}`;
     adminDesc.textContent = v.desc;
-
+ 
     if (actualizarHash) {
         try {
             history.replaceState(null, '', nombre === 'cuentas' ? '#cuentas' : location.pathname + location.search);
         } catch (e) { /* no crítico */ }
     }
 }
-
+ 
 viewTabs.forEach(btn => btn.addEventListener('click', () => setVista(btn.dataset.view)));
 window.addEventListener('hashchange', () => {
     setVista(location.hash === '#cuentas' ? 'cuentas' : 'usuarios', { actualizarHash: false });
 });
 setVista(location.hash === '#cuentas' ? 'cuentas' : 'usuarios', { actualizarHash: false });
-
+ 
 // =========================================================
 // MODELO DE CUENTA
 // =========================================================
@@ -211,24 +211,24 @@ function normalizarCuenta(uid, v) {
         createdAt: v.createdAt || ''
     };
 }
-
+ 
 function getSeccionKey(c) {
     if (c.lombardos && c.inmigrantes) return 'ambas';
     if (c.lombardos) return 'lombardos';
     if (c.inmigrantes) return 'inmigrantes';
     return '';
 }
-
+ 
 function nombreVisible(c) {
     return c.nombre || c.email || c.uid;
 }
-
+ 
 // =========================================================
 // CARGA EN TIEMPO REAL
 // =========================================================
 function cargarCuentas() {
     if (unsubscribeCuentas) unsubscribeCuentas();
-
+ 
     unsubscribeCuentas = onValue(ref(database, 'usuarios'), (snapshot) => {
         cuentasData = [];
         if (snapshot.exists()) {
@@ -251,21 +251,21 @@ function cargarCuentas() {
         toast('❌ Error al cargar cuentas', 'error', 4000);
     });
 }
-
+ 
 function actualizarStatsCuentas() {
     $('statCuentasTotal').textContent = cuentasData.length;
     $('statCuentasForm').textContent = cuentasData.filter(c => c.acceso).length;
     $('statCuentasSin').textContent = cuentasData.filter(c => !c.acceso).length;
     $('statCuentasAdmin').textContent = cuentasData.filter(c => c.admin).length;
 }
-
+ 
 // =========================================================
 // FILTRO + RENDER
 // =========================================================
 function getCuentasFiltradas() {
     const q = cuentasSearch.value.trim().toLowerCase();
     const f = cuentasFilter.value;
-
+ 
     return cuentasData.filter(c => {
         if (f === 'con' && !c.acceso) return false;
         if (f === 'sin' && c.acceso) return false;
@@ -279,10 +279,10 @@ function getCuentasFiltradas() {
         return true;
     });
 }
-
+ 
 function renderCuentas() {
     const lista = getCuentasFiltradas();
-
+ 
     if (lista.length === 0) {
         const total = cuentasData.length;
         cuentasContainer.innerHTML = `
@@ -294,7 +294,7 @@ function renderCuentas() {
         `;
         return;
     }
-
+ 
     const header = `
         <div class="cuentas-header">
             <span>Cuenta</span>
@@ -303,16 +303,16 @@ function renderCuentas() {
             <span>Contraseña</span>
             <span style="text-align:right;">Acciones</span>
         </div>`;
-
+ 
     const rows = lista.map(c => {
         const nombre = nombreVisible(c);
         const inicial = nombre.trim().charAt(0).toUpperCase() || '?';
         const esYo = adminUser && c.uid === adminUser.uid;
-
+ 
         const accesoBadge = c.acceso
             ? `<span class="badge badge-activo"><i class="fas fa-check"></i> Sí</span>`
             : `<span class="badge badge-inactivo"><i class="fas fa-xmark"></i> No</span>`;
-
+ 
         let seccionesHtml = '<span style="color:var(--text-soft);">—</span>';
         if (c.acceso) {
             const partes = [];
@@ -322,14 +322,14 @@ function renderCuentas() {
                 ? partes.join('')
                 : '<span style="color:var(--text-soft);">Sin sección asignada</span>';
         }
-
+ 
         const adminBadge = c.admin
             ? `<span class="badge badge-admin"><i class="fas fa-crown"></i> Admin</span>`
             : '';
         const yoBadge = esYo
             ? `<span class="badge badge-inactivo">Vos</span>`
             : '';
-
+ 
         return `
             <div class="cuenta-row" data-uid="${escapeHtml(c.uid)}">
                 <div class="cell-name">
@@ -361,10 +361,10 @@ function renderCuentas() {
             </div>
         `;
     }).join('');
-
+ 
     cuentasContainer.innerHTML = header + rows;
 }
-
+ 
 cuentasContainer.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-caction]');
     if (!btn || btn.disabled) return;
@@ -374,10 +374,10 @@ cuentasContainer.addEventListener('click', (e) => {
     else if (accion === 'reset') enviarReset(uid);
     else if (accion === 'delete') abrirDeleteCuenta(uid);
 });
-
+ 
 cuentasSearch.addEventListener('input', renderCuentas);
 cuentasFilter.addEventListener('change', renderCuentas);
-
+ 
 // =========================================================
 // MODAL CREAR / EDITAR CUENTA
 // =========================================================
@@ -385,31 +385,31 @@ function setPassVisible(visible) {
     cuentaPassword.type = visible ? 'text' : 'password';
     cuentaPassToggle.innerHTML = `<i class="fas fa-eye${visible ? '-slash' : ''}"></i>`;
 }
-
+ 
 function sincronizarAccesoUI() {
     const on = cuentaAcceso.checked;
     cuentaAccesoState.textContent = on ? 'Sí' : 'No';
     cuentaSeccionWrap.classList.toggle('disabled', !on);
     cuentaSeccionInputs.forEach(i => { i.disabled = !on; });
 }
-
+ 
 function getSeccionElegida() {
     const el = document.querySelector('input[name="cuentaSeccion"]:checked');
     return el ? el.value : 'lombardos';
 }
-
+ 
 function setSeccionElegida(valor) {
     cuentaSeccionInputs.forEach(i => { i.checked = i.value === valor; });
 }
-
+ 
 function abrirCuentaModal(uid = null) {
     const c = uid ? cuentasData.find(x => x.uid === uid) : null;
     if (uid && !c) return;
-
+ 
     editingUid = uid;
     setPassVisible(false);
     cuentaPassword.value = '';
-
+ 
     if (c) {
         cuentaModalTitle.innerHTML = '<i class="fas fa-user-pen"></i> Editar cuenta';
         cuentaModalSubtitle.textContent = c.email || c.uid;
@@ -433,12 +433,12 @@ function abrirCuentaModal(uid = null) {
         setSeccionElegida('lombardos');
         cuentaModalSave.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
     }
-
+ 
     sincronizarAccesoUI();
     cuentaModal.classList.add('visible');
     setTimeout(() => cuentaNombre.focus(), 100);
 }
-
+ 
 function cerrarCuentaModal() {
     if (guardando) return;
     cuentaModal.classList.remove('visible');
@@ -446,7 +446,7 @@ function cerrarCuentaModal() {
     setPassVisible(false);
     editingUid = null;
 }
-
+ 
 cuentaNewBtn.addEventListener('click', () => abrirCuentaModal(null));
 cuentaModalCancel.addEventListener('click', cerrarCuentaModal);
 cuentaModal.addEventListener('click', (e) => { if (e.target === cuentaModal) cerrarCuentaModal(); });
@@ -457,7 +457,7 @@ cuentaPassGen.addEventListener('click', () => {
     setPassVisible(true);
     cuentaPassword.focus();
 });
-
+ 
 // =========================================================
 // FIREBASE: crear cuenta sin cerrar la sesión del admin
 // Usa una segunda instancia de la app: así el admin sigue logueado.
@@ -467,23 +467,22 @@ function getSecondaryAuth() {
         || initializeApp({ ...auth.app.options }, SECONDARY_APP_NAME);
     return getAuth(app);
 }
-
+ 
 async function crearCuenta({ nombre, email, password, formulario }) {
     const secAuth = getSecondaryAuth();
     const cred = await createUserWithEmailAndPassword(secAuth, email, password);
     const uid = cred.user.uid;
-
+ 
     try { await updateProfile(cred.user, { displayName: nombre }); }
     catch (e) { console.warn('No se pudo guardar displayName:', e); }
-
+ 
     try { await signOutSecundario(secAuth); }
     catch (e) { console.warn('No se pudo cerrar la sesión auxiliar:', e); }
-
+ 
     try {
         await set(ref(database, `usuarios/${uid}`), {
             nombre,
             email,
-            admin: false,
             formulario,
             createdAt: new Date().toISOString(),
             createdBy: adminUser?.uid || null
@@ -494,7 +493,7 @@ async function crearCuenta({ nombre, email, password, formulario }) {
     }
     return uid;
 }
-
+ 
 // =========================================================
 // FIREBASE: editar email / contraseña / eliminar (requiere Cloud Function)
 // El SDK web no permite modificar a OTRO usuario: eso solo lo puede hacer
@@ -510,7 +509,7 @@ async function llamarFuncionAdmin(nombre, data) {
     const token = await user.getIdToken();
     const projectId = auth.app.options.projectId;
     const url = `https://${FUNCTIONS_REGION}-${projectId}.cloudfunctions.net/${nombre}`;
-
+ 
     let res;
     try {
         res = await fetch(url, {
@@ -526,10 +525,10 @@ async function llamarFuncionAdmin(nombre, data) {
         err.code = 'functions/unreachable';
         throw err;
     }
-
+ 
     let json = null;
     try { json = await res.json(); } catch (e) { /* respuesta sin JSON */ }
-
+ 
     if (!res.ok || json?.error) {
         const err = new Error(json?.error?.message || `Error ${res.status}`);
         err.code = `functions/${json?.error?.status || res.status}`;
@@ -537,18 +536,18 @@ async function llamarFuncionAdmin(nombre, data) {
     }
     return json?.result;
 }
-
+ 
 async function editarCuenta({ uid, nombre, email, password, formulario }, original) {
     const emailCambio = email !== (original.email || '').toLowerCase();
     const passCambio = !!password;
-
+ 
     if (emailCambio || passCambio) {
         const payload = { uid, displayName: nombre };
         if (emailCambio) payload.email = email;
         if (passCambio) payload.password = password;
         await llamarFuncionAdmin('adminUpdateUser', payload);
     }
-
+ 
     await update(ref(database, `usuarios/${uid}`), {
         nombre,
         email,
@@ -556,20 +555,20 @@ async function editarCuenta({ uid, nombre, email, password, formulario }, origin
         updatedAt: new Date().toISOString()
     });
 }
-
+ 
 // =========================================================
 // GUARDAR (crear o editar)
 // =========================================================
 cuentaModalSave.addEventListener('click', async () => {
     if (guardando) return;
-
+ 
     const nombre = cuentaNombre.value.trim();
     const email = cuentaEmail.value.trim().toLowerCase();
     const password = cuentaPassword.value;
     const acceso = cuentaAcceso.checked;
     const seccion = getSeccionElegida();
     const creando = !editingUid;
-
+ 
     if (!nombre) return toast('❌ Escribí un nombre para la cuenta', 'error', 3000);
     if (!emailValido(email)) return toast('❌ Escribí un email válido', 'error', 3000);
     if (creando && password.length < MIN_PASSWORD) {
@@ -578,21 +577,21 @@ cuentaModalSave.addEventListener('click', async () => {
     if (!creando && password && password.length < MIN_PASSWORD) {
         return toast(`❌ La nueva contraseña debe tener al menos ${MIN_PASSWORD} caracteres`, 'error', 3500);
     }
-
+ 
     const formulario = {
         acceso,
         lombardos: acceso && (seccion === 'lombardos' || seccion === 'ambas'),
         inmigrantes: acceso && (seccion === 'inmigrantes' || seccion === 'ambas')
     };
-
+ 
     const original = creando ? null : cuentasData.find(x => x.uid === editingUid);
     if (!creando && !original) return toast('❌ No se encontró la cuenta', 'error', 3000);
-
+ 
     guardando = true;
     cuentaModalSave.disabled = true;
     const htmlOriginal = cuentaModalSave.innerHTML;
     cuentaModalSave.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
-
+ 
     try {
         if (creando) {
             await crearCuenta({ nombre, email, password, formulario });
@@ -618,7 +617,7 @@ cuentaModalSave.addEventListener('click', async () => {
         cuentaModalSave.innerHTML = htmlOriginal;
     }
 });
-
+ 
 // =========================================================
 // RESTABLECER CONTRASEÑA POR MAIL (funciona sin Cloud Functions)
 // =========================================================
@@ -626,7 +625,7 @@ async function enviarReset(uid) {
     const c = cuentasData.find(x => x.uid === uid);
     if (!c || !c.email) return toast('❌ Esta cuenta no tiene email registrado', 'error', 3000);
     if (!confirm(`¿Enviar un mail para restablecer la contraseña a ${c.email}?`)) return;
-
+ 
     try {
         await sendPasswordResetEmail(getSecondaryAuth(), c.email);
         toast(`📧 Mail enviado a ${c.email}`, 'success', 3500);
@@ -635,7 +634,7 @@ async function enviarReset(uid) {
         toast(`❌ ${mensajeError(error)}`, 'error', 5000);
     }
 }
-
+ 
 // =========================================================
 // ELIMINAR CUENTA
 // =========================================================
@@ -646,22 +645,22 @@ function abrirDeleteCuenta(uid) {
     cuentaDeleteName.textContent = `${nombreVisible(c)}${c.email && c.nombre ? ` (${c.email})` : ''}`;
     cuentaDeleteModal.classList.add('visible');
 }
-
+ 
 function cerrarDeleteCuenta() {
     cuentaDeleteModal.classList.remove('visible');
     deleteUid = null;
 }
-
+ 
 cuentaDeleteCancel.addEventListener('click', cerrarDeleteCuenta);
 cuentaDeleteModal.addEventListener('click', (e) => { if (e.target === cuentaDeleteModal) cerrarDeleteCuenta(); });
-
+ 
 cuentaDeleteConfirm.addEventListener('click', async () => {
     if (!deleteUid) return;
     const uid = deleteUid;
     const btn = cuentaDeleteConfirm;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ELIMINANDO...';
-
+ 
     try {
         // 1) Borra la cuenta de acceso (Authentication)
         await llamarFuncionAdmin('adminDeleteUser', { uid });
