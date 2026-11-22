@@ -1467,7 +1467,7 @@
 
         <div class="theme-switch">
             <button class="theme-btn active" id="btn-liga" onclick="setTema('liga')">Liga Lombarda</button>
-            <button class="theme-btn" id="btn-inmigrantes" onclick="setTema('inmigrantes')">Inmigrantes</button>
+            <button class="theme-btn" id="btn-inmigrantes" onclick="setTema('inmigrantes')">Otro clan</button>
         </div>
 
         <div class="main-wrapper">
@@ -2099,7 +2099,7 @@
         const sideAdminLink = document.getElementById('sideAdminLink');
 
         // ⬇️ UID restringido a solo inmigrantes
-        const UID_SOLO_INMIGRANTES = ['POBK1KyUCzaIRLR78H8HGAnY9RW2']; // masivo@clanes.com
+        const UID_SOLO_INMIGRANTES = ['POBK1KyUCzaIRLR78H8HGAnY9RW2']; 
 
         function openMenu() {
             sideMenu.classList.add('open');
@@ -2247,7 +2247,7 @@
 
             console.log(`📝 Formulario - Usuario: ${user.email}`);
             console.log(`👑 Rol: ${isAdmin ? 'admin' : 'normal'}`);
-            console.log(`🔒 Restringido a inmigrantes: ${esRestringido}`);
+            console.log(`🔒 Restringido a otro clan: ${esRestringido}`);
         });
 
         console.log('📝 Formulario con autenticación obligatoria listo');
