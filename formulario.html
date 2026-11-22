@@ -399,6 +399,29 @@
         }
         .theme-btn.locked i { margin-right: 6px; }
 
+        /* Animación al clickear un botón bloqueado ("cerrado") */
+        @keyframes lockedShake {
+            0%, 100% { transform: translateX(0); }
+            15% { transform: translateX(-8px) rotate(-2deg); }
+            30% { transform: translateX(7px) rotate(2deg); }
+            45% { transform: translateX(-6px) rotate(-1.5deg); }
+            60% { transform: translateX(5px) rotate(1.5deg); }
+            75% { transform: translateX(-3px); }
+            90% { transform: translateX(2px); }
+        }
+        @keyframes lockedPulse {
+            0%, 100% { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
+            50% { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35), 0 0 22px rgba(153, 0, 36, 0.8); }
+        }
+        .theme-btn.locked-shake {
+            animation: lockedShake 0.55s ease, lockedPulse 0.55s ease;
+            opacity: 0.9;
+        }
+        .theme-btn.locked-shake i {
+            animation: lockedShake 0.55s ease;
+            display: inline-block;
+        }
+
         .toast {
             position: fixed;
             bottom: 30px;
@@ -2424,9 +2447,30 @@
             };
         }
 
+        // =========================================================
+        // ANIMACIÓN: botón "Liga Lombarda" bloqueado (cerrado)
+        // =========================================================
+        function animarBotonCerrado() {
+            const btn = document.getElementById('btn-liga');
+            if (!btn || btn._cerradoTimeout) return;
+
+            const original = btn.innerHTML;
+            btn.classList.remove('locked-shake');
+            void btn.offsetWidth; // reinicia la animación
+            btn.classList.add('locked-shake');
+            btn.innerHTML = '<i class="fa-solid fa-lock"></i> Cerrado';
+
+            btn._cerradoTimeout = setTimeout(() => {
+                btn.innerHTML = original;
+                btn.classList.remove('locked-shake');
+                btn._cerradoTimeout = null;
+            }, 1400);
+        }
+
         function setTema(tema) {
             if (window.SOLO_INMIGRANTES && tema !== 'inmigrantes') {
-                window.showToast('🔒 Tu cuenta solo puede completar el formulario de Inmigrantes', 'error', 3500);
+                animarBotonCerrado();
+                window.showToast('🔒 Liga Lombarda está cerrado para tu cuenta', 'error', 3000);
                 return;
             }
             if (isAnimating) return;
@@ -2462,13 +2506,13 @@
                     document.getElementById('editorTitle').textContent = 'Nuevo expediente de inmigrante';
                     document.getElementById('panelTitleIdent').textContent = 'IDENTIFICACIÓN DEL INMIGRANTE';
                     document.getElementById('panelTitleInfo').textContent = 'INFORMACIÓN DEL INMIGRANTE';
-                    document.getElementById('panelTitleComp').textContent = 'COMPETENCIAS DEL INMIGRANTE';
+                    document.getElementById('panelTitleComp').textContent = 'COMPETENCIAS EN MINECRAFT';
 
                     document.getElementById('docHeading').textContent = 'REGISTRO DE INMIGRANTES';
                     document.getElementById('docSubheading').textContent = 'DOCUMENTO DE INMIGRANTE';
                     document.getElementById('docRegister').textContent = 'REGISTRO DE INMIGRANTES';
                     document.getElementById('previewClassification').textContent = 'INMIGRANTE';
-                    document.getElementById('previewCompTitle').textContent = 'COMPETENCIAS DEL INMIGRANTE';
+                    document.getElementById('previewCompTitle').textContent = 'COMPETENCIAS EN MINECRAFT';
                     document.getElementById('docMotto').textContent = 'POR LA LIBERTAD · POR UN NUEVO HOGAR · POR SIEMPRE';
 
                     document.getElementById('fieldRankPreview').style.display = 'none';
