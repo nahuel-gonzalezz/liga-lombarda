@@ -2458,7 +2458,7 @@
             btn.classList.remove('locked-shake');
             void btn.offsetWidth; // reinicia la animación
             btn.classList.add('locked-shake');
-            btn.innerHTML = '<i class="fa-solid fa-lock"></i> Cerrado';
+            btn.innerHTML = '<i class="fa-solid fa-lock"></i> Sin Acceso';
 
             btn._cerradoTimeout = setTimeout(() => {
                 btn.innerHTML = original;
@@ -2470,7 +2470,7 @@
         function setTema(tema) {
             if (window.SOLO_INMIGRANTES && tema !== 'inmigrantes') {
                 animarBotonCerrado();
-                window.showToast('🔒 Liga Lombarda está cerrado para tu cuenta', 'error', 3000);
+                window.showToast('🔒 Solo Lombardos pueden acceder a esta seccion.', 'error', 3000);
                 return;
             }
             if (isAnimating) return;
