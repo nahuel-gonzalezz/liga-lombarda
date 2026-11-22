@@ -3061,10 +3061,10 @@
                 const newExpedienteRef = push(expedientesRef);
 
                 await set(newExpedienteRef, data);
-                console.log('✅ Guardado en Firebase:', newExpedienteRef.key);
+                console.log('✅ Guardado en la base de datos:', newExpedienteRef.key);
                 return { success: true, id: newExpedienteRef.key, source: 'firebase' };
             } catch (error) {
-                console.error('❌ Error Firebase al guardar:', error);
+                console.error('❌ Error en la base de datos al guardar:', error);
                 return { success: false, error: error.message, source: 'firebase' };
             }
         }
