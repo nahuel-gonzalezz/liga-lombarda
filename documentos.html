@@ -2088,7 +2088,7 @@
                     const name = item.name || 'Sin nombre';
                     const alias = item.alias || 'Sin alias';
                     const nick = item.minecraftNick || '';
-                    const rank = item.rank || 'Miembro de otro clan';
+                    const rank = obtenerClanInmigrante(item) || 'Sin clan';
 
                     const delay = (cardIndex * 0.04).toFixed(2);
                     cardIndex++;
