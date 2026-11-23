@@ -670,7 +670,7 @@
         .desc-counter.warn { color: #c77800; }
         .desc-counter.limit { color: #b3002a; }
 
-        /* Selector de clan (buscador + lista + "Otro" fijo arriba) */
+        /* Selector de clan (buscador + lista + "Otro clan" al final) */
         .clan-hint {
             display: block;
             margin-top: 6px;
@@ -682,6 +682,11 @@
         .clan-hint i { margin-right: 4px; color: var(--accent); }
         #clanSearch { margin-bottom: 8px; }
         #clan option[value="Otro"] { font-weight: 800; }
+        #clan option[disabled] { color: #999; }
+        #clan.invalid {
+            border-color: #b3002a;
+            box-shadow: 0 0 0 3px rgba(179, 0, 42, 0.12);
+        }
 
         .secondary-btn {
             border: 2px solid var(--accent-dark);
@@ -1683,18 +1688,22 @@
                                 </select>
                             </div>
 
-                            <!-- CLAN: lista dinámica (Firebase) + buscador + "Otro" siempre arriba -->
+                            <!-- CLAN: placeholder obligatorio + lista + "Otro clan" al final -->
                             <div class="field field-clan-extra">
                                 <label for="clan"><i class="fas fa-people-group"></i> CLAN</label>
                                 <input type="text" id="clanSearch" placeholder="🔎 Buscar clan..." autocomplete="off" style="display: none;" />
-                                <select id="clan">
-                                    <option value="Otro">➕ Otro (escribir un clan nuevo)...</option>
-                                    <option value="Gremios Redstone">Gremios Redstone</option>
+                                <select id="clan" required>
+                                    <option value="" disabled selected>Elegir un clan...</option>
                                     <option value="Goatania">Goatania</option>
+                                    <option value="Gremio de Redstone">Gremio de Redstone</option>
+                                    <option value="Eternal">Eternal</option>
+                                    <option value="El Consejo">El Consejo</option>
+                                    <option value="Paja Gang">Paja Gang</option>
+                                    <option value="Otro">Otro clan</option>
                                 </select>
                                 <input type="text" id="clanCustom" placeholder="Escribí el nombre del clan" maxlength="30" style="margin-top: 8px; display: none;" />
                                 <small class="clan-hint" id="clanHint">
-                                    <i class="fas fa-info-circle"></i> ¿Tu clan no está? Elegí "Otro".
+                                    <i class="fas fa-info-circle"></i> ¿Tu clan no está? Elegí "Otro clan".
                                 </small>
                             </div>
 
@@ -2267,11 +2276,12 @@
         // =========================================================
         // CLANES DINÁMICOS
         // - Se guardan en Firebase: /clanes/{clave} = { nombre, creadoPor, creadoEn }
-        // - "Otro" SIEMPRE es la primera opción de la lista.
+        // - Primera opción: "Elegir un clan..." (deshabilitada, no es válida).
+        // - "Otro clan" SIEMPRE va al final de la lista.
         // - Si hay más de CLAN_MIN_PARA_BUSCADOR clanes aparece un buscador.
         // =========================================================
-        const CLANES_BASE = ['Gremios Redstone', 'Goatania'];
-        const CLAN_OTRO = 'Otro';
+        const CLANES_BASE = ['Goatania', 'Gremio de Redstone', 'Eternal', 'El Consejo', 'Paja Gang'];
+        const CLAN_OTRO = 'Otro';          // value interno de la opción "Otro clan"
         const CLAN_MAX_LEN = 30;
         const CLAN_MIN_PARA_BUSCADOR = 6;
 
@@ -2314,6 +2324,7 @@
             const sel = document.getElementById('clan');
             const custom = document.getElementById('clanCustom');
             if (!sel || !custom) return;
+            sel.classList.remove('invalid');
             if (sel.value === CLAN_OTRO) {
                 custom.style.display = 'block';
             } else {
@@ -2322,47 +2333,74 @@
             }
         }
 
-        // Reconstruye el <select>. "Otro" va siempre primero.
+        // Reconstruye el <select>:
+        //   1) "Elegir un clan..." (deshabilitado, no es una opción válida)
+        //   2) los clanes
+        //   3) "Otro clan" siempre al final
         function renderClanSelect(filtro = '') {
             const sel = document.getElementById('clan');
             const buscador = document.getElementById('clanSearch');
             if (!sel) return;
 
-            const previo = sel.value;
+            const previo = sel.value;            // '' si todavía no eligió nada
             const f = normalizarClan(filtro);
 
-            // Mostrar el buscador solo si hay muchos clanes
             if (buscador) {
                 buscador.style.display = clanesLista.length > CLAN_MIN_PARA_BUSCADOR ? 'block' : 'none';
             }
 
             sel.innerHTML = '';
 
+            const optPlaceholder = document.createElement('option');
+            optPlaceholder.value = '';
+            optPlaceholder.textContent = 'Elegir un clan...';
+            optPlaceholder.disabled = true;
+            sel.appendChild(optPlaceholder);
+
+            // Se mantiene visible el clan ya elegido aunque el buscador lo filtre
+            clanesLista
+                .filter(c => !f || normalizarClan(c).includes(f) || c === previo)
+                .forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    sel.appendChild(opt);
+                });
+
             const optOtro = document.createElement('option');
             optOtro.value = CLAN_OTRO;
-            optOtro.textContent = 'Otro...';
+            optOtro.textContent = 'Otro clan';
             sel.appendChild(optOtro);
 
-            const visibles = clanesLista.filter(c => !f || normalizarClan(c).includes(f));
-            visibles.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                opt.textContent = c;
-                sel.appendChild(opt);
-            });
-
-            // Restaurar selección
-            const existe = Array.from(sel.options).some(o => o.value === previo);
-            if (previo && existe) {
-                sel.value = previo;
-            } else if (visibles.length > 0 && (!previo || f)) {
-                sel.value = visibles[0];
-            } else {
-                sel.value = CLAN_OTRO;
-            }
+            // Restaurar selección; si no había (o ya no existe), vuelve al placeholder
+            const existe = Array.from(sel.options).some(o => o.value === previo && !o.disabled);
+            sel.value = (previo && existe) ? previo : '';
 
             sincronizarClanCustom();
             if (typeof updateAllData === 'function') updateAllData();
+        }
+
+        // Valida que haya un clan real elegido (o escrito si eligió "Otro clan")
+        function validarClan() {
+            const sel = document.getElementById('clan');
+            const custom = document.getElementById('clanCustom');
+
+            if (!sel.value) {
+                sel.classList.add('invalid');
+                sel.focus();
+                window.showToast('🏴 Elegí un clan de la lista', 'error', 3500);
+                return false;
+            }
+
+            if (sel.value === CLAN_OTRO) {
+                const escrito = limpiarNombreClan(custom.value);
+                if (!escrito || !claveClan(escrito)) {
+                    custom.focus();
+                    window.showToast('✍️ Escribí el nombre de tu clan (o elegí uno de la lista)', 'error', 3500);
+                    return false;
+                }
+            }
+            return true;
         }
 
         // Lee los clanes guardados en Firebase y los junta con los base
@@ -2389,8 +2427,7 @@
             const clave = claveClan(limpio);
             if (!limpio || !clave) return;
 
-            const yaExistia = !!buscarClanExistente(limpio);
-            if (yaExistia) return;
+            if (buscarClanExistente(limpio)) return;
 
             try {
                 if (!window.firebaseDB) return;
@@ -2923,10 +2960,10 @@
                 const clanSelect = document.getElementById('clan');
                 if (clanSelect.value === CLAN_OTRO) {
                     const escrito = limpiarNombreClan(document.getElementById('clanCustom').value);
-                    // Si escribió uno que ya existe (ej: "eternals" vs "Eternals"), usamos el existente
-                    clan = escrito ? (buscarClanExistente(escrito) || escrito) : CLAN_OTRO;
+                    // Si escribió uno que ya existe (ej: "eternal" vs "Eternal"), usamos el existente
+                    clan = escrito ? (buscarClanExistente(escrito) || escrito) : '';
                 } else {
-                    clan = clanSelect.value || '';
+                    clan = clanSelect.value || '';   // '' mientras siga en "Elegir un clan..."
                 }
                 rank = '';
             } else {
@@ -3082,7 +3119,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(initSkinViewer, 300);
 
-            // ---- Clan: select + buscador + campo "Otro" ----
+            // ---- Clan: select + buscador + campo "Otro clan" ----
             const clanSelect = document.getElementById('clan');
             const clanCustom = document.getElementById('clanCustom');
             const clanSearch = document.getElementById('clanSearch');
@@ -3171,15 +3208,9 @@
                     return;
                 }
 
-                // Validar clan si es inmigrante y eligió "Otro"
-                if (document.body.classList.contains('theme-purple')) {
-                    const sel = document.getElementById('clan');
-                    const escrito = limpiarNombreClan(document.getElementById('clanCustom').value);
-                    if (sel.value === CLAN_OTRO && (!escrito || !claveClan(escrito))) {
-                        window.showToast('✍️ Escribí el nombre de tu clan (o elegí uno de la lista)', 'error', 3500);
-                        document.getElementById('clanCustom').focus();
-                        return;
-                    }
+                // Validar clan (obligatorio en modo inmigrante)
+                if (document.body.classList.contains('theme-purple') && !validarClan()) {
+                    return;
                 }
 
                 generateFileNumber();
