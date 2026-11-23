@@ -514,6 +514,7 @@
         .anim-item:nth-child(1) { animation-delay: 0.05s; }
         .anim-item:nth-child(2) { animation-delay: 0.15s; }
         .anim-item:nth-child(3) { animation-delay: 0.25s; }
+        .anim-item:nth-child(4) { animation-delay: 0.35s; }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(24px); }
             to { opacity: 1; transform: translateY(0); }
@@ -648,6 +649,39 @@
             white-space: nowrap;
         }
         .search-bar .filter-count span { color: var(--gold-bright); font-weight: 700; }
+
+        /* =========================================================
+           FILTRO POR CLAN (chips)
+        ========================================================= */
+        .clan-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: -16px 0 28px;
+        }
+        .clan-chip {
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 7px 14px;
+            border-radius: 50px;
+            font: 700 10px 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .clan-chip:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
+        .clan-chip.active {
+            background: #fff;
+            color: var(--purple-dark);
+            border-color: #fff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.35);
+        }
+        .clan-chip .n { opacity: 0.65; margin-left: 4px; }
+        @media (max-width: 480px) {
+            .clan-chip { font-size: 9px; padding: 6px 11px; }
+        }
 
         /* =========================================================
            CONTENEDOR POR RANGO
@@ -1197,6 +1231,8 @@
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" id="searchInput2" placeholder="Buscar inmigrante..." />
                     </div>
+
+                    <div class="clan-filter anim-item" id="clanFilter"></div>
 
                     <div id="inmigrantesContainer" class="anim-item"></div>
                 </div>
@@ -1842,7 +1878,7 @@
 
         // =========================================================
         // CLASIFICAR Y ORDENAR CLANES DE INMIGRANTES
-        // Prioridad: Goatania -> Gremio Redstone -> otros clanes -> sin clan.
+        // Orden alfabético (A-Z) por nombre de clan; "Sin clan / otros" al final.
         // Se admiten distintos nombres de campo para no depender de una
         // única versión del formulario o de la estructura guardada en Firebase.
         // =========================================================
@@ -1883,36 +1919,33 @@
             const clan = obtenerClanInmigrante(item);
             const normalizado = normalizarTextoGrupo(clan);
 
-            if (normalizado.includes('goatania')) {
-                return {
-                    key: 'goatania',
-                    label: 'GOATANIA',
-                    color: '#d4af37',
-                    icon: 'fa-crown',
-                    order: 0
-                };
-            }
-
-            if (
-                normalizado.includes('redstone') ||
-                normalizado.includes('gremio red')
-            ) {
-                return {
-                    key: 'redstone',
-                    label: 'GREMIO REDSTONE',
-                    color: '#c0392b',
-                    icon: 'fa-hammer',
-                    order: 1
-                };
-            }
-
             if (!clan) {
                 return {
                     key: 'sin-clan',
                     label: 'SIN CLAN / OTROS',
                     color: '#8e8e9a',
-                    icon: 'fa-users',
-                    order: 9999
+                    order: 9999,
+                    sortName: 'zzzz'
+                };
+            }
+
+            if (normalizado.includes('goatania')) {
+                return {
+                    key: 'goatania',
+                    label: 'GOATANIA',
+                    color: '#d4af37',
+                    order: 0,
+                    sortName: 'goatania'
+                };
+            }
+
+            if (normalizado.includes('redstone') || normalizado.includes('gremio red')) {
+                return {
+                    key: 'redstone',
+                    label: 'GREMIO REDSTONE',
+                    color: '#c0392b',
+                    order: 0,
+                    sortName: 'gremio redstone'
                 };
             }
 
@@ -1920,11 +1953,49 @@
                 key: `otro-${normalizado}`,
                 label: clan.toUpperCase(),
                 color: '#9c6bc5',
-                icon: 'fa-people-group',
-                order: 2,
+                order: 0,
                 sortName: normalizado
             };
         }
+
+        // =========================================================
+        // FILTRO POR CLAN (chips)
+        // =========================================================
+        let clanFiltroActivo = 'todos';
+
+        function renderizarFiltroClanes(todos) {
+            const cont = document.getElementById('clanFilter');
+            const mapa = new Map();
+
+            todos.forEach(it => {
+                const c = obtenerClaveClan(it);
+                if (!mapa.has(c.key)) mapa.set(c.key, { ...c, n: 0 });
+                mapa.get(c.key).n++;
+            });
+
+            if (clanFiltroActivo !== 'todos' && !mapa.has(clanFiltroActivo)) {
+                clanFiltroActivo = 'todos';
+            }
+
+            const lista = Array.from(mapa.values()).sort((a, b) =>
+                a.order !== b.order
+                    ? a.order - b.order
+                    : a.sortName.localeCompare(b.sortName, 'es')
+            );
+
+            cont.innerHTML =
+                `<button class="clan-chip ${clanFiltroActivo === 'todos' ? 'active' : ''}" data-clan="todos">TODOS<span class="n">${todos.length}</span></button>` +
+                lista.map(c =>
+                    `<button class="clan-chip ${clanFiltroActivo === c.key ? 'active' : ''}" data-clan="${c.key}">${c.label}<span class="n">${c.n}</span></button>`
+                ).join('');
+        }
+
+        document.getElementById('clanFilter').addEventListener('click', (e) => {
+            const chip = e.target.closest('.clan-chip');
+            if (!chip) return;
+            clanFiltroActivo = chip.dataset.clan;
+            renderizarInmigrantes(expedientesGlobales, searchInput2.value);
+        });
 
         // =========================================================
         // RENDER INMIGRANTES
@@ -1938,6 +2009,13 @@
             }));
 
             items = items.filter(item => esInmigrante(item));
+
+            // Chips con todos los clanes (no dependen de la búsqueda)
+            renderizarFiltroClanes(items);
+
+            if (clanFiltroActivo !== 'todos') {
+                items = items.filter(item => obtenerClaveClan(item).key === clanFiltroActivo);
+            }
 
             if (searchLower) {
                 items = items.filter(item => {
@@ -1969,7 +2047,7 @@
                 return;
             }
 
-            // Agrupar por clan manteniendo un orden jerárquico fijo.
+            // Agrupar por clan
             const grupos = new Map();
 
             items.forEach(item => {
@@ -1985,6 +2063,7 @@
                 grupos.get(clanInfo.key).items.push(item);
             });
 
+            // Orden alfabético; "sin clan" siempre al final
             const gruposOrdenados = Array.from(grupos.values()).sort((a, b) => {
                 if (a.order !== b.order) return a.order - b.order;
                 return (a.sortName || a.label).localeCompare(b.sortName || b.label, 'es');
