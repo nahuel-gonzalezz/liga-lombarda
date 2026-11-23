@@ -782,6 +782,74 @@
             transition: accent-color 0.5s ease;
         }
 
+        /* =========================================================
+           PRESUPUESTO DE PUNTOS (límite por panel)
+        ========================================================= */
+        .points-budget {
+            margin: 0 0 18px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            background: var(--accent-bg);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .points-budget .pb-top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .points-budget .pb-count {
+            font-family: "Montserrat", sans-serif;
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .points-budget .pb-count small { font-size: 13px; color: var(--text-mid); font-weight: 700; }
+        .points-budget .pb-pct {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+        }
+        .points-budget .pb-bar {
+            height: 8px;
+            margin: 10px 0 8px;
+            border-radius: 99px;
+            background: var(--border-soft);
+            overflow: hidden;
+        }
+        .points-budget .pb-fill {
+            height: 100%;
+            width: 0;
+            background: var(--accent);
+            border-radius: 99px;
+            transition: width 0.25s ease, background-color 0.3s ease;
+        }
+        .points-budget .pb-meta {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-soft);
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .points-budget .pb-remaining { color: var(--text-mid); font-weight: 700; }
+        .points-budget.full { border-color: var(--accent); }
+        .points-budget.shake { animation: pbShake 0.35s ease; border-color: #d32f2f; }
+        .points-budget.invalid { border-color: #d32f2f; background: rgba(211,47,47,0.08); }
+        .points-budget.invalid .pb-count, .points-budget.invalid .pb-pct { color: #d32f2f; }
+        .points-budget.invalid .pb-fill { background: #d32f2f; }
+        @keyframes pbShake {
+            0%,100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(0.4); transform: none; }
+
         .generate-area { text-align: center; margin: 30px 0 50px; }
         .generate-btn {
             width: 100%;
@@ -1779,6 +1847,17 @@
                             EVALUACIÓN DE CAPACIDADES
                         </div>
                         <div class="stats-editor">
+                            <div class="points-budget" id="budgetStats" data-group="stats" data-total="42">
+                                <div class="pb-top">
+                                    <div class="pb-count"><span class="pb-used">0</span><small> / 42</small></div>
+                                    <div class="pb-pct">60% DISPONIBLE</div>
+                                </div>
+                                <div class="pb-bar"><div class="pb-fill"></div></div>
+                                <div class="pb-meta">
+                                    <span>7 atributos · Máximo individual: 10</span>
+                                    <span class="pb-remaining">Restantes: 0</span>
+                                </div>
+                            </div>
                             <div class="stat-editor-row">
                                 <div class="stat-name"><i class="fas fa-dumbbell"></i> FUERZA</div>
                                 <input type="range" min="1" max="10" value="5" id="strength" />
@@ -1823,6 +1902,17 @@
                             <span id="panelTitleComp">COMPETENCIAS LOMBARDAS</span>
                         </div>
                         <div class="stats-editor">
+                            <div class="points-budget" id="budgetComp" data-group="comp" data-total="24">
+                                <div class="pb-top">
+                                    <div class="pb-count"><span class="pb-used">0</span><small> / 24</small></div>
+                                    <div class="pb-pct">60% DISPONIBLE</div>
+                                </div>
+                                <div class="pb-bar"><div class="pb-fill"></div></div>
+                                <div class="pb-meta">
+                                    <span>4 atributos · Máximo individual: 10</span>
+                                    <span class="pb-remaining">Restantes: 0</span>
+                                </div>
+                            </div>
                             <div class="stat-editor-row">
                                 <div class="stat-name"><i class="fa-solid fa-hand-fist"></i> COMBATE</div>
                                 <input type="range" min="1" max="10" value="5" id="combat" />
@@ -2923,6 +3013,98 @@
         }
 
         // Contador de caracteres de la descripción
+        /* =========================================================
+           LÍMITE DE PUNTOS — Capacidades (42/70) y Competencias (24/40)
+        ========================================================= */
+        const POINT_GROUPS = {
+            stats: {
+                total: 42,
+                label: 'EVALUACIÓN DE CAPACIDADES',
+                ids: ['strength','perception','endurance','charisma','intelligence','agility','luck'],
+                budgetId: 'budgetStats'
+            },
+            comp: {
+                total: 24,
+                label: 'COMPETENCIAS',
+                ids: ['combat','building','farming','redstone'],
+                budgetId: 'budgetComp'
+            }
+        };
+
+        function sumGroup(group, exceptId) {
+            return group.ids.reduce((acc, id) => {
+                if (id === exceptId) return acc;
+                return acc + (parseInt(document.getElementById(id).value) || 1);
+            }, 0);
+        }
+
+        function getGroupByInputId(id) {
+            return Object.values(POINT_GROUPS).find(g => g.ids.includes(id));
+        }
+
+        function refreshOutputs(group) {
+            group.ids.forEach(id => {
+                const out = document.getElementById(id + 'Value');
+                if (out) out.textContent = document.getElementById(id).value;
+            });
+        }
+
+        function updateBudgetUI(group) {
+            const box = document.getElementById(group.budgetId);
+            if (!box) return;
+            const used = sumGroup(group, null);
+            const remaining = group.total - used;
+            box.querySelector('.pb-used').textContent = used;
+            box.querySelector('.pb-remaining').textContent = 'Restantes: ' + remaining;
+            box.querySelector('.pb-fill').style.width = Math.min(100, (used / group.total) * 100) + '%';
+            box.classList.toggle('full', remaining === 0);
+            box.classList.toggle('invalid', remaining < 0);
+        }
+
+        // Limita el slider para que nunca se pase del total del grupo
+        function enforcePointLimit(input) {
+            const group = getGroupByInputId(input.id);
+            if (!group) return;
+            const others = sumGroup(group, input.id);
+            const maxAllowed = Math.max(1, Math.min(10, group.total - others));
+            if (parseInt(input.value) > maxAllowed) {
+                input.value = maxAllowed;
+                const box = document.getElementById(group.budgetId);
+                box.classList.remove('shake');
+                void box.offsetWidth;
+                box.classList.add('shake');
+                setTimeout(() => box.classList.remove('shake'), 400);
+                if (window.showToast) {
+                    window.showToast('⚠️ Límite alcanzado: ' + group.label + ' solo permite ' + group.total + ' puntos en total', 'error', 2500);
+                }
+            }
+            refreshOutputs(group);
+            updateBudgetUI(group);
+        }
+
+        // Validación final: devuelve true solo si ningún grupo se pasa del límite
+        function validarPuntos(showMessage = true) {
+            for (const group of Object.values(POINT_GROUPS)) {
+                const used = sumGroup(group, null);
+                const tooHigh = group.ids.some(id => parseInt(document.getElementById(id).value) > 10);
+                if (used > group.total || tooHigh) {
+                    updateBudgetUI(group);
+                    const box = document.getElementById(group.budgetId);
+                    box.classList.add('invalid');
+                    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    if (showMessage && window.showToast) {
+                        window.showToast('🚫 ' + group.label + ': usaste ' + used + ' puntos y el máximo es ' + group.total + '. Ajustá los valores para continuar.', 'error', 5000);
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateAllBudgets() {
+            Object.values(POINT_GROUPS).forEach(updateBudgetUI);
+        }
+
         function updateDescriptionCounter() {
             const textarea = document.getElementById('description');
             const counter = document.getElementById('descCounter');
@@ -3184,6 +3366,7 @@
 
             document.querySelectorAll('input[type="range"]').forEach(el => {
                 el.addEventListener('input', function() {
+                    enforcePointLimit(this);
                     const output = document.getElementById(this.id + 'Value');
                     if (output) output.textContent = this.value;
                     updateAllData();
@@ -3213,6 +3396,11 @@
                     return;
                 }
 
+                // Validar límite de puntos (capacidades y competencias)
+                if (!validarPuntos()) {
+                    return;
+                }
+
                 generateFileNumber();
                 updateAllData();
                 updateAllPreviews();
@@ -3236,6 +3424,10 @@
 
             document.getElementById('modalConfirm').addEventListener('click', async function() {
                 const btn = this;
+                if (!validarPuntos()) {
+                    confirmModal.classList.remove('visible');
+                    return;
+                }
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner spinner"></i> GUARDANDO...';
 
@@ -3281,6 +3473,7 @@
             }, 1500);
 
             updateDescriptionCounter();
+            updateAllBudgets();
         });
 
         function updateAllData() {
