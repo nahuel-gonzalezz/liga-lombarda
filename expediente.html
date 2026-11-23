@@ -2210,11 +2210,11 @@
       }
       if (item.rank) {
         const r = String(item.rank).toLowerCase();
-        if (r.includes('inmigrante') || r.includes('ilegal') || r.includes('indocumentado')) return true;
+        if (r.includes('inmigrante') || r.includes('ilegal') || r.includes('')) return true;
       }
       if (item.status) {
         const st = String(item.status).toUpperCase();
-        if (st.includes('ILEGAL') || st.includes('INDOCUMENTADO')) return true;
+        if (st.includes('') || st.includes('')) return true;
       }
       if (item.rank && RANK_ORDER.includes(item.rank)) return false;
       return true;
@@ -2590,13 +2590,13 @@
 
       setText('bookHeaderTitle', 'PASAPORTE LOMBARDO');
       setText('bookHeaderSubtitle', 'REGISTRO DE EXTRANJERO');
-      setText('bookHeaderSmall', 'INDOCUMENTADO');
+      setText('bookHeaderSmall', '');
 
       const infoTitle = document.querySelector('#page-1 .back .section-title');
       if (infoTitle) infoTitle.innerHTML = '<i class="fas fa-id-card"></i> INFORMACIÓN DEL EXTRANJERO';
 
       const motto = $('bookMotto');
-      if (motto) motto.innerHTML = '<i class="fas fa-passport"></i> POR LA LIGA · CONTROL MIGRATORIO <i class="fas fa-passport"></i>';
+      if (motto) motto.innerHTML = '<i class="fas fa-passport"></i> · CONTROL MIGRATORIO · <i class="fas fa-passport"></i>';
 
       setText('bookEndTitle', 'FIN');
       const endSub = $('bookEndSubtitle');
